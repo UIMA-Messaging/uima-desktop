@@ -1,42 +1,50 @@
-import { useState, useRef, useEffect } from "react";
-import "../styles/Chat.css";
-import Vibrant from "node-vibrant";
-import { Message } from "../../common/types";
+import '../styles/Chat.css'
+import { useState, useRef, useEffect } from 'react'
+import { Message } from '../../common/types'
+import { v4 as uuid } from 'uuid'
 
 export default function Chat({ chat }: { chat: string }) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [palette, setPalette] = useState(null);
-  const bottom = useRef(null);
+  const [messages, setMessages] = useState<Message[]>([])
+  const [palette, setPalette] = useState(null)
+  const [isOnline, setIsOnline] = useState<boolean>()
+  const bottom = useRef(null)
 
   // useEffect(() => {
   //   Vibrant.from(image).getPalette().then(setPalette).catch();
   // }, []);
 
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    window.electron.isOnline().then(setIsOnline)
+  }, [])
 
-  function sendMessage(event: any): void {
-    if (event.key == "Enter") {
+  useEffect(() => {
+    bottom.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
+  window.electron.onMessageReceive((_, message) => setMessages([...messages, message]))
+
+  function sendMessage(event: any) {
+    if (event.key == 'Enter') {
       if (event.target.value) {
         const newMessage: Message = {
-          id: new Date().toISOString(),
-          sender: "you",
-          receiver: "",
+          id: uuid(),
+          sender: 'you',
+          receiver: 'admin@localhost',
           content: event.target.value,
           timestamp: new Date(),
-        };
-
-        setMessages([...messages, newMessage]);
+        }
+        window.electron.sendMessage(newMessage)
+        setMessages([...messages, newMessage])
       }
 
-      event.target.value = "";
+      event.target.value = ''
       // event.target.blur();
     }
   }
 
   return (
-    <div className="chat-wrapper">
+    <div className="chat-wrapper" style={{ opacity: isOnline ? 1 : 0.7, pointerEvents: isOnline ? null : 'none' }}>
       <nav className="chat-header">
         <div className="chat-user">
           <img className="chat-user-picture" />
@@ -44,8 +52,8 @@ export default function Chat({ chat }: { chat: string }) {
         </div>
       </nav>
       <div className="chat-conversation">
-        {messages.map(m => (
-          <div key={m.id} style={{ flexDirection: m.sender === "you" ? "row-reverse" : "row" }} className="chat-item-wrapper">
+        {messages.map((m) => (
+          <div key={m.id} style={{ flexDirection: m.sender === 'you' ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
             <div className="chat-bubble">
               {/* <div style={{ color: m.sender !== "you" ? palette?.LightVibrant.hex : "inherit",  }} className="chat-bubble"> */}
               {m.content}
@@ -58,5 +66,5 @@ export default function Chat({ chat }: { chat: string }) {
         <input className="text-input" placeholder={`Chat with @${chat}`} onKeyDown={sendMessage} />
       </footer>
     </div>
-  );
+  )
 }

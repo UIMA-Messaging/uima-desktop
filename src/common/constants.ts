@@ -5,9 +5,12 @@ export const channels = {
   IS_REGISTERED: "is-first-time-running",
   IS_AUTHED: "is-user-authenticated",
   USER_PROFILE: "get-user-profile",
-  ERROR: "on-error",
   LOGIN_ERROR: "on-login-error",
   REGISTRATION_ERROR: "on-registration-error",
+  SEND_MESSAGE: "user-send-message",
+  RECEIVE_MESSAGE: "user-received-message",
+  XMP_IS_CONNECTED: "is-user-connected-to-xmp",
+  XMP_ERROR: "on-xmp-error",
 };
 
 export const data = {
