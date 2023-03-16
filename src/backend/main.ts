@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import isDev from 'electron-is-dev'
 import ElectronStore from 'electron-store'
 import Authentification from './services/authentication'
-import EjabberdClient from './services/ejabberd'
+import EjabberdClient from './clients/ejabberdClient'
 import StateManagement from './services/stateManagement'
 import './channels/dataHandlers'
 import './channels/xmpHandlers'
@@ -40,7 +40,8 @@ app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWin
 const store = new ElectronStore()
 const authentication = new Authentification(store)
 const stateManagement = new StateManagement(store)
-const ejabberd = new EjabberdClient('username1@localhost', '123', 'localhost', 5222)
+const ejabberd = new EjabberdClient('localhost', 5222)
+ejabberd.setJabberUser('username1@localhost', '123')
 
 export { authentication, stateManagement, ejabberd, window }
 

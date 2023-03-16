@@ -6,11 +6,20 @@ import { Message } from '../../common/types'
 export default class EjabberdClient extends EventEmitter {
   private xmpClient: Client
   private conneted: boolean
+  private host: string
+  private port: number
+  private sender: string
 
-  constructor(jid: string, password: string, host: string, port: number) {
+  constructor(host: string, port: number) {
     super()
-    this.xmpClient = new Client({ jid, password, host, port, reconnect: true })
     this.conneted = false
+    this.host = host
+    this.port = port
+  }
+
+  public setJabberUser(jid: string, password: string) {
+    this.sender = jid
+    this.xmpClient = new Client({ jid, password, host: this.host, port: this.port, reconnect: true })
 
     this.xmpClient.on('online', () => {
       this.conneted = true
@@ -18,7 +27,7 @@ export default class EjabberdClient extends EventEmitter {
       super.emit('onConnected', this.conneted)
     })
 
-    this.xmpClient.on('offline', () => {
+    this.xmpClient.on('disconnect', () => {
       this.conneted = false
       super.emit('onDisconnected', this.conneted)
     })
@@ -45,9 +54,13 @@ export default class EjabberdClient extends EventEmitter {
   }
 
   public send(message: Message) {
+    if (!this.xmpClient) {
+      throw Error('Ejabberd user not configured yet.')
+    }
     if (!this.conneted) {
       throw Error('User not connected to XMP client.')
     }
+    message.sender = this.sender
     const stanza = xml('message', { to: message.receiver, type: 'chat' }, xml('body', null, message.content))
     this.xmpClient.send(stanza)
     super.emit('onSend', message, stanza)

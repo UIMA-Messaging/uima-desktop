@@ -4,8 +4,8 @@ import { Message } from '../../common/types'
 import { v4 as uuid } from 'uuid'
 
 export default function Chat({ chat }: { chat: string }) {
-  // const [palette, setPalette] = useState(null)
   const [messages, setMessages] = useState<Message[]>([])
+  const [palette, setPalette] = useState(null)
   const [isOnline, setIsOnline] = useState(false)
   const bottom = useRef(null)
 
