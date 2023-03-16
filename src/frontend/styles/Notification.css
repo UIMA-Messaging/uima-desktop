@@ -5,11 +5,13 @@
   bottom: 20px;
   left: 20px;
   border-radius: 5px;
-  animation: notification 3s ease-in-out forwards;
   padding: 10px 20px;
   font-size: 90%;
   background-color: #222222;
-  display: none;
+}
+
+.notification-animation {
+  animation: notification 3s ease-in-out forwards;
 }
 
 .type-info {

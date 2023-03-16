@@ -3,7 +3,7 @@ import { notifyOfAuthState } from '../channels/authHandlers'
 import { authentication, stateManagement } from '../main'
 
 authentication.on('onRegister', (user) => {
-  stateManagement.setSensitive(data.USER_PROFILE, user)
+  stateManagement.setSensitive(data.USER_PROFILE, user) // test changes
 })
 
 authentication.on('onLogin', (credentials) => {
