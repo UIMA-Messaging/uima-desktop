@@ -1,12 +1,14 @@
 import '../styles/Chat.css'
 import { useState, useRef, useEffect } from 'react'
 import { Message } from '../../common/types'
+import Notification from './Notification'
 import { v4 as uuid } from 'uuid'
 
 export default function Chat({ chat }: { chat: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [palette, setPalette] = useState(null)
   const [isOnline, setIsOnline] = useState(false)
+  const [xmpError, setXmpError] = useState(null)
   const bottom = useRef(null)
 
   useEffect(() => {
@@ -18,6 +20,7 @@ export default function Chat({ chat }: { chat: string }) {
     bottom.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  window.electron.onXmpError((_, error) => setXmpError(error))
   window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
   window.electron.onMessageReceive((_, message) => setMessages([...messages, message]))
 
@@ -60,6 +63,8 @@ export default function Chat({ chat }: { chat: string }) {
       <footer className="chat-inputs">
         <input className="text-input" placeholder={`Chat with @${chat}`} onKeyDown={sendMessage} />
       </footer>
+      <Notification text={isOnline ? 'Connected to XMP.' : 'Diconnected from XMP.'} type={isOnline ? 'success' : 'error'} />
+      {/* {xmpError && <Notification text={xmpError} type={'error'} />} */}
     </div>
   )
 }

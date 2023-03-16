@@ -8,10 +8,8 @@ declare global {
       register: (registration: Registration) => Promise<void>
       login: (credentials: LoginCredentials) => Promise<void>
       logout: () => void
-      isAuthenticated: () => Promise<boolean>
-      isRegistered: () => Promise<boolean>
-      onAuthentication: (callback: (event: IpcRendererEvent, isAuthed: boolean) => void) => void
-      onRegsiteration: (callback: (event: IpcRendererEvent, isRegistered: boolean) => void) => void
+      authenticationStatus: () => Promise<'notRegistered' | 'loggedOut' | 'loggedIn'>
+      onAuthenticationStatus: (callback: (event: IpcRendererEvent, status: 'notRegistered' | 'loggedOut' | 'loggedIn') => void) => void
       onLoginError: (callback: (event: IpcRendererEvent, error: string) => void) => void
       onRegistrationError: (callback: (event: IpcRendererEvent, error: string) => void) => void
       fetchProfile: () => Promise<User>

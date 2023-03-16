@@ -1,6 +1,5 @@
-import { Stanza } from 'node-xmpp-client'
 import { Message } from '../../common/types'
-import { notifyOfMessage, notifyOfStatus } from '../channels/xmpHandlers'
+import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../channels/xmpHandlers'
 import { ejabberd } from '../main'
 
 ejabberd.on('onConnected', (isConnected) => {
@@ -13,6 +12,10 @@ ejabberd.on('onDisconnected', (isConnected) => {
   notifyOfStatus(isConnected)
 })
 
-ejabberd.on('onReceive', (message: Message, stanza: Stanza) => {
+ejabberd.on('onReceive', (message: Message) => {
   notifyOfMessage(message)
+})
+
+ejabberd.on('onError', (message: string) => {
+  notifyOfError(message)
 })

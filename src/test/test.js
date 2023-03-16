@@ -1,32 +1,31 @@
-const xmpp = require("node-xmpp-client");
-const xml = require("@xmpp/xml");
+const { AsymmetricRatchet } = require("2key-ratchet");
+const crypto = require("crypto");
 
-const client = new xmpp.Client({
-  jid: "username1@localhost",
-  password: "123",
-  host: "localhost",
-  port: 5222,
-  reconnect: true,
-});
+const ecdh = crypto.createECDH("secp256k1");
 
-client.on("online", () => {
-  console.log("Connected to Ejabberd server");
+const senderPrivateKey = ecdh.generateKeys();
+const senderPublicKey = ecdh.getPublicKey();
 
-  const stanza = xml(
-    "message",
-    { to: "admin@localhost", type: "chat" },
-    xml("body", null, "Hello world!")
-  );
+const receiverPrivateKey = ecdh.generateKeys();
+const receiverPublicKey = ecdh.getPublicKey();
 
-  console.log(stanza.toString());
+const sendingRatchet = new AsymmetricRatchet();
+const receivingRatchet = new AsymmetricRatchet();
 
-  client.send(stanza);
-});
+sendingRatchet.initialize(receiverPublicKey);
+receivingRatchet.initialize(senderPublicKey);
 
-client.on("error", (err) => {
-  console.error(err);
-});
+const sendingSharedSecret =
+  sendingRatchet.generateSharedSecret(receivingPublicKey);
+const receivingSharedSecret =
+  receivingRatchet.generateSharedSecret(sendingPublicKey);
 
-client.on("stanza", (stanza) => {
-  console.log("Received stanza: ", stanza.toString());
-});
+const plaintext = "Hello, world!";
+const ciphertext = sendingRatchet.encrypt(plaintext, sendingSharedSecret);
+const decryptedText = receivingRatchet.decrypt(
+  ciphertext,
+  receivingSharedSecret
+);
+
+sendingRatchet.ratchet();
+receivingRatchet.ratchet();

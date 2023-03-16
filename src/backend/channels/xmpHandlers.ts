@@ -11,14 +11,18 @@ ipcMain.on(channels.SEND_MESSAGE, (event, message: Message) => {
   }
 })
 
-ipcMain.handle(channels.XMP_IS_CONNECTED, (_) => {
+ipcMain.handle(channels.XMP_ONLINE, (_) => {
   return ejabberd.isConnected()
 })
 
 export function notifyOfStatus(isOnline: boolean) {
-  window.webContents.send(channels.XMP_IS_CONNECTED, isOnline)
+  window.webContents.send(channels.XMP_ONLINE, isOnline)
 }
 
 export function notifyOfMessage(message: Message) {
   window.webContents.send(channels.RECEIVE_MESSAGE, message)
+}
+
+export function notifyOfError(error: string) {
+  window.webContents.send(channels.XMP_ERROR, error)
 }

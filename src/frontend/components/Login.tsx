@@ -13,8 +13,8 @@ export default function Login() {
   const [error, setError] = useState<string>();
 
   window.electron.onLoginError((_, error) => {
-    setError(error);
     setIsLoggingIn(false);
+    setError(error);
   });
 
   function onClick(data: LoginCredentials) {

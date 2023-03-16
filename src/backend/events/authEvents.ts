@@ -1,19 +1,17 @@
 import { data } from '../../common/constants'
-import { notifyOfAuthentication, notifyOfRegistration } from '../channels/authHandlers'
+import { notifyOfAuthState } from '../channels/authHandlers'
 import { authentication, stateManagement } from '../main'
 
-authentication.on('onRegister', (credentials, user) => {
-  stateManagement.setEncryptionKey(credentials.password + credentials.username) // create proper cypher strat
+authentication.on('onRegister', (user) => {
   stateManagement.setSensitive(data.USER_PROFILE, user)
-  notifyOfRegistration(authentication.isRegistered())
 })
 
 authentication.on('onLogin', (credentials) => {
   stateManagement.setEncryptionKey(credentials.password + credentials.username)
-  notifyOfAuthentication(authentication.isAuthenticated())
+  notifyOfAuthState('loggedIn')
 })
 
 authentication.on('onLogout', () => {
   stateManagement.invalidateEncryptionKey()
-  notifyOfAuthentication(authentication.isAuthenticated())
+  notifyOfAuthState('loggedOut')
 })

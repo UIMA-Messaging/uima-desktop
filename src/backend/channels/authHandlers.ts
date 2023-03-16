@@ -3,6 +3,10 @@ import { channels } from '../../common/constants'
 import { Registration, LoginCredentials } from '../../common/types'
 import { authentication, window } from '../main'
 
+ipcMain.handle(channels.IS_FIRST_TIME, () => {
+  return authentication.isFirstTimeRunning()
+})
+
 ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
   try {
     await authentication.register(registration)
@@ -27,22 +31,16 @@ ipcMain.on(channels.LOGOUT, (event) => {
   }
 })
 
-ipcMain.handle(channels.IS_FIRST_TIME, (_) => {
-  return authentication.isFirstTimeRunning()
+ipcMain.handle(channels.AUTHENTICATION_STATUS, () => {
+  if (!authentication.isRegistered()) {
+    return 'notRegistered'
+  } else if (authentication.isAuthenticated()) {
+    return 'loggedIn'
+  } else {
+    return 'loggedOut'
+  }
 })
 
-ipcMain.handle(channels.ON_REGISTRATION, () => {
-  return authentication.isRegistered()
-})
-
-ipcMain.handle(channels.ON_AUTHENTICATION, () => {
-  return authentication.isAuthenticated()
-})
-
-export function notifyOfRegistration(registered: boolean) {
-  window.webContents.send(channels.ON_REGISTRATION, registered)
-}
-
-export function notifyOfAuthentication(authenticated: boolean) {
-  window.webContents.send(channels.ON_AUTHENTICATION, authenticated)
+export function notifyOfAuthState(state: 'notRegistered' | 'loggedOut' | 'loggedIn') {
+  window.webContents.send(channels.AUTHENTICATION_STATUS, state)
 }

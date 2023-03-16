@@ -7,34 +7,28 @@ import Chat from './components/Chat'
 import Welcome from './components/Welcome'
 
 export default function App() {
-  const [isAuthed, setIsAuthed] = useState<boolean>()
+  const [authStatus, setAuthStatus] = useState<string>()
   const [isFirstTime, setIsFirstTime] = useState<boolean>()
-  const [isRegistered, setIsRegistered] = useState<boolean>()
   const [selectedChat, setSelectedChat] = useState(null)
 
   useEffect(() => {
-    // combine all three into single `authenticationStatus` handler
-    window.electron.isAuthenticated().then(setIsAuthed)
-    window.electron.isRegistered().then(setIsRegistered)
     window.electron.isFirstTimeRunning().then(setIsFirstTime)
+    window.electron.authenticationStatus().then(setAuthStatus)
   }, [])
 
-  // combine into single `onAuthenticationStatus` handler
-  window.electron.onAuthentication((_, isAuthed) => setIsAuthed(isAuthed))
-  window.electron.onRegsiteration((_, isRegistered) => setIsRegistered(isRegistered))
+  window.electron.onAuthenticationStatus((_, status) => setAuthStatus(status))
 
-  if (!isRegistered) {
-    return <Register />
+  switch (authStatus) {
+    case 'notRegistered':
+      return <Register />
+    case 'loggedOut':
+      return <Login />
+    case 'loggedIn':
+      return (
+        <div className="app-wrapper">
+          <Sidebar onClick={setSelectedChat} />
+          {selectedChat ? <Chat chat={selectedChat} /> : <Welcome returning={isFirstTime} />}
+        </div>
+      )
   }
-
-  if (!isAuthed) {
-    return <Login />
-  }
-
-  return (
-    <div className="app-wrapper">
-      <Sidebar onClick={setSelectedChat} />
-      {selectedChat ? <Chat chat={selectedChat} /> : <Welcome returning={isFirstTime} />}
-    </div>
-  )
 }
