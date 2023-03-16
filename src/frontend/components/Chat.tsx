@@ -6,14 +6,11 @@ import { v4 as uuid } from 'uuid'
 export default function Chat({ chat }: { chat: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [palette, setPalette] = useState(null)
-  const [isOnline, setIsOnline] = useState<boolean>()
+  const [isOnline, setIsOnline] = useState(false)
   const bottom = useRef(null)
 
-  // useEffect(() => {
-  //   Vibrant.from(image).getPalette().then(setPalette).catch();
-  // }, []);
-
   useEffect(() => {
+    // Vibrant.from(image).getPalette().then(setPalette).catch()
     window.electron.isOnline().then(setIsOnline)
   }, [])
 
@@ -37,9 +34,7 @@ export default function Chat({ chat }: { chat: string }) {
         window.electron.sendMessage(newMessage)
         setMessages([...messages, newMessage])
       }
-
       event.target.value = ''
-      // event.target.blur();
     }
   }
 

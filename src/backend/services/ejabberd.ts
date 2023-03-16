@@ -15,12 +15,12 @@ export default class EjabberdClient extends EventEmitter {
     this.xmpClient.on('online', () => {
       this.conneted = true
       this.xmpClient.send(xml('presence'))
-      super.emit('onConnected')
+      super.emit('onConnected', this.conneted)
     })
 
     this.xmpClient.on('offline', () => {
       this.conneted = false
-      super.emit('onDisconnected')
+      super.emit('onDisconnected', this.conneted)
     })
 
     this.xmpClient.on('error', (error: Error) => {
@@ -31,7 +31,7 @@ export default class EjabberdClient extends EventEmitter {
     this.xmpClient.on('stanza', (stanza: Stanza) => {
       if (stanza.name === 'message') {
         // @ts-ignore
-        const content = stanza?.children[1]!?.children[0]!
+        const content = stanza?.children![1]?.children![0]
         const message: Message = {
           id: stanza.id,
           sender: stanza.from,
@@ -42,8 +42,6 @@ export default class EjabberdClient extends EventEmitter {
         super.emit('onReceive', message, stanza)
       }
     })
-
-    super.emit('onStartup', this.conneted)
   }
 
   public send(message: Message) {

@@ -1,13 +1,11 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
 import { Registration, LoginCredentials } from '../../common/types'
-import { authentication } from '../main'
+import { authentication, window } from '../main'
 
 ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
   try {
     await authentication.register(registration)
-    event.sender.send(channels.IS_REGISTERED, authentication.hasRegistered())
-    event.sender.send(channels.IS_AUTHED, authentication.isAuthed())
   } catch (error) {
     event.sender.send(channels.REGISTRATION_ERROR, error.message)
   }
@@ -19,18 +17,32 @@ ipcMain.on(channels.LOGIN, (event, credentials: LoginCredentials) => {
   } catch (error) {
     event.sender.send(channels.LOGIN_ERROR, error.message)
   }
-  event.sender.send(channels.IS_AUTHED, authentication.isAuthed())
 })
 
 ipcMain.on(channels.LOGOUT, (event) => {
-  authentication.logout()
-  event.sender.send(channels.IS_AUTHED, authentication.isAuthed())
+  try {
+    authentication.logout()
+  } catch (error) {
+    event.sender.send(channels.LOGOUT_ERROR, error.message)
+  }
 })
 
-ipcMain.handle(channels.IS_REGISTERED, () => {
-  return authentication.hasRegistered()
+ipcMain.handle(channels.IS_FIRST_TIME, (_) => {
+  return authentication.isFirstTimeRunning()
 })
 
-ipcMain.handle(channels.IS_AUTHED, () => {
-  return authentication.isAuthed()
+ipcMain.handle(channels.ON_REGISTRATION, () => {
+  return authentication.isRegistered()
 })
+
+ipcMain.handle(channels.ON_AUTHENTICATION, () => {
+  return authentication.isAuthenticated()
+})
+
+export function notifyOfRegistration(registered: boolean) {
+  window.webContents.send(channels.ON_REGISTRATION, registered)
+}
+
+export function notifyOfAuthentication(authenticated: boolean) {
+  window.webContents.send(channels.ON_AUTHENTICATION, authenticated)
+}

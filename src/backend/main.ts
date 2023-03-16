@@ -30,8 +30,8 @@ function createWindow(): BrowserWindow {
   return window
 }
 
-let createdWindow: BrowserWindow = null
-app.whenReady().then(() => (createdWindow = createWindow()))
+let window: BrowserWindow = null
+app.whenReady().then(() => (window = createWindow()))
 
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 
@@ -42,7 +42,7 @@ const authentication = new Authentification(store)
 const stateManagement = new StateManagement(store)
 const ejabberd = new EjabberdClient('username1@localhost', '123', 'localhost', 5222)
 
-export { authentication, stateManagement, ejabberd, createdWindow }
+export { authentication, stateManagement, ejabberd, window }
 
 import './events/authEvents'
 import './events/xmpEvents'

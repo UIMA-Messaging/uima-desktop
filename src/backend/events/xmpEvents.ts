@@ -1,21 +1,18 @@
 import { Stanza } from 'node-xmpp-client'
-import { channels } from '../../common/constants'
 import { Message } from '../../common/types'
-import { createdWindow, ejabberd } from '../main'
+import { notifyOfMessage, notifyOfStatus } from '../channels/xmpHandlers'
+import { ejabberd } from '../main'
 
-ejabberd.on('onConnected', () => {
+ejabberd.on('onConnected', (isConnected) => {
   console.log('User now connected to chating server.')
+  notifyOfStatus(isConnected)
 })
 
-ejabberd.on('onDisconnected', () => {
+ejabberd.on('onDisconnected', (isConnected) => {
   console.log('User disconnected from chating server.')
-})
-
-ejabberd.on('onSend', (message: Message, stanza: Stanza) => {
-  console.log('Just sent a message to ' + message.receiver, message.content)
+  notifyOfStatus(isConnected)
 })
 
 ejabberd.on('onReceive', (message: Message, stanza: Stanza) => {
-  console.log('Received message from ' + message.sender, message.content)
-  createdWindow.webContents.send(channels.RECEIVE_MESSAGE, message)
+  notifyOfMessage(message)
 })
