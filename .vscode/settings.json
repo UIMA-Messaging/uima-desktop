@@ -1,0 +1,25 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "database.aesten.net",
+            "driver": "MySQL",
+            "name": "Arcady",
+            "username": "mysql",
+            "password": "sql_CONNECT1732",
+            "database": "wwrpg",
+            "connectString": "Server=database.aesten.net;Database=wwrpg;Uid=mysql;Pwd=sql_CONNECT1732;"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "messages",
+            "group": "instantmessaging",
+            "database": "${workspaceFolder:InstantMessaging}/src/database/messages.db"
+        }
+    ]
+}
