@@ -1,7 +1,6 @@
 export const channels = {
   IS_FIRST_TIME: 'is-first-time-running-app',
   AUTHENTICATION_STATUS: 'authentication-status',
-  USER_PROFILE: 'get-user-profile',
   REGISTER: 'regsiter-new-user',
   REGISTRATION_ERROR: 'on-registration-error',
   LOGIN: 'login-existing-user',
@@ -12,6 +11,12 @@ export const channels = {
   RECEIVE_MESSAGE: 'user-received-message',
   XMP_ONLINE: 'is-user-connected-to-xmp',
   XMP_ERROR: 'on-xmp-error',
+  USER_PROFILE: 'get-user-profile',
+  CHANNELS: 'get-chat-channels',
+  CONVERSATIONS: 'get-channel-conversations',
+  CREATE_CHANNEL: 'create-channel',
+  CONTACT: 'user-to-contact-other-user',
+  CONTACT_ERROR: 'on-contact-failor',
 }
 
 export const data = {

@@ -1,9 +1,9 @@
 import '../styles/Chat.css'
 import { useState, useRef, useEffect } from 'react'
-import { Message } from '../../common/types'
+import { Channel, Message } from '../../common/types'
 import { v4 as uuid } from 'uuid'
 
-export default function Chat({ chat }: { chat: string }) {
+export default function Chat({ channel }: { channel: Channel }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [palette, setPalette] = useState(null)
   const [isOnline, setIsOnline] = useState(false)
@@ -16,6 +16,7 @@ export default function Chat({ chat }: { chat: string }) {
   useEffect(() => {
     // Vibrant.from(image).getPalette().then(setPalette).catch()
     window.electron.isOnline().then(setIsOnline)
+    window.electron.getChannelConversation(channel.id).then(setMessages)
   }, [])
 
   useEffect(() => {
@@ -47,23 +48,23 @@ export default function Chat({ chat }: { chat: string }) {
     <div className="chat-wrapper" style={{ opacity: isOnline ? 1 : 0.7, pointerEvents: isOnline ? null : 'none' }}>
       <nav className="chat-header">
         <div className="chat-user">
-          <img className="chat-user-picture" />
-          <div className="chat-user-name">@{chat}</div>
+          <img className="chat-user-picture" src={channel.image} />
+          <div className="chat-user-name">{channel.name}</div>
         </div>
       </nav>
       <div className="chat-conversation">
-        {messages.map((m) => (
-          <div key={m.id} style={{ flexDirection: m.sender === self ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
+        {messages.map((message) => (
+          <div key={message.id} style={{ flexDirection: message.sender === self ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
             <div className="chat-bubble">
               {/* <div style={{ color: m.sender !== "you" ? palette?.LightVibrant.hex : "inherit",  }} className="chat-bubble"> */}
-              {m.content}
+              {message.content}
             </div>
           </div>
         ))}
         <div ref={bottom} />
       </div>
       <footer className="chat-inputs">
-        <input className="text-input" placeholder={`Chat with @${chat}`} onKeyDown={sendMessage} />
+        <input className="text-input" placeholder={`Chat with @${channel}`} onKeyDown={sendMessage} />
       </footer>
     </div>
   )

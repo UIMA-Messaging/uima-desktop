@@ -5,29 +5,29 @@ import { Message } from '../../common/types'
 
 export default class EjabberdClient extends EventEmitter {
   private xmpClient: Client
-  private conneted: boolean
+  private connected: boolean
   private host: string
   private port: number
 
   constructor(host: string, port: number) {
     super()
-    this.conneted = false
+    this.connected = false
     this.host = host
     this.port = port
   }
 
-  public setJabberUser(jid: string, password: string) {
+  public connect(jid: string, password: string) {
     this.xmpClient = new Client({ jid, password, host: this.host, port: this.port, reconnect: true })
 
     this.xmpClient.on('online', () => {
-      this.conneted = true
+      this.connected = true
       this.xmpClient.send(xml('presence'))
-      super.emit('onConnected', this.conneted)
+      super.emit('onConnected', this.connected)
     })
 
     this.xmpClient.on('disconnect', () => {
-      this.conneted = false
-      super.emit('onDisconnected', this.conneted)
+      this.connected = false
+      super.emit('onDisconnected', this.connected)
     })
 
     this.xmpClient.on('error', (error: Error) => {
@@ -46,11 +46,19 @@ export default class EjabberdClient extends EventEmitter {
     })
   }
 
+  public disconnect() {
+    this.xmpClient.disconnect()
+    this.xmpClient = null
+    this.host = null
+    this.port = null
+    this.connected = false
+  }
+
   public send(recipientJid: string, message: Message) {
     if (!this.xmpClient) {
       throw Error('Ejabberd user not configured yet.')
     }
-    if (!this.conneted) {
+    if (!this.connected) {
       throw Error('User not connected to XMP client.')
     }
     const payload = xml('body', null, JSON.stringify(message))
@@ -60,6 +68,6 @@ export default class EjabberdClient extends EventEmitter {
   }
 
   public isConnected(): boolean {
-    return this.conneted
+    return this.connected
   }
 }

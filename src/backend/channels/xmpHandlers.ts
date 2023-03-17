@@ -11,7 +11,7 @@ ipcMain.on(channels.SEND_MESSAGE, (event, recipientJid: string, message: Message
   }
 })
 
-ipcMain.handle(channels.XMP_ONLINE, (_) => {
+ipcMain.handle(channels.XMP_ONLINE, () => {
   return ejabberd.isConnected()
 })
 

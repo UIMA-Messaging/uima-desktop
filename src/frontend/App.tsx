@@ -6,11 +6,13 @@ import Sidebar from './components/Sidebar'
 import Chat from './components/Chat'
 import Welcome from './components/Welcome'
 import Notification from './components/Notification'
+import { Channel } from '../common/types'
 
 export default function App() {
   const [authStatus, setAuthStatus] = useState<string>()
   const [isFirstTime, setIsFirstTime] = useState<boolean>()
-  const [selectedChat, setSelectedChat] = useState(null)
+  const [selectedChannel, setSelectedChannel] = useState<Channel>()
+  const [channels, setChannels] = useState<Channel[]>([])
   const [isOnline, setIsOnline] = useState(false)
 
   useEffect(() => {
@@ -18,6 +20,12 @@ export default function App() {
     window.electron.authenticationStatus().then(setAuthStatus)
     window.electron.isOnline().then(setIsOnline)
   }, [])
+
+  useEffect(() => {
+    if (authStatus) {
+      window.electron.getChannels().then(setChannels)
+    }
+  }, [authStatus])
 
   window.electron.onAuthenticationStatus((_, status) => setAuthStatus(status))
   window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
@@ -30,9 +38,10 @@ export default function App() {
     case 'loggedIn':
       return (
         <div className="app-wrapper">
-          <Sidebar onClick={setSelectedChat} />
-          {selectedChat ? <Chat chat={selectedChat} /> : <Welcome returning={isFirstTime} />}
-          <Notification text={isOnline ? 'Connected to XMP.' : 'Diconnected from XMP.'} type={isOnline ? 'success' : 'error'} />
+          <Sidebar channels={channels} onClick={setSelectedChannel} />
+          {selectedChannel ? <Chat channel={selectedChannel} /> : <Welcome returning={isFirstTime} />}
+          {isOnline && <Notification text={'Connected to XMP'} type={'success'} />}
+          {!isOnline && <Notification text={'Diconnected from XMP'} type={'error'} />}
         </div>
       )
   }

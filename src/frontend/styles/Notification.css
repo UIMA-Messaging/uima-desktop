@@ -8,6 +8,7 @@
   padding: 10px 20px;
   font-size: 90%;
   background-color: #222222;
+  z-index: 9999;
 }
 
 .notification-animation {

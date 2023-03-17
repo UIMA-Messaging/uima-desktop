@@ -6,9 +6,13 @@ import path from 'path'
 isDev && sqlite3.verbose()
 
 export default class SqlConnection {
-  private repository: Database
+  private database: Database
 
-  constructor(database: string) {
+  constructor(database: Database) {
+    this.database = database
+  }
+
+  static create(database: string): SqlConnection {
     if (!database.endsWith('.db')) {
       throw Error('Invalid database file not ending with `.db`')
     }
@@ -17,17 +21,20 @@ export default class SqlConnection {
     fs.mkdir(dbDir, { recursive: true }, () => {})
     fs.access(dbPath, fs.constants.F_OK, function (err) {
       if (err) {
-        console.log('Database file does not exist. Creating a new one.', err.message)
+        console.log('Database file does not exist. Creating a new one.')
         fs.writeFile(dbPath, '', () => {})
       }
     })
-    this.repository = new Database(dbPath)
+    return new SqlConnection(new Database(dbPath))
   }
 
   public async execute(sql: string, obj?: any): Promise<void> {
+    if (!this.database) {
+      throw Error('Database not initialized yet!')
+    }
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
-      this.repository.run(sql, entity, (error: Error) => {
+      this.database.run(sql, entity, (error: Error) => {
         if (error) {
           reject(error)
         } else {
@@ -38,9 +45,12 @@ export default class SqlConnection {
   }
 
   public async query<T>(sql: string, obj?: any): Promise<T[]> {
+    if (!this.database) {
+      throw Error('Database not initialized yet!')
+    }
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
-      this.repository.all(sql, entity, (error: Error, rows: any) => {
+      this.database.all(sql, entity, (error: Error, rows: any) => {
         if (error) {
           reject(error)
         } else {
@@ -51,9 +61,12 @@ export default class SqlConnection {
   }
 
   public async querySingle<T>(sql: string, obj?: any): Promise<T> {
+    if (!this.database) {
+      throw Error('Database not initialized yet!')
+    }
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
-      this.repository.get(sql, entity, (error: Error, row: any) => {
+      this.database.get(sql, entity, (error: Error, row: any) => {
         if (error) {
           reject(error)
         } else {

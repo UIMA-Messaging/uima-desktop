@@ -9,7 +9,7 @@ export default function Welcome({ returning }: { returning: boolean }) {
   const [profile, setProfile] = useState<User>()
 
   useEffect(() => {
-    window.electron.fetchProfile().then(setProfile)
+    window.electron.getProfile().then(setProfile)
   }, [])
 
   return (

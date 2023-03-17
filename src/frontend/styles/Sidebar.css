@@ -33,10 +33,6 @@
   margin: auto;
 }
 
-.add-friend:hover {
-  background-color: white;
-}
-
 .create-group-chat:hover {
   background-color: #03bfa7;
 }
