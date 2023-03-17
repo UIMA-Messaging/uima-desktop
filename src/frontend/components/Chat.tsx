@@ -9,6 +9,9 @@ export default function Chat({ chat }: { chat: string }) {
   const [isOnline, setIsOnline] = useState(false)
   const bottom = useRef(null)
 
+  const channelId = uuid()
+  const recipient = 'admin@localhost'
+
   useEffect(() => {
     // Vibrant.from(image).getPalette().then(setPalette).catch()
     window.electron.isOnline().then(setIsOnline)
@@ -26,12 +29,13 @@ export default function Chat({ chat }: { chat: string }) {
       if (event.target.value) {
         const newMessage: Message = {
           id: uuid(),
-          sender: 'you',
-          receiver: 'admin@localhost',
+          channelId: channelId,
+          sender: 'greffgreff',
+          receiver: 'admin',
           content: event.target.value,
           timestamp: new Date(),
         }
-        window.electron.sendMessage(newMessage)
+        window.electron.sendMessage(recipient, newMessage)
         setMessages([...messages, newMessage])
       }
       event.target.value = ''
@@ -48,7 +52,7 @@ export default function Chat({ chat }: { chat: string }) {
       </nav>
       <div className="chat-conversation">
         {messages.map((m) => (
-          <div key={m.id} style={{ flexDirection: m.sender === 'you' ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
+          <div key={m.id} style={{ flexDirection: m.sender === 'greffgreff' ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
             <div className="chat-bubble">
               {/* <div style={{ color: m.sender !== "you" ? palette?.LightVibrant.hex : "inherit",  }} className="chat-bubble"> */}
               {m.content}

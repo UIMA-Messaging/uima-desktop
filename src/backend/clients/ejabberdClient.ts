@@ -8,7 +8,6 @@ export default class EjabberdClient extends EventEmitter {
   private conneted: boolean
   private host: string
   private port: number
-  private sender: string
 
   constructor(host: string, port: number) {
     super()
@@ -18,7 +17,6 @@ export default class EjabberdClient extends EventEmitter {
   }
 
   public setJabberUser(jid: string, password: string) {
-    this.sender = jid
     this.xmpClient = new Client({ jid, password, host: this.host, port: this.port, reconnect: true })
 
     this.xmpClient.on('online', () => {
@@ -41,29 +39,23 @@ export default class EjabberdClient extends EventEmitter {
       if (stanza.name === 'message') {
         // @ts-ignore
         const content = stanza?.children![1]?.children![0]
-        const message: Message = {
-          id: stanza.id,
-          sender: stanza.from,
-          receiver: stanza.to,
-          content: content,
-          timestamp: new Date(),
-        }
-        super.emit('onReceive', message, stanza)
+        const message: Message = JSON.parse(content)
+        super.emit('onReceive', message)
       }
     })
   }
 
-  public send(message: Message) {
+  public send(recipientJid: string, message: Message) {
     if (!this.xmpClient) {
       throw Error('Ejabberd user not configured yet.')
     }
     if (!this.conneted) {
       throw Error('User not connected to XMP client.')
     }
-    message.sender = this.sender
-    const stanza = xml('message', { to: message.receiver, type: 'chat' }, xml('body', null, message.content))
+    const payload = xml('body', null, JSON.stringify(message))
+    const stanza = xml('message', { to: recipientJid, type: 'chat' }, payload)
     this.xmpClient.send(stanza)
-    super.emit('onSend', message, stanza)
+    super.emit('onSend', message)
   }
 
   public isConnected(): boolean {

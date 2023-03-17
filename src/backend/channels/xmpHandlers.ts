@@ -3,9 +3,9 @@ import { channels } from '../../common/constants'
 import { Message } from '../../common/types'
 import { ejabberd, window } from '../main'
 
-ipcMain.on(channels.SEND_MESSAGE, (event, message: Message) => {
+ipcMain.on(channels.SEND_MESSAGE, (event, recipientJid: string, message: Message) => {
   try {
-    ejabberd.send(message)
+    ejabberd.send(recipientJid, message)
   } catch (error) {
     event.sender.send(channels.XMP_ERROR, error)
   }

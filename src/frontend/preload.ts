@@ -15,6 +15,6 @@ contextBridge.exposeInMainWorld('electron', {
   isOnline: () => ipcRenderer.invoke(channels.XMP_ONLINE),
   onOnline: (callback: (event: IpcRendererEvent, isOnline: boolean) => void) => ipcRenderer.on(channels.XMP_ONLINE, callback),
   onXmpError: (callback: (event: IpcRendererEvent, error: string) => void) => ipcRenderer.on(channels.XMP_ERROR, callback),
-  sendMessage: (message: Message) => ipcRenderer.send(channels.SEND_MESSAGE, message),
+  sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.SEND_MESSAGE, recipientJid, message),
   onMessageReceive: (callback: (event: IpcRendererEvent, message: Message) => void) => ipcRenderer.on(channels.RECEIVE_MESSAGE, callback),
 })

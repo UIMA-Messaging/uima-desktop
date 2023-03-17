@@ -15,7 +15,7 @@ declare global {
       fetchProfile: () => Promise<User>
       onOnline: (callback: (event: IpcRendererEvent, isOnline: boolean) => void) => void
       isOnline: () => Promise<boolean>
-      sendMessage: (message: Message) => void
+      sendMessage: (recipientJid: string, message: Message) => void
       onMessageReceive: (callback: (event: IpcRendererEvent, message: Message) => void) => void
       onXmpError: (callback: (event: IpcRendererEvent, error: string) => void) => void
     }
