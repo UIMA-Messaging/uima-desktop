@@ -50,6 +50,19 @@ export default class SqlConnection {
     })
   }
 
+  public async querySingle<T>(sql: string, obj?: any): Promise<T> {
+    const entity = this.objToEntity(sql, obj)
+    return new Promise((resolve, reject) => {
+      this.repository.all(sql, entity, (error: Error, rows: any) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(rows[0] as T)
+        }
+      })
+    })
+  }
+
   private objToEntity(sql: string, obj: any): any {
     const entity = {}
     if (obj) {
