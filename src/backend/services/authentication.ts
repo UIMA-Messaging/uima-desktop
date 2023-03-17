@@ -1,7 +1,7 @@
 import Bcrypt from 'bcrypt'
 import ElectronStore from 'electron-store'
 import EventEmitter from 'events'
-import { BasicUser, LoginCredentials, Registration } from '../../common/types'
+import { BasicUser, Credentials, Registration } from '../../common/types'
 import { register } from '../clients/identityClient'
 
 export default class Authentification extends EventEmitter {
@@ -20,7 +20,7 @@ export default class Authentification extends EventEmitter {
     if (this.isChallengePresent()) {
       throw Error('A user has already been registered to this device.')
     }
-    const credentials: LoginCredentials = { username: registration.username, password: registration.password }
+    const credentials: Credentials = { username: registration.username, password: registration.password }
     const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
     const registeredUser = await register(basicUser)
     this.generateChallenge(credentials.password + credentials.username)
@@ -28,7 +28,7 @@ export default class Authentification extends EventEmitter {
     this.emit('onRegister', registeredUser)
   }
 
-  public login(credentials: LoginCredentials) {
+  public login(credentials: Credentials) {
     if (this.authenticated) {
       throw Error('A user is already authenticated. User must first logout.')
     }

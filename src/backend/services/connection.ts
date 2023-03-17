@@ -17,7 +17,7 @@ export default class SqlConnection {
     fs.mkdir(dbDir, { recursive: true }, () => {})
     fs.access(dbPath, fs.constants.F_OK, function (err) {
       if (err) {
-        console.log('Database file does not exist. Creating a new one.')
+        console.log('Database file does not exist. Creating a new one.', err.message)
         fs.writeFile(dbPath, '', () => {})
       }
     })

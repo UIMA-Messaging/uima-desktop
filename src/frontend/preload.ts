@@ -1,11 +1,11 @@
 import { channels } from '../common/constants'
-import { LoginCredentials, Registration, Message } from '../common/types'
+import { Credentials, Registration, Message } from '../common/types'
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
   isFirstTimeRunning: () => ipcRenderer.invoke(channels.IS_FIRST_TIME),
   register: (registration: Registration) => ipcRenderer.send(channels.REGISTER, registration),
-  login: (credentials: LoginCredentials) => ipcRenderer.send(channels.LOGIN, credentials),
+  login: (credentials: Credentials) => ipcRenderer.send(channels.LOGIN, credentials),
   logout: () => ipcRenderer.send(channels.LOGOUT),
   authenticationStatus: () => ipcRenderer.invoke(channels.AUTHENTICATION_STATUS),
   onAuthenticationStatus: (callback: (event: IpcRendererEvent, status: 'notRegistered' | 'loggedOut' | 'loggedIn') => void) => ipcRenderer.on(channels.AUTHENTICATION_STATUS, callback),

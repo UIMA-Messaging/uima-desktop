@@ -38,6 +38,7 @@ export default class EjabberdClient extends EventEmitter {
     this.xmpClient.on('stanza', (stanza: Stanza) => {
       if (stanza.name === 'message') {
         // @ts-ignore
+        // const attribute = stanza?.children[0]!.attrs?.message
         const content = stanza?.children![1]?.children![0]
         const message: Message = JSON.parse(content)
         super.emit('onReceive', message)

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { Registration, LoginCredentials } from '../../common/types'
+import { Registration, Credentials } from '../../common/types'
 import { authentication, window } from '../main'
 
 ipcMain.handle(channels.IS_FIRST_TIME, () => {
@@ -15,7 +15,7 @@ ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
   }
 })
 
-ipcMain.on(channels.LOGIN, (event, credentials: LoginCredentials) => {
+ipcMain.on(channels.LOGIN, (event, credentials: Credentials) => {
   try {
     authentication.login(credentials)
   } catch (error) {

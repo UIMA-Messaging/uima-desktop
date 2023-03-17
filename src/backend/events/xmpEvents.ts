@@ -18,6 +18,10 @@ ejabberd.on('onReceive', (message: Message) => {
   insertMessage(message)
 })
 
+ejabberd.on('onSend', (message: Message) => {
+  insertMessage(message)
+})
+
 ejabberd.on('onError', (message: string) => {
   notifyOfError(message)
 })

@@ -9,8 +9,9 @@ export default function Chat({ chat }: { chat: string }) {
   const [isOnline, setIsOnline] = useState(false)
   const bottom = useRef(null)
 
-  const channelId = uuid()
+  const channelId = '8077126b-048d-4e25-bd94-071b0d87a276'
   const recipient = 'admin@localhost'
+  const self = 'greffgreff'
 
   useEffect(() => {
     // Vibrant.from(image).getPalette().then(setPalette).catch()
@@ -30,7 +31,7 @@ export default function Chat({ chat }: { chat: string }) {
         const newMessage: Message = {
           id: uuid(),
           channelId: channelId,
-          sender: 'greffgreff',
+          sender: self,
           receiver: 'admin',
           content: event.target.value,
           timestamp: new Date(),
@@ -52,7 +53,7 @@ export default function Chat({ chat }: { chat: string }) {
       </nav>
       <div className="chat-conversation">
         {messages.map((m) => (
-          <div key={m.id} style={{ flexDirection: m.sender === 'greffgreff' ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
+          <div key={m.id} style={{ flexDirection: m.sender === self ? 'row-reverse' : 'row' }} className="chat-item-wrapper">
             <div className="chat-bubble">
               {/* <div style={{ color: m.sender !== "you" ? palette?.LightVibrant.hex : "inherit",  }} className="chat-bubble"> */}
               {m.content}

@@ -1,4 +1,4 @@
-import { LoginCredentials, Registration, User, Message } from '../common/types'
+import { Credentials, Registration, User, Message } from '../common/types'
 import { IpcRendererEvent } from 'electron'
 
 declare global {
@@ -6,7 +6,7 @@ declare global {
     electron: {
       isFirstTimeRunning: () => Promise<boolean>
       register: (registration: Registration) => Promise<void>
-      login: (credentials: LoginCredentials) => Promise<void>
+      login: (credentials: Credentials) => Promise<void>
       logout: () => void
       authenticationStatus: () => Promise<'notRegistered' | 'loggedOut' | 'loggedIn'>
       onAuthenticationStatus: (callback: (event: IpcRendererEvent, status: 'notRegistered' | 'loggedOut' | 'loggedIn') => void) => void

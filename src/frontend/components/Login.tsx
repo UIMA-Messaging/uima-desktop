@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { LoginCredentials } from "../../common/types";
+import { Credentials } from "../../common/types";
 import "../styles/Register.css";
 
 export default function Login() {
@@ -17,7 +17,7 @@ export default function Login() {
     setError(error);
   });
 
-  function onClick(data: LoginCredentials) {
+  function onClick(data: Credentials) {
     setIsLoggingIn(true);
     window.electron.login(data);
   }

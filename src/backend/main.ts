@@ -4,6 +4,7 @@ import ElectronStore from 'electron-store'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberdClient'
 import StateManagement from './services/stateManagement'
+import SqlConnection from './services/connection'
 import './channels/dataHandlers'
 import './channels/xmpHandlers'
 import './channels/authHandlers'
@@ -40,10 +41,11 @@ app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWin
 const store = new ElectronStore()
 const authentication = new Authentification(store)
 const stateManagement = new StateManagement(store)
+const connection = new SqlConnection('main.db')
 const ejabberd = new EjabberdClient('localhost', 5222)
 ejabberd.setJabberUser('username1@localhost', '123')
 
-export { authentication, stateManagement, ejabberd, window }
+export { authentication, stateManagement, ejabberd, connection, window }
 
 import './events/authEvents'
 import './events/xmpEvents'

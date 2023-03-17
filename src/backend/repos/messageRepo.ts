@@ -1,19 +1,19 @@
 import { Message } from '../../common/types'
-import SqlConnection from './connection'
-
-const connection = new SqlConnection('main.db')
+import { connection } from '../main'
 
 try {
-  connection.execute(`CREATE TABLE Messages (
-        Id TEXT PRIMARY KEY,
-        ChannelId TEXT,
-        Sender TEXT,
-        Receiver TEXT,
-        Content TEXT,
-        Timestamp DATETIME
-      )`)
+  connection.execute(`
+    CREATE TABLE Channels (
+      Id TEXT PRIMARY KEY,
+      ChannelId TEXT,
+      Sender TEXT,
+      Receiver TEXT,
+      Content TEXT,
+      Timestamp DATETIME
+    )`)
+  console.log('Created `Messages` table already exists.')
 } catch (error) {
-  console.log('Messages table already exists.')
+  console.log('Using already existing `Messages` table.')
 }
 
 export async function getMessages(channelId: string, limit: number = 100, offset: number = 0): Promise<Message[]> {
@@ -35,6 +35,7 @@ export async function insertMessage(message: Message): Promise<void> {
   `,
     message
   )
+  console.log(await connection.query<Message>('SELECT * FROM Messages WHERE ChannelId = $channelId', { channelId: message.channelId }))
 }
 
 export async function deleteMessage(message: Message): Promise<void> {
