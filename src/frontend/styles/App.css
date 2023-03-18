@@ -27,6 +27,8 @@ input {
   min-width: 100px;
   color: black;
   padding: 10px 15px;
+  font-family: inherit;
+  font-size: 100%;
 }
 
 input:focus {
@@ -34,17 +36,17 @@ input:focus {
   outline: unset;
 }
 
-input[type="submit"] {
+input[type='submit'],
+input[type='button'] {
   cursor: pointer;
   font-weight: bold;
   transition: 0.2s;
 }
 
-input[type="submit"]:hover {
-  cursor: pointer;
+input[type='submit']:hover,
+input[type='button']:hover {
   background-color: inherit;
   color: inherit;
-  font-weight: bold;
 }
 
 input:focus::-webkit-input-placeholder {

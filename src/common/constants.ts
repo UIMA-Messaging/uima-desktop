@@ -1,16 +1,24 @@
 export const channels = {
-  REGISTER: "regsiter-new-user",
-  LOGIN: "login-existing-user",
-  LOGOUT: "logout-authed-user",
-  IS_REGISTERED: "is-first-time-running",
-  IS_AUTHED: "is-user-authenticated",
-  USER_PROFILE: "get-user-profile",
-  ERROR: "on-error",
-  LOGIN_ERROR: "on-login-error",
-  REGISTRATION_ERROR: "on-registration-error",
-};
+  IS_FIRST_TIME: 'is-first-time-running-app',
+  AUTHENTICATION_STATUS: 'authentication-status',
+  REGISTER: 'regsiter-new-user',
+  REGISTRATION_ERROR: 'on-registration-error',
+  LOGIN: 'login-existing-user',
+  LOGIN_ERROR: 'on-login-error',
+  LOGOUT: 'logout-authed-user',
+  LOGOUT_ERROR: 'on-logout-error',
+  SEND_MESSAGE: 'user-send-message',
+  RECEIVE_MESSAGE: 'user-received-message',
+  XMP_ONLINE: 'is-user-connected-to-xmp',
+  XMP_ERROR: 'on-xmp-error',
+  USER_PROFILE: 'get-user-profile',
+  CHANNELS: 'get-chat-channels',
+  CONVERSATIONS: 'get-channel-conversations',
+  CREATE_CHANNEL: 'create-channel',
+  CONTACT: 'user-to-contact-other-user',
+  CONTACT_ERROR: 'on-contact-failor',
+}
 
 export const data = {
-  CHALLENGE: "challenge",
-  USER_PROFILE: "profile",
-};
+  USER_PROFILE: 'profile',
+}

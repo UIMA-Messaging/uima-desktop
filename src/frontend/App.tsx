@@ -1,38 +1,48 @@
-import "./styles/App.css";
-import { useEffect, useState } from "react";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Sidebar from "./components/Sidebar";
-import Chat from "./components/Chat";
-import Welcome from "./components/Welcome";
+import './styles/App.css'
+import { useEffect, useState } from 'react'
+import Login from './components/Login'
+import Register from './components/Register'
+import Sidebar from './components/Sidebar'
+import Chat from './components/Chat'
+import Welcome from './components/Welcome'
+import Notification from './components/Notification'
+import { Channel } from '../common/types'
 
 export default function App() {
-  const [isAuthed, setIsAuthed] = useState<boolean>();
-  const [isRegistered, setIsRegistered] = useState<boolean>();
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [authStatus, setAuthStatus] = useState<string>()
+  const [isFirstTime, setIsFirstTime] = useState<boolean>()
+  const [selectedChannel, setSelectedChannel] = useState<Channel>()
+  const [channels, setChannels] = useState<Channel[]>([])
+  const [isOnline, setIsOnline] = useState(false)
 
   useEffect(() => {
-    window.electron.isAuthed().then(setIsAuthed);
-    window.electron.isRegistered().then(setIsRegistered);
-  }, []);
+    window.electron.isFirstTimeRunning().then(setIsFirstTime)
+    window.electron.authenticationStatus().then(setAuthStatus)
+    window.electron.isOnline().then(setIsOnline)
+  }, [])
 
-  window.electron.onAuthChange((_, isAuthed) => setIsAuthed(isAuthed));
-  window.electron.onRegistrationChange((_, isRegistered) => setIsRegistered(isRegistered));
+  useEffect(() => {
+    if (authStatus) {
+      window.electron.getChannels().then(setChannels)
+    }
+  }, [authStatus])
 
-  if (!isRegistered) {
-    return <Register />;
+  window.electron.onAuthenticationStatus((_, status) => setAuthStatus(status))
+  window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
+
+  switch (authStatus) {
+    case 'notRegistered':
+      return <Register />
+    case 'loggedOut':
+      return <Login />
+    case 'loggedIn':
+      return (
+        <div className="app-wrapper">
+          <Sidebar channels={channels} onClick={setSelectedChannel} />
+          {selectedChannel ? <Chat channel={selectedChannel} /> : <Welcome returning={isFirstTime} />}
+          {isOnline && <Notification text={'Connected to XMP'} type={'success'} />}
+          {!isOnline && <Notification text={'Diconnected from XMP'} type={'error'} />}
+        </div>
+      )
   }
-
-  if (!isAuthed) {
-    return <Login />;
-  }
-
-  return (
-    isAuthed && (
-      <div className="app-wrapper">
-        <Sidebar onClick={setSelectedChat} />
-        {selectedChat ? <Chat chat={selectedChat} /> : <Welcome />}
-      </div>
-    )
-  );
 }
