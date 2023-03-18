@@ -1,24 +1,19 @@
-import "../styles/Sidebar.css";
-import Profile from "./Profile";
+import '../styles/Sidebar.css'
+import AddContact from './AddContact'
+import Profile from './Profile'
+import { Channel } from '../../common/types'
 
-export default function Sidebar({ onClick }: { onClick: (chat: string) => void }) {
+export default function Sidebar({ onClick, channels }: { onClick: (channel: Channel) => void; channels: Channel[] }) {
   return (
     <div className="sidebar-wrapper">
       <Profile />
       <div className="sidebar-item-separator" />
-      <div className="profile add-friend" />
+      <AddContact />
       <div className="profile create-group-chat" />
       <div className="sidebar-item-separator" />
-      <div className="profile" onClick={() => onClick("chat 1")} />
-      <div className="profile" onClick={() => onClick("chat 2")} />
-      <div className="profile" onClick={() => onClick("chat 3")} />
-      <div className="profile" onClick={() => onClick("chat 4")} />
-      <div className="profile" onClick={() => onClick("chat 5")} />
-      <div className="profile" onClick={() => onClick("chat 6")} />
-      <div className="profile" onClick={() => onClick("chat 7")} />
-      <div className="profile" onClick={() => onClick("chat 8")} />
-      <div className="profile" onClick={() => onClick("chat 9")} />
-      <div className="profile" onClick={() => onClick("chat 10")} />
+      {channels?.map((channel) => (
+        <div className="profile" key={channel.id} onClick={() => onClick(channel)} />
+      ))}
     </div>
-  );
+  )
 }

@@ -1,16 +1,16 @@
 export interface Key {
-  value: string;
-  creationDate: Date;
-  expirationDate: Date;
+  value: string
+  creationDate: Date
+  expirationDate: Date
 }
 
 export interface KeyBundle {
-  identityKey: Key;
-  signedPreKey: Key;
-  oneTimePreKeys: Key[];
+  identityKey: Key
+  signedPreKey: Key
+  oneTimePreKeys: Key[]
 }
 
 export interface KeyPair {
-  publicKey: Key;
-  privateKey: Key;
+  publicKey: Key
+  privateKey: Key
 }

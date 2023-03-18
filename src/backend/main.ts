@@ -1,68 +1,68 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { channels, data } from "../common/constants";
-import { Registration, LoginCredentials } from "../common/types";
-import { authentication, stateManagement } from "./dataManagement";
-import isDev from "electron-is-dev";
+import { app, BrowserWindow } from 'electron'
+import isDev from 'electron-is-dev'
+import ElectronStore from 'electron-store'
+import Authentification from './services/authentication'
+import EjabberdClient from './clients/ejabberdClient'
+import StateManagement from './services/stateManagement'
+import SqlConnection from './services/sqlConnection'
+import { Database } from 'sqlite3'
+import MessageRepo from './repos/messageRepo'
+import ChannelRepo from './repos/channelRepo'
+import UserRepo from './repos/userRepo'
+import path from 'path'
 
-require("electron-squirrel-startup") && app.quit();
+require('electron-squirrel-startup') && app.quit()
 
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+// Window creation
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
-function createWindow() {
+function createWindow(): BrowserWindow {
   const window = new BrowserWindow({
     height: 600,
     width: 800,
-    backgroundColor: "black",
+    backgroundColor: 'black',
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
-  });
-  window.removeMenu();
-  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  })
+  window.removeMenu()
+  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   if (isDev) {
-    window.webContents.openDevTools({ mode: "detach" });
+    window.webContents.openDevTools({ mode: 'detach' })
   }
+  return window
 }
 
-app.whenReady().then(() => createWindow());
+// App behavior
+let window: BrowserWindow = null
+app.whenReady().then(() => (window = createWindow()))
+app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
+app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
 
-app.on("window-all-closed", () => process.platform !== "darwin" && app.quit());
+// Services
+const store = new ElectronStore()
+const authentication = new Authentification(store)
+const stateManagement = new StateManagement(store)
 
-app.on("activate", () => BrowserWindow.getAllWindows().length === 0 && createWindow());
+// Repositories
+const connection = new SqlConnection(new Database('main.db'))
+const users = new UserRepo(connection)
+const channels = new ChannelRepo(connection)
+const messages = new MessageRepo(connection)
 
-ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
-  try {
-    await authentication.register(registration);
-    event.sender.send(channels.IS_REGISTERED, authentication.hasRegistered());
-    event.sender.send(channels.IS_AUTHED, authentication.isAuthed());
-  } catch (error) {
-    event.sender.send(channels.REGISTRATION_ERROR, error.message);
-  }
-});
+// Clients
+const ejabberd = new EjabberdClient('localhost', 5222)
 
-ipcMain.on(channels.LOGIN, (event, credentials: LoginCredentials) => {
-  try {
-    authentication.login(credentials);
-  } catch (error) {
-    event.sender.send(channels.LOGIN_ERROR, error.message);
-  }
-  event.sender.send(channels.IS_AUTHED, authentication.isAuthed());
-});
+export { authentication, stateManagement, ejabberd, connection, messages, channels, users, window }
 
-ipcMain.on(channels.LOGOUT, event => {
-  authentication.logout();
-  event.sender.send(channels.IS_AUTHED, authentication.isAuthed());
-});
+// Register handlers
+import './channels/dataHandlers'
+import './channels/xmpHandlers'
+import './channels/authHandlers'
+import './channels/channelHandlers'
+import './channels/contactHandlers'
 
-ipcMain.handle(channels.IS_REGISTERED, () => {
-  return authentication.hasRegistered();
-});
-
-ipcMain.handle(channels.IS_AUTHED, () => {
-  return authentication.isAuthed();
-});
-
-ipcMain.handle(channels.USER_PROFILE, () => {
-  return stateManagement.getSensitive(data.USER_PROFILE);
-});
+// Register events
+import './events/authEvents'
+import './events/xmpEvents'
