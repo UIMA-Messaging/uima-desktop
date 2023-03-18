@@ -18,7 +18,7 @@ export default function Welcome({ returning }: { returning: boolean }) {
         <div className="welcome">{returning ? 'Welcome back ' : 'Welcome'}</div>
         <div className="welcome-name">{profile?.displayName}</div>
       </h1>
-      {returning && (
+      {!returning && (
         <div className="hello-there">
           <div>
             <Safe />
