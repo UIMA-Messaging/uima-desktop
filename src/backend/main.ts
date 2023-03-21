@@ -9,7 +9,6 @@ import { Database } from 'sqlite3'
 import MessageRepo from './repos/messageRepo'
 import ChannelRepo from './repos/channelRepo'
 import UserRepo from './repos/userRepo'
-import path from 'path'
 
 require('electron-squirrel-startup') && app.quit()
 
@@ -57,11 +56,11 @@ const ejabberd = new EjabberdClient('localhost', 5222)
 export { authentication, stateManagement, ejabberd, connection, messages, channels, users, window }
 
 // Register handlers
-import './channels/dataHandlers'
-import './channels/xmpHandlers'
-import './channels/authHandlers'
-import './channels/channelHandlers'
-import './channels/contactHandlers'
+import './handlers/dataHandlers'
+import './handlers/xmpHandlers'
+import './handlers/authHandlers'
+import './handlers/messageHandlers'
+import './handlers/contactHandlers'
 
 // Register events
 import './events/authEvents'
