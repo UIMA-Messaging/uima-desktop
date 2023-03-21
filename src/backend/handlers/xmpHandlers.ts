@@ -5,7 +5,7 @@ import { ejabberd, window } from '../main'
 
 ipcMain.on(channels.SEND_MESSAGE, (event, recipientJid: string, message: Message) => {
   try {
-    ejabberd.send(recipientJid, message)
+    ejabberd.sendMessage(recipientJid, message)
   } catch (error) {
     event.sender.send(channels.XMP_ERROR, error)
   }
