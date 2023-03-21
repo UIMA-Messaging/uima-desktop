@@ -1,3 +1,5 @@
+import { KeyBundle } from './Keys'
+
 export interface User {
   id: string
   displayName: string
@@ -5,4 +7,10 @@ export interface User {
   image: string
   joinedAt: Date
   editedAt?: Date
+}
+
+export interface BasicUser {
+  displayName: string
+  image: string
+  keyBundle?: KeyBundle
 }
