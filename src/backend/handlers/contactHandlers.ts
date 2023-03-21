@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { contact } from '../clients/identityClient'
+import { contact } from '../clients/contactClient'
 
 ipcMain.handle(channels.CONTACT, async (event, username: string) => {
   try {
