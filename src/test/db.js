@@ -1,68 +1,42 @@
-const sqlite3 = require('sqlite3').verbose()
-const fs = require('fs')
-const path = require('path')
+const xmpp = require('node-xmpp-client')
 
-const dbDir = path.resolve(__dirname, '../databases')
-const dbPath = path.resolve(dbDir, 'main.db')
-
-fs.mkdir(dbDir, { recursive: true }, () => {})
-fs.access(dbPath, fs.constants.F_OK, function (err) {
-  if (err) {
-    console.log('Database file does not exist. Creating one...')
-    fs.writeFile(dbPath, '', () => {})
-  }
+// Connect to the XMPP server
+const client = new xmpp.Client({
+  jid: 'username1@localhost',
+  password: '123',
+  host: 'localhost',
+  port: 5222,
 })
 
-const db = new sqlite3.Database(dbPath)
+// Wait for the client to connect
+client.on('online', () => {
+  console.log('Connected as', client.jid.toString())
 
-async function execute(sql, obj) {
-  const entity = objToEntity(sql, obj)
-  return new Promise((resolve, reject) => {
-    db.run(sql, entity, (err) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve()
-      }
-    })
-  })
-}
+  // Send a MAM query to the server for unread messages
+  // client.send(
+  //   new xmpp.Stanza('iq', { type: 'get', id: '123456' })
+  //     .c('query', { xmlns: 'urn:xmpp:mam:1' })
+  //     .c('x', { xmlns: 'jabber:x:data', type: 'submit' })
+  //     .c('field', { var: 'FORM_TYPE', type: 'hidden' })
+  //     .c('value').t('urn:xmpp:mam:1').up()
+  //     .c('field', { var: 'end' })
+  //     .c('value').t(new Date().toISOString()).up()
+  //     .c('field', { var: 'with' })
+  //     .c('value').t('admin@localhost/174024716262933073314098')
+  // );
+  client.send(`<iq type='set' id='10bca'>
+    <inbox xmlns='erlang-solutions.com:xmpp:inbox:0' queryid='b6'/>
+  </iq>`)
+})
 
-async function query(sql, obj) {
-  const entity = objToEntity(sql, obj)
-  return new Promise((resolve, reject) => {
-    db.all(sql, entity, (err, rows) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(rows)
-      }
-    })
-  })
-}
-
-function objToEntity(sql, obj) {
-  const entity = {}
-  if (obj) {
-    const columns = sql.match(/\$\w+/g)
-    Object.keys(obj).forEach((key) => {
-      const renamed = '$' + key
-      if (columns.includes(renamed)) {
-        entity[renamed] = obj[key]
-      }
+// Handle MAM results
+client.on('stanza', (stanza) => {
+  console.log(JSON.stringify(stanza, null, 2))
+  if (stanza.is('iq') && stanza.getChild('query', 'urn:xmpp:mam:1')) {
+    const results = stanza.getChild('query', 'urn:xmpp:mam:1').getChildren('result')
+    console.log('Unread messages:', results.length)
+    results.forEach((result) => {
+      console.log(result.getChildText('body'))
     })
   }
-  return entity
-}
-
-async function run() {
-  await execute('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)')
-  const user = { id: 1, name: 'Alice', email: 'alice@example.com', a: 'avc' }
-  await execute('INSERT INTO users (id, name, email) VALUES ($id, $name, $email)', user)
-  const result = await query('SELECT name FROM users')
-  console.log('query', result)
-  const filter = await query('SELECT * FROM users WHERE id = $id', { id: 01 })
-  console.log('filter', filter)
-}
-
-run()
+})
