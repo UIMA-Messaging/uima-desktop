@@ -1,7 +1,6 @@
 export { Credentials } from './Credentials'
 export { Message } from './Message'
-export { BasicUser } from './BasicUser'
-export { User } from './User'
+export { BasicUser, User } from './User'
 export { Channel, ChannelMemeber } from './Channel'
 export { Registration } from './Registration'
 export { Key, KeyPair, KeyBundle } from './Keys'
