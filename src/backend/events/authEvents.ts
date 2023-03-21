@@ -1,14 +1,15 @@
+import { Credentials, User } from '../../common/types'
 import { data } from '../../common/constants'
 import { notifyOfAuthState } from '../handlers/authHandlers'
 import { authentication, ejabberd, stateManagement } from '../main'
 
-authentication.on('onRegister', (user) => {
+authentication.on('onRegister', (user: User) => {
   stateManagement.setSensitive(data.USER_PROFILE, user) // test changes
 })
 
-authentication.on('onLogin', (credentials) => {
+authentication.on('onLogin', (credentials: Credentials) => {
   stateManagement.setEncryptionKey(credentials.password + credentials.username)
-  ejabberd.connect('username1@localhost', '123')
+  ejabberd.connect(credentials.username, '123')
   notifyOfAuthState('loggedIn')
 })
 
