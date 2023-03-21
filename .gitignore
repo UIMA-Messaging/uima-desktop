@@ -1,5 +1,6 @@
 # User defined
-src/databases/*
+src/databases
+src/test
 
 # Logs
 logs

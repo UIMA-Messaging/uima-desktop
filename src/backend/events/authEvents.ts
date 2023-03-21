@@ -1,5 +1,5 @@
 import { data } from '../../common/constants'
-import { notifyOfAuthState } from '../channels/authHandlers'
+import { notifyOfAuthState } from '../handlers/authHandlers'
 import { authentication, ejabberd, stateManagement } from '../main'
 
 authentication.on('onRegister', (user) => {
