@@ -1,6 +1,6 @@
-import { Channel, Message } from '../../common/types'
+import { Message } from '../../common/types'
 import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmpHandlers'
-import { channels, ejabberd, messages } from '../main'
+import { ejabberd, messages } from '../main'
 
 ejabberd.on('onConnected', (isConnected) => {
   console.log('User now connected to chating server.')
@@ -12,12 +12,12 @@ ejabberd.on('onDisconnected', (isConnected) => {
   notifyOfStatus(isConnected)
 })
 
-ejabberd.on('onMessageReceive', (message: Message) => {
+ejabberd.on('onMessageReceived', (message: Message) => {
   notifyOfMessage(message)
   messages.createMessage(message)
 })
 
-ejabberd.on('onMessageSend', (message: Message) => {
+ejabberd.on('onMessageSent', (message: Message) => {
   messages.createMessage(message)
 })
 
