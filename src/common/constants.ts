@@ -21,4 +21,5 @@ export const channels = {
 
 export const data = {
   USER_PROFILE: 'profile',
+  JABBER_USER: 'jabber-user'
 }

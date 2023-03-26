@@ -1,6 +1,7 @@
 import { Client, Stanza, Element } from 'node-xmpp-client'
 import xml from '@xmpp/xml'
-import { Channel, Message } from '../../common/types'
+import { Message } from '../../common/types'
+import { JabberUser } from '../../common/types/User'
 import EventEmitter from 'events'
 
 export default class EjabberdClient extends EventEmitter {
@@ -16,8 +17,8 @@ export default class EjabberdClient extends EventEmitter {
     this.port = port
   }
 
-  public connect(username: string, password: string) {
-    this.xmpClient = new Client({ jid: `${username}@${this.host}`, password, host: this.host, port: this.port, reconnect: true })
+  public connect(user: JabberUser) {
+    this.xmpClient = new Client({ jid: user.username, password: user.password, host: this.host, port: this.port, reconnect: true })
 
     this.xmpClient.on('online', () => {
       this.connected = true
@@ -38,11 +39,13 @@ export default class EjabberdClient extends EventEmitter {
     this.xmpClient.on('stanza', (stanza: Stanza) => {
       console.log(JSON.stringify(stanza, null, 2))
       if (this.isMessage(stanza)) {
-        this.emit('onMessageReceive', this.getMessage(stanza))
-      } else if (this.isChannelInvite(stanza)) {
-        this.emit('onChannelInvite', this.getChannelInvite(stanza))
+        this.emit('onMessageReceived', this.getMessage(stanza))
       }
     })
+  }
+
+  public formulateJabberUser(username: string, password: string): JabberUser {
+    return { username: `${username}@${this.host}`, password }
   }
 
   public disconnect() {
@@ -51,21 +54,6 @@ export default class EjabberdClient extends EventEmitter {
     this.host = null
     this.port = null
     this.connected = false
-  }
-
-  public joinChannel(channel: Channel, nickname?: string) {
-    this.xmpClient.send(xml('presence', { to: channel.id + '/' + nickname }))
-    this.emit('onChannelJoin', channel, nickname)
-  }
-
-  public joinDM(jid: string) {
-    this.xmpClient.send(
-      xml('presence', {
-        to: jid,
-        type: 'subscribe',
-      })
-    )
-    this.emit('onJoinDM')
   }
 
   private isMessage(stanza: Stanza): boolean {
@@ -79,19 +67,6 @@ export default class EjabberdClient extends EventEmitter {
     return JSON.parse(content)
   }
 
-  private isChannelInvite(stanza: Stanza): boolean {
-    // @ts-ignore
-    return !!stanza.children.find((child) => child.attrs?.xmlns === 'jabber:x:conference')
-  }
-
-  private getChannelInvite(stanza: Stanza): Channel {
-    // @ts-ignore
-    const content = stanza.children.find((child) => child.attrs?.xmlns === 'jabber:x:conference').attrs
-    const channel: Channel = JSON.parse(content.reason)
-    channel.id = content.jid
-    return channel
-  }
-
   public sendMessage(recipientJid: string, message: Message) {
     if (!this.xmpClient) {
       throw Error('Ejabberd user not configured yet.')
@@ -102,7 +77,7 @@ export default class EjabberdClient extends EventEmitter {
     const payload = xml('body', null, JSON.stringify(message))
     const stanza = xml('message', { to: recipientJid, type: 'chat' }, payload)
     this.xmpClient.send(stanza)
-    this.emit('onMessageSend', message)
+    this.emit('onMessageSent', message)
   }
 
   public isConnected(): boolean {

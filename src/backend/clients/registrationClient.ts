@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BasicUser, User } from '../../common/types'
+import { BasicUser, RegisteredUser, User } from '../../common/types'
 import https from 'https'
 import isDev from 'electron-is-dev'
 import { AxiosError } from 'axios'
@@ -7,7 +7,7 @@ import { AxiosError } from 'axios'
 const baseRegister = 'https://localhost:44354/users/register/'
 const baseUnregister = 'https://localhost:44354/users/unregister/'
 
-export async function register(user: BasicUser): Promise<User> {
+export async function register(user: BasicUser): Promise<RegisteredUser> {
   try {
     const res = await axios.post(baseRegister, user, headers())
     return res.data
