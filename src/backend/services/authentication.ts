@@ -24,8 +24,8 @@ export default class Authentification extends EventEmitter {
     const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
     const registeredUser = await register(basicUser)
     this.generateChallenge(credentials.password + credentials.username)
+    this.emit('onRegister', registeredUser, credentials)
     this.login(credentials)
-    this.emit('onRegister', registeredUser)
   }
 
   public login(credentials: Credentials) {
