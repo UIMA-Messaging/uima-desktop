@@ -36,7 +36,7 @@ export default class StateManagement {
     if (override && this.store.get(key)) {
       throw Error(`Object with key \`${key}\` already exists.`)
     }
-    let encrypted = this.encrypt(obj)
+    const encrypted = this.encrypt(obj)
     this.store.set(key, encrypted)
   }
 
