@@ -14,6 +14,15 @@ export default function Sidebar({ onClick, channels }: { onClick: (channel: Chan
       {channels?.map((channel) => (
         <div className="profile" key={channel.id} onClick={() => onClick(channel)} />
       ))}
+      <div
+        className="profile"
+        onClick={() =>
+          onClick({
+            id: '123',
+            name: 'test channel',
+          })
+        }
+      />
     </div>
   )
 }
