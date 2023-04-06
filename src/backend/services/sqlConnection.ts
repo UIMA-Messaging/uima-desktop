@@ -35,11 +35,7 @@ export default class SqlConnection {
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
       this.database.run(sql, entity, (error: Error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
-        }
+        error ? reject(error) : resolve()
       })
     })
   }
@@ -51,11 +47,7 @@ export default class SqlConnection {
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
       this.database.all(sql, entity, (error: Error, rows: any) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(rows as T[])
-        }
+        error ? reject(error) : resolve(rows as T[])
       })
     })
   }
@@ -67,11 +59,7 @@ export default class SqlConnection {
     const entity = this.objToEntity(sql, obj)
     return new Promise((resolve, reject) => {
       this.database.get(sql, entity, (error: Error, row: any) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(row as T)
-        }
+        error ? reject(error) : resolve(row as T)
       })
     })
   }
