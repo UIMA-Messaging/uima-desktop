@@ -1,10 +1,10 @@
 import { connection } from '../main'
 import SqlConnection from '../services/sql-connection'
-import crypto from "crypto"
+import crypto from 'crypto'
 
 export interface PersistentData {
   id: string
-  json: string
+  data: string
   createdAt: Date
   accessedAt: Date
 }
@@ -17,11 +17,11 @@ export default class StateManagement {
     this.connection = connection
     console.log('Creating `AppPersistentData` table if it does not already exist.')
     this.connection.execute(`
-    CREATE TABLE IF NOT EXISTS AppData (
-      Id TEXT PRIMARY KEY,
-      Json TEXT,
-      CreatedAt DATETIME,
-      AccessedAt DATETIME
+      CREATE TABLE IF NOT EXISTS AppData (
+        Id TEXT PRIMARY KEY,
+        Data TEXT,
+        CreatedAt DATETIME,
+        AccessedAt DATETIME
       );`)
   }
 
@@ -34,24 +34,35 @@ export default class StateManagement {
   }
 
   public async set(id: string, obj: any) {
-    await connection.execute('INSERT INTO AppPersistentData(Id, Json) VALUES ($id, $json);', { id, json: JSON.stringify(obj) })
+    await connection.execute('INSERT INTO AppPersistentData(Id, Data) VALUES ($id, $data);', { id, data: JSON.stringify(obj) })
   }
 
-  public async get(id: string): Promise<PersistentData[]> {
-    return await connection.query<PersistentData>('SELECT * FROM AppPersistentData WHERE Id = id', { id })
+  public async get<T>(id: string): Promise<T> {
+    const result = await connection.querySingle<PersistentData>('SELECT * FROM AppPersistentData WHERE Id = id', { id })
+    return JSON.parse(result.data)
   }
 
-  public async setSensitive() {}
+  public async setSensitive(id: string, obj: any) {
+    const encrypted = this.encrypt(JSON.stringify(obj))
+    await this.set(id, encrypted)
+  }
 
-  public async getSensitive() {}
+  public async getSensitive(id: string) {
+    const encrypted = this.get(id)
+    return this.decrypt(encrypted)
+  }
 
-  private encrypt(decrypted: any): string {
-    const json = JSON.stringify(decrypted)
-    return CryptoJS.AES.encrypt(json, this.encryptionKey).toString()
+  private encrypt(decrypted: any): any {
+    const cipher = crypto.createCipheriv('aes-256-cbc', this.encryptionKey, crypto.randomBytes(32))
+    let encrypted = cipher.update(decrypted, 'utf8', 'hex')
+    encrypted += cipher.final('hex')
+    return encrypted
   }
 
   private decrypt(encrypted: any) {
-    const decrypted = CryptoJS.AES.decrypt(encrypted, this.encryptionKey)
-    return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8))
+    const decipher = crypto.createDecipheriv('aes-256-cbc', this.encryptionKey, crypto.randomBytes(32))
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8')
+    decrypted += decipher.final('utf8')
+    return decrypted
   }
 }
