@@ -7,30 +7,31 @@ import Chat from './components/Chat'
 import Welcome from './components/Welcome'
 import Notification from './components/Notification'
 import { Channel } from '../common/types'
+import { getAuthState, getChannels, getOnlineState, isAuthenticated, isFirstRun, isOnline } from './handlers/handlers'
 
 export default function App() {
-  const [authStatus, setAuthStatus] = useState<string>()
+  const [authenticated, setAuthentication] = useState<string>()
   const [isFirstTime, setIsFirstTime] = useState<boolean>()
   const [selectedChannel, setSelectedChannel] = useState<Channel>()
   const [channels, setChannels] = useState<Channel[]>([])
-  const [isOnline, setIsOnline] = useState(false)
+  const [online, setOnline] = useState(false)
 
   useEffect(() => {
-    window.electron.isFirstTimeRunning().then(setIsFirstTime)
-    window.electron.authenticationStatus().then(setAuthStatus)
-    window.electron.isOnline().then(setIsOnline)
+    isFirstRun().then(setIsFirstTime)
+    getAuthState().then(setAuthentication)
+    getOnlineState().then(setOnline)
   }, [])
 
   useEffect(() => {
-    if (authStatus) {
-      window.electron.getChannels().then(setChannels)
+    if (authenticated) {
+      getChannels().then(setChannels)
     }
-  }, [authStatus])
+  }, [authenticated])
 
-  window.electron.onAuthenticationStatus((_, status) => setAuthStatus(status))
-  window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
+  isAuthenticated(setAuthentication)
+  isOnline(setOnline)
 
-  switch (authStatus) {
+  switch (authenticated) {
     case 'notRegistered':
       return <Register />
     case 'loggedOut':
@@ -40,8 +41,8 @@ export default function App() {
         <div className="app-wrapper">
           <Sidebar channels={channels} onClick={setSelectedChannel} />
           {selectedChannel ? <Chat channel={selectedChannel} /> : <Welcome returning={isFirstTime} />}
-          {isOnline && <Notification text={'Connected to XMP'} type={'success'} />}
-          {!isOnline && <Notification text={'Diconnected from XMP'} type={'error'} />}
+          {online && <Notification text={'Connected to XMP'} type={'success'} />}
+          {!online && <Notification text={'Diconnected from XMP'} type={'error'} />}
         </div>
       )
   }

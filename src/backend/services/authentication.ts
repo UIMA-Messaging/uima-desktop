@@ -2,7 +2,7 @@ import Bcrypt from 'bcrypt'
 import ElectronStore from 'electron-store'
 import EventEmitter from 'events'
 import { BasicUser, Credentials, Registration } from '../../common/types'
-import { register } from '../clients/identityClient'
+import { register } from '../clients/registrationClient'
 
 export default class Authentification extends EventEmitter {
   private store: ElectronStore
@@ -24,8 +24,8 @@ export default class Authentification extends EventEmitter {
     const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
     const registeredUser = await register(basicUser)
     this.generateChallenge(credentials.password + credentials.username)
+    this.emit('onRegister', registeredUser, credentials)
     this.login(credentials)
-    this.emit('onRegister', registeredUser)
   }
 
   public login(credentials: Credentials) {
