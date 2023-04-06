@@ -1,5 +1,5 @@
 import ElectronStore from 'electron-store'
-import CryptoJS from 'crypto-js'
+import crypto from 'crypto'
 
 export default class StateManagement {
   private store: ElectronStore
@@ -51,13 +51,17 @@ export default class StateManagement {
     return obj ? (obj as Type) : null
   }
 
-  public encrypt(decrypted: any): string {
-    const json = JSON.stringify(decrypted)
-    return CryptoJS.AES.encrypt(json, this.encryptionKey).toString()
+  private encrypt(decrypted: any): any {
+    const cipher = crypto.createCipheriv('aes-256-cbc', this.encryptionKey, crypto.randomBytes(32))
+    let encrypted = cipher.update(decrypted, 'utf8', 'hex')
+    encrypted += cipher.final('hex')
+    return encrypted
   }
 
-  public decrypt(encrypted: any) {
-    const decrypted = CryptoJS.AES.decrypt(encrypted, this.encryptionKey)
-    return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8))
+  private decrypt(encrypted: any) {
+    const decipher = crypto.createDecipheriv('aes-256-cbc', this.encryptionKey, crypto.randomBytes(32))
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8')
+    decrypted += decipher.final('utf8')
+    return decrypted
   }
 }
