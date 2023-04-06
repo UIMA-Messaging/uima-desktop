@@ -2,7 +2,7 @@ import Bcrypt from 'bcrypt'
 import ElectronStore from 'electron-store'
 import EventEmitter from 'events'
 import { BasicUser, Credentials, Registration } from '../../common/types'
-import { register } from '../clients/registrationClient'
+import { register } from '../clients/registration-client'
 
 export default class Authentification extends EventEmitter {
   private store: ElectronStore

@@ -1,6 +1,6 @@
 import { User } from '../../common/types'
 import { connection } from '../main'
-import SqlConnection from '../services/sqlConnection'
+import SqlConnection from '../services/sql-connection'
 
 export default class UserRepo {
   private connection: SqlConnection

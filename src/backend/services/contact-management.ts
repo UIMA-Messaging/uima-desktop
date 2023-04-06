@@ -1,5 +1,5 @@
 import { User } from '../../common/types'
-import { contact } from '../clients/contactClient'
+import { contact } from '../clients/contact-client'
 
 export default class ContactManagament {
   public onBehalf: User

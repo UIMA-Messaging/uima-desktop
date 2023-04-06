@@ -1,6 +1,6 @@
 import { Credentials, RegisteredUser, JabberUser, User } from '../../common/types'
 import { data } from '../../common/constants'
-import { notifyOfAuthState } from '../handlers/authHandlers'
+import { notifyOfAuthState } from '../handlers/auth-handlers'
 import { authentication, ejabberd, stateManagement } from '../main'
 
 authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials) => {
