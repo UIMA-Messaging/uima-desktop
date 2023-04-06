@@ -1,5 +1,5 @@
 import { Message } from '../../common/types'
-import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../channels/xmpHandlers'
+import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmpHandlers'
 import { ejabberd, messages } from '../main'
 
 ejabberd.on('onConnected', (isConnected) => {
@@ -12,15 +12,15 @@ ejabberd.on('onDisconnected', (isConnected) => {
   notifyOfStatus(isConnected)
 })
 
-ejabberd.on('onReceive', (message: Message) => {
+ejabberd.on('onMessageReceived', (message: Message) => {
   notifyOfMessage(message)
   messages.createMessage(message)
 })
 
-ejabberd.on('onSend', (message: Message) => {
+ejabberd.on('onMessageSent', (message: Message) => {
   messages.createMessage(message)
 })
 
-ejabberd.on('onError', (message: string) => {
-  notifyOfError(message)
+ejabberd.on('onError', (error: string) => {
+  notifyOfError(error)
 })

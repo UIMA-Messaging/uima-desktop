@@ -1,14 +1,21 @@
+import { Credentials, RegisteredUser, JabberUser, User } from '../../common/types'
 import { data } from '../../common/constants'
-import { notifyOfAuthState } from '../channels/authHandlers'
+import { notifyOfAuthState } from '../handlers/authHandlers'
 import { authentication, ejabberd, stateManagement } from '../main'
 
-authentication.on('onRegister', (user) => {
-  stateManagement.setSensitive(data.USER_PROFILE, user) // test changes
+authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials) => {
+  stateManagement.setEncryptionKey(credentials.password + credentials.username)
+  stateManagement.setSensitive(data.USER_PROFILE, user)
+  const jabber = ejabberd.formulateJabberUser(user.username, user.ephemeralPassword)
+  console.log('jabber', jabber)
+  stateManagement.setSensitive(data.JABBER_USER, jabber)
+  stateManagement.invalidateEncryptionKey()
 })
 
-authentication.on('onLogin', (credentials) => {
+authentication.on('onLogin', (credentials: Credentials) => {
   stateManagement.setEncryptionKey(credentials.password + credentials.username)
-  ejabberd.connect('username1@localhost', '123')
+  const jabber = stateManagement.getSensitive<JabberUser>(data.JABBER_USER)
+  ejabberd.connect(jabber)
   notifyOfAuthState('loggedIn')
 })
 

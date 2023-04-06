@@ -1,5 +1,6 @@
 # User defined
 src/databases/*
+src/test
 
 # Logs
 logs
@@ -90,3 +91,4 @@ typings/
 
 # Electron-Forge
 out/
+main.db

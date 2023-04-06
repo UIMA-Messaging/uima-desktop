@@ -39,7 +39,6 @@ export default class MessageRepo {
       `,
       message
     )
-    console.log(await this.connection.query<Message>('SELECT * FROM Messages WHERE ChannelId = $channelId', { channelId: message.channelId }))
   }
 
   public async deleteMessage(message: Message): Promise<void> {
