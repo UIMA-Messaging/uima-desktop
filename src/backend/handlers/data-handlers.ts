@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { channels, data } from '../../common/constants'
-import { stateManagement } from '../main'
+import { appData } from '../main'
 
 ipcMain.handle(channels.USER_PROFILE, () => {
-  return stateManagement.getSensitive(data.USER_PROFILE)
+  return appData.getSensitive(data.USER_PROFILE)
 })
