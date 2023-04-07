@@ -1,15 +1,13 @@
 import { app, BrowserWindow } from 'electron'
 import isDev from 'electron-is-dev'
-import ElectronStore from 'electron-store'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberd-client'
-import StateManagement from './services/state-management'
+import StateManagement from './repos/state-management'
 import SqlConnection from './services/sql-connection'
 import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import UserRepo from './repos/user-repo'
-// import StateManagement from './repos/persistent-data'
 import ContactManagament from './services/contact-management'
 
 require('electron-squirrel-startup') && app.quit()
@@ -40,24 +38,22 @@ let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
-
-// Services
-const store = new ElectronStore()
-const authentication = new Authentification(store)
-const stateManagement = new StateManagement(store)
-const contactManagement = new ContactManagament()
+const connection = new SqlConnection(new Database('main.db'))
 
 // Repositories
-const connection = new SqlConnection(new Database('main.db'))
+const appData = new StateManagement(connection)
 const users = new UserRepo(connection)
 const channels = new ChannelRepo(connection)
 const messages = new MessageRepo(connection)
-const appData = new StateManagement(connection)
+
+// Services
+const authentication = new Authentification(appData)
+const contactManagement = new ContactManagament()
 
 // Clients
 const ejabberd = new EjabberdClient('localhost', 5222)
 
-export { authentication, stateManagement, ejabberd, connection, messages, channels, users, appData, contactManagement, window }
+export { authentication, appData, ejabberd, connection, messages, channels, users, contactManagement, window }
 
 // Register handlers
 import './handlers/data-handlers'

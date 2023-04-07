@@ -1,26 +1,26 @@
 import { Credentials, RegisteredUser, JabberUser, User } from '../../common/types'
 import { data } from '../../common/constants'
 import { notifyOfAuthState } from '../handlers/auth-handlers'
-import { authentication, ejabberd, stateManagement } from '../main'
+import { authentication, ejabberd, appData } from '../main'
 
 authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials) => {
-  stateManagement.setEncryptionKey(credentials.password + credentials.username)
-  stateManagement.setSensitive(data.USER_PROFILE, user)
+  appData.setEncryptionKey(credentials.password + credentials.username)
+  appData.setSensitive(data.USER_PROFILE, user)
   const jabber = ejabberd.formulateJabberUser(user.username, user.ephemeralPassword)
   console.log('jabber', jabber)
-  stateManagement.setSensitive(data.JABBER_USER, jabber)
-  stateManagement.invalidateEncryptionKey()
+  appData.setSensitive(data.JABBER_USER, jabber)
+  appData.invalidateEncryptionKey()
 })
 
-authentication.on('onLogin', (credentials: Credentials) => {
-  stateManagement.setEncryptionKey(credentials.password + credentials.username)
-  const jabber = stateManagement.getSensitive<JabberUser>(data.JABBER_USER)
+authentication.on('onLogin', async (credentials: Credentials) => {
+  appData.setEncryptionKey(credentials.password + credentials.username)
+  const jabber = await appData.getSensitive<JabberUser>(data.JABBER_USER)
   ejabberd.connect(jabber)
   notifyOfAuthState('loggedIn')
 })
 
 authentication.on('onLogout', () => {
-  stateManagement.invalidateEncryptionKey()
+  appData.invalidateEncryptionKey()
   notifyOfAuthState('loggedOut')
   ejabberd.disconnect() // placed at the end?
 })

@@ -3,25 +3,25 @@ import DoubleRatchet from '../security/double-ratchet'
 import X3DH from '../security/x3dh'
 
 export async function getX3DH(): Promise<X3DH> {
-  const results = await appData.getFromLocal('x3dh')
-  if (!results.length) {
+  const instance = await appData.getSensitive('x3dh')
+  if (!instance) {
     throw Error('No X3DH instance was persisted locally.')
   }
-  return JSON.parse(results[0].json)
+  return instance as X3DH
 }
 
 export async function setX3DH(x3dh: X3DH) {
-  await appData.persistLocally('x3dh', x3dh)
+  await appData.setSensitive('x3dh', x3dh)
 }
 
 export async function getDoubleRatchetByUser(userId: string) {
-  const results = await appData.getFromLocal(`double-ratchet-${userId}`)
-  if (!results.length) {
+  const instance = await appData.getSensitive(`double-ratchet-${userId}`)
+  if (!instance) {
     throw Error(`No double ratchet found was persisted for user ${userId}`)
   }
-  return JSON.parse(results[0].json)
+  return instance as DoubleRatchet
 }
 
 export async function setDoubleRatchetForUser(userId: string, ratchet: DoubleRatchet) {
-  await appData.persistLocally(`double-ratchet-${userId}`, ratchet)
+  await appData.setSensitive(`double-ratchet-${userId}`, ratchet)
 }

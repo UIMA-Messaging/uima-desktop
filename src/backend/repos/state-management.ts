@@ -39,7 +39,7 @@ export default class StateManagement {
 
   public async get<T>(id: string): Promise<T> {
     const result = await connection.querySingle<PersistentData>('SELECT * FROM AppPersistentData WHERE Id = id', { id })
-    return JSON.parse(result.data)
+    return JSON.parse(result.data) as T
   }
 
   public async setSensitive(id: string, obj: any) {
@@ -47,12 +47,12 @@ export default class StateManagement {
     await this.set(id, encrypted)
   }
 
-  public async getSensitive(id: string) {
-    const encrypted = this.get(id)
-    return this.decrypt(encrypted)
+  public async getSensitive<T>(id: string): Promise<T> {
+    const encrypted = await this.get<string>(id)
+    return this.decrypt(encrypted) as T
   }
 
-  private encrypt(decrypted: any): any {
+  private encrypt(decrypted: any): string {
     const cipher = crypto.createCipheriv('aes-256-cbc', this.encryptionKey, crypto.randomBytes(32))
     let encrypted = cipher.update(decrypted, 'utf8', 'hex')
     encrypted += cipher.final('hex')
