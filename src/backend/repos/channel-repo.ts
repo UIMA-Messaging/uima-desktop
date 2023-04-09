@@ -1,5 +1,5 @@
 import { Channel, ChannelMemeber } from '../../common/types'
-import SqlConnection from '../services/sqlConnection'
+import SqlConnection from '../services/sql-connection'
 
 export default class ChannelRepo {
   private connection: SqlConnection

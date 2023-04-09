@@ -1,5 +1,5 @@
 import { Message } from '../../common/types'
-import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmpHandlers'
+import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { ejabberd, messages } from '../main'
 
 ejabberd.on('onConnected', (isConnected) => {

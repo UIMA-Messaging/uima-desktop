@@ -1,17 +1,17 @@
 import Bcrypt from 'bcrypt'
-import ElectronStore from 'electron-store'
 import EventEmitter from 'events'
 import { BasicUser, Credentials, Registration } from '../../common/types'
-import { register } from '../clients/registrationClient'
+import { register } from '../clients/registration-client'
+import StateManagement from '../repos/state-management'
 
 export default class Authentification extends EventEmitter {
-  private store: ElectronStore
+  private appData: StateManagement
   private authenticated: boolean
   private firstTimeRunning: boolean
 
-  constructor(store: ElectronStore) {
+  constructor(appData: StateManagement) {
     super()
-    this.store = store
+    this.appData = appData
     this.authenticated = false
     this.firstTimeRunning = this.isChallengePresent()
   }
@@ -25,17 +25,17 @@ export default class Authentification extends EventEmitter {
     const registeredUser = await register(basicUser)
     this.generateChallenge(credentials.password + credentials.username)
     this.emit('onRegister', registeredUser, credentials)
-    this.login(credentials)
+    await this.login(credentials)
   }
 
-  public login(credentials: Credentials) {
+  public async login(credentials: Credentials) {
     if (this.authenticated) {
       throw Error('A user is already authenticated. User must first logout.')
     }
     if (!this.isChallengePresent()) {
       throw Error('No challenge present. Cannot validated user credentials.')
     }
-    const isValid = this.validateChallenge(credentials.password + credentials.username)
+    const isValid = await this.validateChallenge(credentials.password + credentials.username)
     if (!isValid) {
       throw Error('Username or password incorrect.')
     }
@@ -52,7 +52,7 @@ export default class Authentification extends EventEmitter {
   }
 
   private isChallengePresent(): boolean {
-    return !!this.store.get('challenge')
+    return !!this.appData.get('challenge')
   }
 
   public isRegistered(): boolean {
@@ -70,13 +70,13 @@ export default class Authentification extends EventEmitter {
   private generateChallenge(identity: string): void {
     const salt = Bcrypt.genSaltSync()
     const hash = Bcrypt.hashSync(identity, salt)
-    this.store.set('salt', salt)
-    this.store.set('challenge', hash)
+    this.appData.set('salt', salt)
+    this.appData.set('challenge', hash)
   }
 
-  private validateChallenge(identity: string): boolean {
-    const salt = this.store.get('salt') as string
-    const challenge = this.store.get('challenge') as string
+  private async validateChallenge(identity: string): Promise<boolean> {
+    const salt = await this.appData.get<string>('salt')
+    const challenge = await this.appData.get<string>('challenge')
     return Bcrypt.hashSync(identity, salt) === challenge
   }
 }
