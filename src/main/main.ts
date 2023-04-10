@@ -26,9 +26,7 @@ function createWindow(): BrowserWindow {
 	})
 	window.removeMenu()
 	window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-	if (isDev) {
-		window.webContents.openDevTools({ mode: 'detach' })
-	}
+	isDev && window.webContents.openDevTools({ mode: 'detach' })
 	return window
 }
 
