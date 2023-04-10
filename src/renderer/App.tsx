@@ -10,40 +10,40 @@ import { Channel } from '../common/types'
 import { getAuthState, getChannels, getOnlineState, isAuthenticated, isFirstRun, isOnline } from './handlers/handlers'
 
 export default function App() {
-  const [authenticated, setAuthentication] = useState<string>()
-  const [isFirstTime, setIsFirstTime] = useState<boolean>()
-  const [selectedChannel, setSelectedChannel] = useState<Channel>()
-  const [channels, setChannels] = useState<Channel[]>([])
-  const [online, setOnline] = useState(false)
+	const [authenticated, setAuthentication] = useState<string>()
+	const [isFirstTime, setIsFirstTime] = useState<boolean>()
+	const [selectedChannel, setSelectedChannel] = useState<Channel>()
+	const [channels, setChannels] = useState<Channel[]>([])
+	const [online, setOnline] = useState(false)
 
-  useEffect(() => {
-    isFirstRun().then(setIsFirstTime)
-    getAuthState().then(setAuthentication)
-    getOnlineState().then(setOnline)
-  }, [])
+	useEffect(() => {
+		isFirstRun().then(setIsFirstTime)
+		getAuthState().then(setAuthentication)
+		getOnlineState().then(setOnline)
+	}, [])
 
-  useEffect(() => {
-    if (authenticated) {
-      getChannels().then(setChannels)
-    }
-  }, [authenticated])
+	useEffect(() => {
+		if (authenticated) {
+			getChannels().then(setChannels)
+		}
+	}, [authenticated])
 
-  isAuthenticated(setAuthentication)
-  isOnline(setOnline)
+	isAuthenticated(setAuthentication)
+	isOnline(setOnline)
 
-  switch (authenticated) {
-    case 'notRegistered':
-      return <Register />
-    case 'loggedOut':
-      return <Login />
-    case 'loggedIn':
-      return (
-        <div className="app-wrapper">
-          <Sidebar channels={channels} onClick={setSelectedChannel} />
-          {selectedChannel ? <Chat channel={selectedChannel} /> : <Welcome returning={isFirstTime} />}
-          {online && <Notification text={'Connected to XMP'} type={'success'} />}
-          {!online && <Notification text={'Diconnected from XMP'} type={'error'} />}
-        </div>
-      )
-  }
+	switch (authenticated) {
+		case 'notRegistered':
+			return <Register />
+		case 'loggedOut':
+			return <Login />
+		case 'loggedIn':
+			return (
+				<div className="app-wrapper">
+					<Sidebar channels={channels} onClick={setSelectedChannel} />
+					{selectedChannel ? <Chat channel={selectedChannel} /> : <Welcome returning={isFirstTime} />}
+					{online && <Notification text={'Connected to XMP'} type={'success'} />}
+					{!online && <Notification text={'Diconnected from XMP'} type={'error'} />}
+				</div>
+			)
+	}
 }

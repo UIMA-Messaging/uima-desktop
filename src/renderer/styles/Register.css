@@ -1,49 +1,49 @@
 .registration-wrapper {
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  width: 300px;
-  height: fit-content;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  gap: 2em;
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	width: 300px;
+	height: fit-content;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	gap: 2em;
 }
 
 .registration-wrapper h1 {
-  margin-top: unset;
+	margin-top: unset;
 }
 
 .registration-note {
-  padding: 15px 20px;
-  border-radius: 5px;
-  background-color: #222222;
-  font-size: 90%;
+	padding: 15px 20px;
+	border-radius: 5px;
+	background-color: #222222;
+	font-size: 90%;
 }
 
 .registration-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
-.registration-form input[type="text"],
-.registration-form input[type="password"] {
-  margin-bottom: 15px;
+.registration-form input[type='text'],
+.registration-form input[type='password'] {
+	margin-bottom: 15px;
 }
 
-.registration-form input[type="submit"] {
-  margin-top: 15px;
+.registration-form input[type='submit'] {
+	margin-top: 15px;
 }
 
 .registration-error,
 .validation-error {
-  color: #e51b1b;
-  font-weight: bold;
+	color: #e51b1b;
+	font-weight: bold;
 }
 
 .validation-error {
-  font-size: 80%;
-  margin: 0;
-  margin-bottom: 7px;
+	font-size: 80%;
+	margin: 0;
+	margin-bottom: 7px;
 }
