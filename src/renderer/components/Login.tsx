@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { Credentials } from '../../common/types'
 import '../styles/Register.css'
 
-export default function Login() {
+export default () => {
   const {
     register,
     formState: { errors },

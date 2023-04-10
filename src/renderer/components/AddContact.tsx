@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { User } from '../../common/types'
 import Notification from './Notification'
 
-export default function AddContact() {
+export default () => {
   const {
     register,
     formState: { errors },
