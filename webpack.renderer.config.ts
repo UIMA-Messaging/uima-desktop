@@ -11,7 +11,7 @@ rules.push(
   },
   {
     test: /\.(svg|png|jpg|gif)$/,
-    include: [path.resolve(__dirname, "./src/frontend/assets")],
+    include: [path.resolve(__dirname, "./src/renderer/assets")],
     type: "asset/inline",
   }
 );
