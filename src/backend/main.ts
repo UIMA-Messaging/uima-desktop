@@ -8,7 +8,6 @@ import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import UserRepo from './repos/user-repo'
-import ContactManagament from './services/contact-management'
 
 require('electron-squirrel-startup') && app.quit()
 
@@ -48,12 +47,11 @@ const messages = new MessageRepo(connection)
 
 // Services
 const authentication = new Authentification(appData)
-const contactManagement = new ContactManagament()
 
 // Clients
 const ejabberd = new EjabberdClient('localhost', 5222)
 
-export { authentication, appData, ejabberd, connection, messages, channels, users, contactManagement, window }
+export { authentication, appData, ejabberd, connection, messages, channels, users, window }
 
 // Register handlers
 import './handlers/data-handlers'
