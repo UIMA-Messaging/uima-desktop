@@ -1,24 +1,24 @@
 .sidebar-wrapper {
-  height: 100vh;
-  width: fit-content;
-  overflow-y: scroll;
+	height: 100vh;
+	width: fit-content;
+	overflow-y: scroll;
 }
 
 .profile {
-  margin: 10px;
-  background-color: #2c2c2c;
-  border-radius: 50%;
-  height: 50px;
-  aspect-ratio: 1;
+	margin: 10px;
+	background-color: #2c2c2c;
+	border-radius: 50%;
+	height: 50px;
+	aspect-ratio: 1;
 }
 
 .profile:hover {
-  border-radius: 30%;
+	border-radius: 30%;
 }
 
 .sidebar-wrapper > * {
-  transition: 0.2s;
-  cursor: pointer;
+	transition: 0.2s;
+	cursor: pointer;
 }
 
 /* .sidebar-wrapper:hover > *:not(:hover) {
@@ -26,13 +26,13 @@
 } */
 
 .sidebar-item-separator {
-  width: 50%;
-  height: 3px;
-  border-radius: 2.5px;
-  background-color: #222222;
-  margin: auto;
+	width: 50%;
+	height: 3px;
+	border-radius: 2.5px;
+	background-color: #222222;
+	margin: auto;
 }
 
 .create-group-chat:hover {
-  background-color: #03bfa7;
+	background-color: #03bfa7;
 }

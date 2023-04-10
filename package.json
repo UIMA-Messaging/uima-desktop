@@ -10,7 +10,7 @@
 		"make": "electron-forge make",
 		"publish": "electron-forge publish",
 		"lint": "eslint --ext .ts,.tsx .",
-		"format": "prettier --write \"src/**/*.ts\""
+		"format": "find . -type f ! -path './node_modules/*' ! -path './.webpack/*' ! -path './.git/*' -exec sh -c 'prettier --write \"$0\"' {} \\;"
 	},
 	"keywords": [],
 	"author": {
