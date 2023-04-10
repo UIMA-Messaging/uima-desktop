@@ -15,7 +15,7 @@ export default class StateManagement {
 
 	constructor(connection: SqlConnection) {
 		this.connection = connection
-		console.log('Creating `AppPersistentData` table if it does not already exist.')
+		console.log('Creating `AppData` table if it does not already exist.')
 		this.connection.execute(`
       CREATE TABLE IF NOT EXISTS AppData (
         Id TEXT PRIMARY KEY,
@@ -34,12 +34,12 @@ export default class StateManagement {
 	}
 
 	public async set(id: string, obj: any) {
-		await connection.execute('INSERT INTO AppPersistentData(Id, Data) VALUES ($id, $data);', { id, data: JSON.stringify(obj) })
+		await connection.execute('INSERT INTO AppData(Id, Data) VALUES ($id, $data);', { id, data: JSON.stringify(obj) })
 	}
 
 	public async get<T>(id: string): Promise<T> {
-		const result = await connection.querySingle<PersistentData>('SELECT * FROM AppPersistentData WHERE Id = id', { id })
-		return JSON.parse(result.data) as T
+		const result = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE Id = $id', { id })
+		return result ? JSON.parse(result.data) as T : null
 	}
 
 	public async setSensitive(id: string, obj: any) {
@@ -48,8 +48,8 @@ export default class StateManagement {
 	}
 
 	public async getSensitive<T>(id: string): Promise<T> {
-		const encrypted = await this.get<T>(id)
-		return this.decrypt(encrypted) as T
+		const encrypted = await this.get<string>(id)
+		return encrypted ? this.decrypt(encrypted) as T : null
 	}
 
 	private encrypt(decrypted: any): string {

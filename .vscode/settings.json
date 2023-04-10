@@ -17,9 +17,9 @@
         {
             "previewLimit": 50,
             "driver": "SQLite",
-            "name": "main-webpack",
+            "name": "main.db",
             "group": "instantmessaging",
-            "database": "${workspaceFolder:InstantMessaging}/.webpack/databases/main.db"
+            "database": "${workspaceFolder:UIMA}/src/main.db"
         }
     ]
 }
