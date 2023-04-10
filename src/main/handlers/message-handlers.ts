@@ -4,13 +4,13 @@ import { channels as channelsRepo, messages } from '../main'
 import { Channel } from '../../common/types'
 
 ipcMain.handle(channels.CHANNELS, async () => {
-    return await channelsRepo.getAllChannels()
+	return await channelsRepo.getAllChannels()
 })
 
 ipcMain.handle(channels.CREATE_CHANNEL, async (_, channel: Channel) => {
-    return await channelsRepo.createOrUpdateChannel(channel)
+	return await channelsRepo.createOrUpdateChannel(channel)
 })
 
 ipcMain.handle(channels.CONVERSATIONS, async (_, channelId: string) => {
-    return await messages.getMessagesFromChannel(channelId)
+	return await messages.getMessagesFromChannel(channelId)
 })

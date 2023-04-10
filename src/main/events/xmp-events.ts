@@ -3,24 +3,24 @@ import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmp-
 import { ejabberd, messages } from '../main'
 
 ejabberd.on('onConnected', (isConnected) => {
-    console.log('User now connected to chating server.')
-    notifyOfStatus(isConnected)
+	console.log('User now connected to chating server.')
+	notifyOfStatus(isConnected)
 })
 
 ejabberd.on('onDisconnected', (isConnected) => {
-    console.log('User disconnected from chating server.')
-    notifyOfStatus(isConnected)
+	console.log('User disconnected from chating server.')
+	notifyOfStatus(isConnected)
 })
 
 ejabberd.on('onMessageReceived', (message: Message) => {
-    notifyOfMessage(message)
-    messages.createMessage(message)
+	notifyOfMessage(message)
+	messages.createMessage(message)
 })
 
 ejabberd.on('onMessageSent', (message: Message) => {
-    messages.createMessage(message)
+	messages.createMessage(message)
 })
 
 ejabberd.on('onError', (error: string) => {
-    notifyOfError(error)
+	notifyOfError(error)
 })
