@@ -66,15 +66,17 @@ export default class SqlConnection {
 
 	private objToEntity(sql: string, obj: any): any {
 		const entity = {}
-		if (obj) {
+		if (obj && sql) {
 			const columns = sql.match(/\$\w+/g)
-			Object.keys(obj).forEach((key) => {
-				const renamed = '$' + key
-				if (columns.includes(renamed)) {
-					// @ts-ignore
-					entity[renamed] = obj[key]
-				}
-			})
+			if (columns) {
+				Object.keys(obj).forEach((key) => {
+					const renamed = '$' + key
+					if (columns.includes(renamed)) {
+						// @ts-ignore
+						entity[renamed] = obj[key]
+					}
+				})
+			}
 		}
 		return entity
 	}

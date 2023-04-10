@@ -35,7 +35,7 @@ let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
-const connection = new SqlConnection(new Database('main.db'))
+const connection = new SqlConnection(new Database('src/main.db'))
 
 // Repositories
 const appData = new StateManagement(connection)
