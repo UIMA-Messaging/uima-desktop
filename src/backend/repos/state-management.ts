@@ -48,7 +48,7 @@ export default class StateManagement {
   }
 
   public async getSensitive<T>(id: string): Promise<T> {
-    const encrypted = await this.get<string>(id)
+    const encrypted = await this.get<T>(id)
     return this.decrypt(encrypted) as T
   }
 
