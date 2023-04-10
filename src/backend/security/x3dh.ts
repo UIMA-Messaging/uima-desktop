@@ -2,6 +2,7 @@ import { createECDH, createHash } from 'crypto'
 import { v4 as uuid } from 'uuid'
 import { ECDH } from 'crypto'
 import { OutstandingExchangeRecord, KeyPair, X3DHKeys, KeyBundle, ExchangeResult, PostKeyBundle } from '../../common/types/SigalProtocol'
+import { kdf } from './encryption'
 
 export default class X3DH {
   private ecdh: ECDH
@@ -55,7 +56,7 @@ export default class X3DH {
     // Combine computed secrets of exchanges
     const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
     // Compute the secret of the shared secrets
-    const sharedSecret = createHash('sha256').update(combinedKeys).digest('hex')
+    const sharedSecret = kdf(combinedKeys)
     return {
       sharedSecret,
       postKeyBundle: {
@@ -103,5 +104,14 @@ export default class X3DH {
       publicIdentityKey: this.identityKeys.publicKey,
       publicOneTimePreKey: oneTimePreKey.publicKey,
     }
+  }
+
+  static secretToReadable(sharedSecret: string) {
+    return createHash('sha256')
+      .update(sharedSecret)
+      .digest('hex')
+      .match(/.{1,4}/g)
+      .map((h) => parseInt(h, 16))
+      .map((n) => String(n).padStart(5, '0'))
   }
 }
