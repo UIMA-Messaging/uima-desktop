@@ -16,20 +16,20 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 function createWindow(): BrowserWindow {
-  const window = new BrowserWindow({
-    height: 600,
-    width: 800,
-    backgroundColor: 'black',
-    webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    },
-  })
-  window.removeMenu()
-  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  if (isDev) {
-    window.webContents.openDevTools({ mode: 'detach' })
-  }
-  return window
+    const window = new BrowserWindow({
+        height: 600,
+        width: 800,
+        backgroundColor: 'black',
+        webPreferences: {
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        },
+    })
+    window.removeMenu()
+    window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+    if (isDev) {
+        window.webContents.openDevTools({ mode: 'detach' })
+    }
+    return window
 }
 
 // App behavior
