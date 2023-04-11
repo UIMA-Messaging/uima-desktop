@@ -6,19 +6,17 @@ export const channels = {
 		LOGOUT: 'logout-authed-user',
 	},
 
-	ON_ERROR: "on-generic-app-error",
+	ON_ERROR: 'on-generic-app-error',
 
-	SEND_MESSAGE: 'user-send-message',
-	RECEIVE_MESSAGE: 'user-received-message',
-	XMP_ONLINE: 'is-user-connected-to-xmp',
-	XMP_ERROR: 'on-xmp-error',
+	XMP: {
+		ONLINE: 'is-user-connected-to-xmp',
+		SEND_MESSAGE: 'user-send-message',
+		RECEIVE_MESSAGE: 'user-received-message',
+	},
 
-	CHANNELS: 'get-chat-channels',
-	CONVERSATIONS: 'get-channel-conversations',
 	CREATE_CHANNEL: 'create-channel',
 
 	CONTACT: 'user-to-contact-other-user',
-	CONTACT_ERROR: 'on-contact-failor',
 
 	APP_DATA: {
 		GET: 'store.get',
