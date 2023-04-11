@@ -5,17 +5,16 @@ import { authentication, ejabberd, appData } from '../main'
 
 authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials) => {
 	appData.setEncryptionKey(credentials.password + credentials.username)
-	appData.setSensitive(data.USER_PROFILE, user)
-	const jabber = ejabberd.formulateJabberUser(user.username, user.ephemeralPassword)
-	console.log('jabber', jabber)
-	appData.setSensitive(data.JABBER_USER, jabber)
+	appData.set(data.USER_PROFILE, JSON.stringify(user), true)
+	const jabber = ejabberd.createJabberUser(user.username, user.ephemeralPassword)
+	appData.set(data.JABBER_USER, JSON.stringify(jabber), true)
 	appData.invalidateEncryptionKey()
 })
 
 authentication.on('onLogin', async (credentials: Credentials) => {
 	appData.setEncryptionKey(credentials.password + credentials.username)
-	const jabber = await appData.getSensitive<JabberUser>(data.JABBER_USER)
-	ejabberd.connect(jabber)
+	const jabber = await appData.get(data.JABBER_USER)
+	ejabberd.connect(JSON.parse(jabber))
 	notifyOfAuthState('loggedIn')
 })
 

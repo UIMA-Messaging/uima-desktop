@@ -3,7 +3,6 @@ import { Credentials, Registration, Message, Channel } from '../common/types'
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
-	isFirstTimeRunning: () => ipcRenderer.invoke(channels.IS_FIRST_TIME),
 	register: (registration: Registration) => ipcRenderer.send(channels.REGISTER, registration),
 	login: (credentials: Credentials) => ipcRenderer.send(channels.LOGIN, credentials),
 	logout: () => ipcRenderer.send(channels.LOGOUT),

@@ -1,29 +1,37 @@
-import Bcrypt from 'bcrypt'
 import EventEmitter from 'events'
-import { BasicUser, Credentials, Registration } from '../../common/types'
+import { BasicUser, Credentials, RegisteredUser, Registration } from '../../common/types'
 import { register } from '../clients/registration-client'
 import StateManagement from '../repos/state-management'
+import { v4 } from 'uuid'
+import { createHash, randomBytes } from 'crypto'
+import { channels } from '../main'
 
 export default class Authentification extends EventEmitter {
 	private appData: StateManagement
 	private authenticated: boolean
-	private firstTimeRunning: boolean
 
 	constructor(appData: StateManagement) {
 		super()
 		this.appData = appData
 		this.authenticated = false
-		this.firstTimeRunning = this.isChallengePresent()
 	}
 
 	public async register(registration: Registration): Promise<void> {
-		if (this.isChallengePresent()) {
+		if (await this.isChallengePresent()) {
 			throw Error('A user has already been registered to this device.')
 		}
 		const credentials: Credentials = { username: registration.username, password: registration.password }
-		const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
-		const registeredUser = await register(basicUser)
-		this.generateChallenge(credentials.password + credentials.username)
+		// const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
+		// const registeredUser = await register(basicUser)
+		const registeredUser: RegisteredUser = {
+			id: v4(),
+			displayName: `${registration.username}#0001`,
+			username: registration.username,
+			image: null,
+			ephemeralPassword: v4(),
+			joinedAt: new Date(),
+		}
+		await this.generateChallenge(credentials.password + credentials.username)
 		this.emit('onRegister', registeredUser, credentials)
 		await this.login(credentials)
 	}
@@ -32,7 +40,7 @@ export default class Authentification extends EventEmitter {
 		if (this.authenticated) {
 			throw Error('A user is already authenticated. User must first logout.')
 		}
-		if (!this.isChallengePresent()) {
+		if (!(await this.isChallengePresent())) {
 			throw Error('No challenge present. Cannot validated user credentials.')
 		}
 		const isValid = await this.validateChallenge(credentials.password + credentials.username)
@@ -51,32 +59,33 @@ export default class Authentification extends EventEmitter {
 		this.emit('onLogout')
 	}
 
-	private isChallengePresent(): boolean {
-		return !!this.appData.get('challenge')
+	private async isChallengePresent(): Promise<boolean> {
+		return !!(await this.appData.get('auth.challenge'))
 	}
 
-	public isRegistered(): boolean {
-		return this.isChallengePresent()
+	public async isRegistered(): Promise<boolean> {
+		return await this.isChallengePresent()
 	}
 
 	public isAuthenticated(): boolean {
 		return this.authenticated
 	}
 
-	public isFirstTimeRunning(): boolean {
-		return this.firstTimeRunning
-	}
-
-	private generateChallenge(identity: string): void {
-		const salt = Bcrypt.genSaltSync()
-		const hash = Bcrypt.hashSync(identity, salt)
-		this.appData.set('salt', salt)
-		this.appData.set('challenge', hash)
+	private async generateChallenge(identity: string): Promise<void> {
+		const salt = randomBytes(16).toString('hex')
+		const hash = createHash('SHA256').update(identity).digest('hex')
+		await this.appData.set('auth.salt', salt)
+		await this.appData.set('auth.challenge', hash)
 	}
 
 	private async validateChallenge(identity: string): Promise<boolean> {
-		const salt = await this.appData.get<string>('salt')
-		const challenge = await this.appData.get<string>('challenge')
-		return Bcrypt.hashSync(identity, salt) === challenge
+		console.log('VALIDATING USER')
+		const salt = await this.appData.get('auth.salt')
+		console.log('salt', salt)
+		const challenge = await this.appData.get('auth.challenge')
+		console.log('challenge', challenge)
+		const hash = createHash('SHA256').update(identity).digest('hex')
+		console.log('hash', hash)
+		return hash === challenge
 	}
 }

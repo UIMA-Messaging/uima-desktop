@@ -3,10 +3,6 @@ import { channels } from '../../common/constants'
 import { Registration, Credentials } from '../../common/types'
 import { authentication, window } from '../main'
 
-ipcMain.handle(channels.IS_FIRST_TIME, () => {
-	return authentication.isFirstTimeRunning()
-})
-
 ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
 	try {
 		await authentication.register(registration)
@@ -15,9 +11,9 @@ ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
 	}
 })
 
-ipcMain.on(channels.LOGIN, (event, credentials: Credentials) => {
+ipcMain.on(channels.LOGIN, async (event, credentials: Credentials) => {
 	try {
-		authentication.login(credentials)
+		await authentication.login(credentials)
 	} catch (error) {
 		event.sender.send(channels.LOGIN_ERROR, error.message)
 	}
@@ -31,8 +27,8 @@ ipcMain.on(channels.LOGOUT, (event) => {
 	}
 })
 
-ipcMain.handle(channels.AUTHENTICATION_STATUS, () => {
-	if (!authentication.isRegistered()) {
+ipcMain.handle(channels.AUTHENTICATION_STATUS, async () => {
+	if (!(await authentication.isRegistered())) {
 		return 'notRegistered'
 	} else if (authentication.isAuthenticated()) {
 		return 'loggedIn'
