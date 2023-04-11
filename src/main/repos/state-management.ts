@@ -1,4 +1,4 @@
-import { connection } from '../main'
+import { connection } from '../index'
 import { decrypt, encrypt } from '../security/encryption'
 import { createHash } from 'crypto'
 import SqlConnection from '../services/sql-connection'
