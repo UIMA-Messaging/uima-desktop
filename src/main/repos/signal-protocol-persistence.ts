@@ -1,4 +1,4 @@
-import { appData } from '../main'
+import { appData } from '..'
 import DoubleRatchet from '../security/double-ratchet'
 import X3DH from '../security/x3dh'
 

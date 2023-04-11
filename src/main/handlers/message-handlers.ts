@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { channels as channelsRepo, messages } from '../main'
+import { channels as channelsRepo, messages } from '..'
 import { Channel } from '../../common/types'
 
 ipcMain.handle(channels.CHANNELS, async () => {
