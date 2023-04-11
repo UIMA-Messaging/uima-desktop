@@ -1,20 +1,18 @@
 export const channels = {
-	ON_ERROR: 'on-generic-app-error',
+	ON_ERROR: 'on.error',
 
 	AUTH: {
-		STATE: 'authentication-status',
-		REGISTER: 'regsiter-new-user',
-		LOGIN: 'login-existing-user',
-		LOGOUT: 'logout-authed-user',
+		STATE: 'auth.state',
+		REGISTER: 'auth.regsiter',
+		LOGIN: 'auth.login',
+		LOGOUT: 'auth.logout',
 	},
 
-	XMP: {
-		ONLINE: 'is-user-connected-to-xmp',
-		SEND_MESSAGE: 'user-send-message',
-		RECEIVE_MESSAGE: 'user-received-message',
+	CHATTING: {
+		ONLINE: 'xmp.online',
+		SEND_MESSAGE: 'message.send',
+		RECEIVE_MESSAGE: 'message.receive',
 	},
-
-	CREATE_CHANNEL: 'create-channel',
 
 	APP_DATA: {
 		GET: 'store.get',
