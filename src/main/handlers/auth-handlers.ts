@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
 import { Registration, Credentials } from '../../common/types'
-import { authentication, window } from '../main'
+import { authentication, window } from '..'
 
 ipcMain.handle(channels.IS_FIRST_TIME, () => {
 	return authentication.isFirstTimeRunning()

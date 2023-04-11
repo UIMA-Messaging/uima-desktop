@@ -1,4 +1,4 @@
-import { connection } from '../main'
+import { connection } from '..'
 import SqlConnection from '../services/sql-connection'
 import crypto from 'crypto'
 
