@@ -1,9 +1,10 @@
 export const channels = {
-	AUTH_STATE: 'authentication-status',
-
-	REGISTER: 'regsiter-new-user',
-	LOGIN: 'login-existing-user',
-	LOGOUT: 'logout-authed-user',
+	AUTH: {
+		STATE: 'authentication-status',
+		REGISTER: 'regsiter-new-user',
+		LOGIN: 'login-existing-user',
+		LOGOUT: 'logout-authed-user',
+	},
 
 	ON_ERROR: "on-generic-app-error",
 
@@ -19,7 +20,7 @@ export const channels = {
 	CONTACT: 'user-to-contact-other-user',
 	CONTACT_ERROR: 'on-contact-failor',
 
-	STORE: {
+	APP_DATA: {
 		GET: 'store.get',
 		SET: 'store.set',
 		ON_CHANGE: 'store.changed',

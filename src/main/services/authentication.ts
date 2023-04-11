@@ -4,7 +4,6 @@ import { register } from '../clients/registration-client'
 import StateManagement from '../repos/state-management'
 import { v4 } from 'uuid'
 import { createHash, randomBytes } from 'crypto'
-import { channels } from '../index'
 
 export default class Authentification extends EventEmitter {
 	private appData: StateManagement
@@ -16,7 +15,7 @@ export default class Authentification extends EventEmitter {
 		this.authenticated = false
 	}
 
-	public async register(registration: Registration): Promise<void> {
+	public async register(registration: Registration): Promise<boolean> {
 		if (await this.isChallengePresent()) {
 			throw Error('A user has already been registered to this device.')
 		}
@@ -33,10 +32,10 @@ export default class Authentification extends EventEmitter {
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
 		this.emit('onRegister', registeredUser, credentials)
-		await this.login(credentials)
+		return await this.login(credentials)
 	}
 
-	public async login(credentials: Credentials) {
+	public async login(credentials: Credentials): Promise<boolean> {
 		if (this.authenticated) {
 			throw Error('A user is already authenticated. User must first logout.')
 		}
@@ -49,14 +48,16 @@ export default class Authentification extends EventEmitter {
 		}
 		this.authenticated = true
 		this.emit('onLogin', credentials)
+		return this.authenticated
 	}
 
-	public logout() {
+	public logout(): boolean {
 		if (!this.authenticated) {
 			throw Error('No user authenticated. User must first login.')
 		}
 		this.authenticated = false
 		this.emit('onLogout')
+		return this.authenticated
 	}
 
 	private async isChallengePresent(): Promise<boolean> {

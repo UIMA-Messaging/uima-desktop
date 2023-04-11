@@ -21,13 +21,13 @@ export default ({ children, initial }: StoreOptions) => {
 
 	useEffect(() => {
 		loadStore()
-		window.electron.onStoreChanged(updateValue)
+		window.electron.onAppDataChange(updateValue)
 	}, [])
 
 	const loadStore = async () => {
 		for (const key in initial) {
 			const defaultValue = initial[key as string]
-			const value = await window.electron.getStoreData(key)
+			const value = await window.electron.getAppData(key)
 			initial[key as string] = (value as never) ?? defaultValue
 		}
 		setStore(initial)
@@ -35,7 +35,7 @@ export default ({ children, initial }: StoreOptions) => {
 	}
 
 	const setValue = async (key: string, value: any): Promise<void> => {
-		await window.electron.setStoreData(key, value)
+		await window.electron.setAppData(key, value)
 		updateValue(key, value)
 	}
 

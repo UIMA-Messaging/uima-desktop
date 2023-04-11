@@ -4,17 +4,17 @@ export default function useAppData<T>(key: string, initial?: any): [T, (state: T
 	let state: T = initial
 
 	useEffect(() => {
-		window.electron.getStoreData<T>(key).then(setState)
+		window.electron.getAppData<T>(key).then(setState)
 	}, [])
 
-	window.electron.onStoreChanged((incomingKey, incomingValue) => {
+	window.electron.onAppDataChange((incomingKey, incomingValue) => {
 		if (key === incomingKey) {
 			state = incomingValue
 		}
 	})
 
 	function setState(newValue: T) {
-		window.electron.setStoreData(key, newValue).then((_) => (state = newValue))
+		window.electron.setAppData(key, newValue).then((_) => (state = newValue))
 	}
 
 	return [state, setState]
