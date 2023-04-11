@@ -2,34 +2,24 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Credentials } from '../../common/types'
 import '../styles/Register.css'
+import useAuth from '../hooks/use-auth'
 
 export default () => {
+	const { login, error, loading } = useAuth()
 	const {
 		register,
-		formState: { errors },
 		handleSubmit,
+		formState: { errors },
 	} = useForm()
-	const [isLoggingIn, setIsLoggingIn] = useState(false)
-	const [error, setError] = useState<string>()
-
-	window.electron.onLoginError((_, error) => {
-		setIsLoggingIn(false)
-		setError(error)
-	})
-
-	function onClick(data: Credentials) {
-		setIsLoggingIn(true)
-		window.electron.login(data)
-	}
 
 	return (
-		<div className="registration-wrapper" style={isLoggingIn ? { opacity: 0.5, pointerEvents: 'none' } : null}>
+		<div className="registration-wrapper" style={loading ? { opacity: 0.5, pointerEvents: 'none' } : null}>
 			<div>
 				<h1>Login</h1>
 				<span>Login with your username and password.</span>
 				{error && <p className="registration-error">{error}</p>}
 			</div>
-			<form className="registration-form" onSubmit={handleSubmit(onClick)}>
+			<form className="registration-form" onSubmit={handleSubmit(login)}>
 				{errors.username?.type === 'required' && <p className="validation-error">Username is required</p>}
 				<input type="text" placeholder="Enter your username" {...register('username', { required: true })} defaultValue="greffgreff" />
 				{errors.password?.type === 'required' && <p className="validation-error">Password is required</p>}

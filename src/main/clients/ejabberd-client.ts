@@ -49,7 +49,7 @@ export default class EjabberdClient extends EventEmitter {
 	}
 
 	public disconnect() {
-		this.xmpClient.disconnect()
+		// this.xmpClient.disconnect() // produces not a function
 		this.xmpClient = null
 		this.host = null
 		this.port = null
