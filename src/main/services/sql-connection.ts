@@ -34,7 +34,7 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.run(sql.replace(/[\r\t]/g, ''), entity, (error: Error) => {
+			this.database.run(sql.replace(/[\r\t]/g, ''), entity, (error) => {
 				error ? reject(error) : resolve()
 			})
 		})
@@ -46,8 +46,8 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.all(sql.replace(/[\r\t]/g, ''), entity, (error: Error, rows: any) => {
-				error ? reject(error) : resolve(rows as T[])
+			this.database.all<T>(sql.replace(/[\r\t]/g, ''), entity, (error, rows) => {
+				error ? reject(error) : resolve(rows)
 			})
 		})
 	}
@@ -58,8 +58,8 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.get(sql.replace(/[\r\t]/g, ''), entity, (error: Error, row: any) => {
-				error ? reject(error) : resolve(row as T)
+			this.database.get<T>(sql.replace(/[\r\t]/g, ''), entity, (error, row) => {
+				error ? reject(error) : resolve(row)
 			})
 		})
 	}

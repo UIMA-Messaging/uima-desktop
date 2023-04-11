@@ -19,10 +19,10 @@ export default class StateManagement {
 		console.log('Creating `AppData` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS AppData(
-				Id TEXT PRIMARY KEY, 
-				Data TEXT, 
-				Sensitive INTEGER CHECK (Sensitive IN (0, 1)), 
-				ModifiedAt DATETIME
+				id TEXT PRIMARY KEY, 
+				data TEXT, 
+				sensitive INTEGER CHECK (sensitive IN (0, 1)), 
+				modifiedAt DATETIME
 			);`)
 	}
 
@@ -35,6 +35,9 @@ export default class StateManagement {
 	}
 
 	public async set(id: string, data: string, sensitive: boolean = false) {
+		if (!data) {
+			Error(`Cannot save empty data! Received \`${typeof data}\``)
+		}
 		const record: PersistentData = {
 			id: id,
 			data: sensitive ? encrypt(data, this.key) : data,
@@ -43,21 +46,19 @@ export default class StateManagement {
 		}
 		await connection.execute(
 			`
-			INSERT INTO AppData(Id, Data, Sensitive, ModifiedAt) 
+			INSERT INTO AppData(id, data, sensitive, modifiedAt) 
 			VALUES ($id, $data, $sensitive, $modifiedAt)
-			ON CONFLICT(Id) DO UPDATE SET 
-				Data = excluded.Data,
-				ModifiedAt = excluded.ModifiedAt,
-				Sensitive = excluded.Sensitive;
+			ON CONFLICT(id) DO UPDATE SET 
+				data = excluded.data,
+				modifiedAt = excluded.modifiedAt,
+				sensitive = excluded.sensitive;
 			`,
 			record
 		)
 	}
 
 	public async get(id: string): Promise<string> {
-		console.log('getting', id)
-		const result = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE Id = $id', { id })
-		console.log("result", result)
-		return result?.sensitive ? decrypt(result.data, this.key) : result?.data
+		const record = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
+		return record?.sensitive ? decrypt(record.data, this.key) : record?.data
 	}
 }
