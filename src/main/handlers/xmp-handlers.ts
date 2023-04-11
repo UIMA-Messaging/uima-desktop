@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
 import { Message } from '../../common/types'
-import { ejabberd, window } from '../main'
+import { ejabberd, window } from '..'
 
 ipcMain.on(channels.SEND_MESSAGE, (event, recipientJid: string, message: Message) => {
 	try {
