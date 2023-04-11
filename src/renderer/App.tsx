@@ -15,7 +15,7 @@ export default () => {
 
 	return (
 		<Routes>
-			<Route path="/" element={"Loading..."} />
+			<Route path="/" />
 			<Route path="/notRegistered" element={<Register />} />
 			<Route path="/loggedOut" element={<Login />} />
 			<Route path="/loggedIn" element={<Dashboard />} />
