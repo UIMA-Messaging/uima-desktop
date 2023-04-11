@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
 import { User } from '../../common/types'
+import useAppData from '../hooks/use-app-data'
 
 export default () => {
-	const [profile, setProfile] = useState<User>()
+	const [profile, _] = useAppData<User>('user.profile')
 
-	useEffect(() => {
-		window.electron.getProfile().then(setProfile)
-	}, [])
+	console.log(profile)
 
 	return <img className="profile" src={profile?.image} onClick={window.electron.logout} />
 }

@@ -52,7 +52,7 @@ const ejabberd = new EjabberdClient('localhost', 5222)
 export { authentication, appData, ejabberd, connection, messages, channels, users, window }
 
 // Register handlers
-import './handlers/data-handlers'
+import './handlers/app-data-handlers'
 import './handlers/xmp-handlers'
 import './handlers/auth-handlers'
 import './handlers/message-handlers'

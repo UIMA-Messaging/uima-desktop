@@ -7,7 +7,7 @@ ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
 	try {
 		await authentication.register(registration)
 	} catch (error) {
-		event.sender.send(channels.REGISTRATION_ERROR, error.message)
+		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
@@ -15,7 +15,7 @@ ipcMain.on(channels.LOGIN, async (event, credentials: Credentials) => {
 	try {
 		await authentication.login(credentials)
 	} catch (error) {
-		event.sender.send(channels.LOGIN_ERROR, error.message)
+		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
@@ -23,11 +23,11 @@ ipcMain.on(channels.LOGOUT, (event) => {
 	try {
 		authentication.logout()
 	} catch (error) {
-		event.sender.send(channels.LOGOUT_ERROR, error.message)
+		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
-ipcMain.handle(channels.AUTHENTICATION_STATUS, async () => {
+ipcMain.handle(channels.AUTH_STATE, async () => {
 	if (!(await authentication.isRegistered())) {
 		return 'notRegistered'
 	} else if (authentication.isAuthenticated()) {
@@ -38,5 +38,5 @@ ipcMain.handle(channels.AUTHENTICATION_STATUS, async () => {
 })
 
 export function notifyOfAuthState(state: 'notRegistered' | 'loggedOut' | 'loggedIn') {
-	window.webContents.send(channels.AUTHENTICATION_STATUS, state)
+	window.webContents.send(channels.AUTH_STATE, state)
 }
