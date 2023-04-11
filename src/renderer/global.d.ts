@@ -12,7 +12,6 @@ export declare global {
 			getChannels: () => Promise<Channel[]>
 			getChannelConversation: (channelId: string) => Promise<Message[]>
 			contactUser: (username: string) => Promise<User | string>
-			onXmpError: (callback: (type: string, message: string) => void) => void
 			
 			onError: (callback: (type: string, message: string) => void) => void
 			
@@ -23,9 +22,9 @@ export declare global {
 			getAuthState: () => Promise<'notRegistered' | 'loggedOut' | 'loggedIn'>
 			onAuthStateChange: (callback: (state: 'notRegistered' | 'loggedOut' | 'loggedIn') => void) => void
 
-			getStoreData: <T>(key: string) => Promise<T>
-			setStoreData: (key: string, value: any) => Promise<void>
-			onStoreChanged: (callback: (key: string, value: any) => void) => void
+			getAppData: <T>(key: string) => Promise<T>
+			setAppData: (key: string, value: any) => Promise<void>
+			onAppDataChange: (callback: (key: string, value: any) => void) => void
 		}
 	}
 }

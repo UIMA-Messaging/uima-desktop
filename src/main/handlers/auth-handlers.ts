@@ -3,31 +3,34 @@ import { channels } from '../../common/constants'
 import { Registration, Credentials } from '../../common/types'
 import { authentication, window } from '..'
 
-ipcMain.on(channels.REGISTER, async (event, registration: Registration) => {
+ipcMain.on(channels.AUTH.REGISTER, async (event, registration: Registration) => {
 	try {
-		await authentication.register(registration)
+		const authenticated = await authentication.register(registration)
+		event.sender.send(channels.AUTH.STATE, authenticated ? 'loggedIn' : 'loggedOut')
 	} catch (error) {
 		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
-ipcMain.on(channels.LOGIN, async (event, credentials: Credentials) => {
+ipcMain.on(channels.AUTH.LOGIN, async (event, credentials: Credentials) => {
 	try {
-		await authentication.login(credentials)
+		const authenticated = await authentication.login(credentials)
+		event.sender.send(channels.AUTH.STATE, authenticated ? 'loggedIn' : 'loggedOut')
 	} catch (error) {
 		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
-ipcMain.on(channels.LOGOUT, (event) => {
+ipcMain.on(channels.AUTH.LOGOUT, (event) => {
 	try {
-		authentication.logout()
+		const authenticated = authentication.logout()
+		event.sender.send(channels.AUTH.STATE, authenticated ? 'loggedIn' : 'loggedOut')
 	} catch (error) {
 		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
 	}
 })
 
-ipcMain.handle(channels.AUTH_STATE, async () => {
+ipcMain.handle(channels.AUTH.STATE, async () => {
 	if (!(await authentication.isRegistered())) {
 		return 'notRegistered'
 	} else if (authentication.isAuthenticated()) {
@@ -36,7 +39,3 @@ ipcMain.handle(channels.AUTH_STATE, async () => {
 		return 'loggedOut'
 	}
 })
-
-export function notifyOfAuthState(state: 'notRegistered' | 'loggedOut' | 'loggedIn') {
-	window.webContents.send(channels.AUTH_STATE, state)
-}
