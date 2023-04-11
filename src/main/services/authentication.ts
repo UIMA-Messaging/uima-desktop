@@ -79,13 +79,9 @@ export default class Authentification extends EventEmitter {
 	}
 
 	private async validateChallenge(identity: string): Promise<boolean> {
-		console.log('VALIDATING USER')
 		const salt = await this.appData.get('auth.salt')
-		console.log('salt', salt)
 		const challenge = await this.appData.get('auth.challenge')
-		console.log('challenge', challenge)
 		const hash = createHash('SHA256').update(identity).digest('hex')
-		console.log('hash', hash)
 		return hash === challenge
 	}
 }
