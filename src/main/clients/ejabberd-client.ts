@@ -44,7 +44,7 @@ export default class EjabberdClient extends EventEmitter {
 		})
 	}
 
-	public formulateJabberUser(username: string, password: string): JabberUser {
+	public createJabberUser(username: string, password: string): JabberUser {
 		return { username: `${username}@${this.host}`, password }
 	}
 

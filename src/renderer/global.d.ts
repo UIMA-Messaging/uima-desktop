@@ -4,7 +4,6 @@ import { IpcRendererEvent } from 'electron'
 declare global {
 	interface Window {
 		electron: {
-			isFirstTimeRunning: () => Promise<boolean>
 			register: (registration: Registration) => Promise<void>
 			login: (credentials: Credentials) => Promise<void>
 			logout: () => void

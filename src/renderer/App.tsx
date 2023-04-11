@@ -9,7 +9,7 @@ import Notification from './components/Notification'
 import { Channel } from '../common/types'
 import { getAuthState, getChannels, getOnlineState, isAuthenticated, isFirstRun, isOnline } from './handlers/handlers'
 
-export default function App() {
+export default () => {
 	const [authenticated, setAuthentication] = useState<string>()
 	const [isFirstTime, setIsFirstTime] = useState<boolean>()
 	const [selectedChannel, setSelectedChannel] = useState<Channel>()

@@ -19,8 +19,8 @@ export default class SqlConnection {
 		const dbDir = path.resolve(__dirname, '../databases')
 		const dbPath = path.resolve(dbDir, database)
 		fs.mkdir(dbDir, { recursive: true }, () => {})
-		fs.access(dbPath, fs.constants.F_OK, function (err) {
-			if (err) {
+		fs.access(dbPath, fs.constants.F_OK, (error) => {
+			if (error) {
 				console.log('Database file does not exist. Creating a new one.')
 				fs.writeFile(dbPath, '', () => {})
 			}
@@ -34,7 +34,7 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.run(sql, entity, (error: Error) => {
+			this.database.run(sql.replace(/[\r\t]/g, ''), entity, (error: Error) => {
 				error ? reject(error) : resolve()
 			})
 		})
@@ -46,7 +46,7 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.all(sql, entity, (error: Error, rows: any) => {
+			this.database.all(sql.replace(/[\r\t]/g, ''), entity, (error: Error, rows: any) => {
 				error ? reject(error) : resolve(rows as T[])
 			})
 		})
@@ -58,7 +58,7 @@ export default class SqlConnection {
 		}
 		const entity = this.objToEntity(sql, obj)
 		return new Promise((resolve, reject) => {
-			this.database.get(sql, entity, (error: Error, row: any) => {
+			this.database.get(sql.replace(/[\r\t]/g, ''), entity, (error: Error, row: any) => {
 				error ? reject(error) : resolve(row as T)
 			})
 		})
