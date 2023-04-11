@@ -4,7 +4,7 @@ import { register } from '../clients/registration-client'
 import StateManagement from '../repos/state-management'
 import { v4 } from 'uuid'
 import { createHash, randomBytes } from 'crypto'
-import { channels } from '../main'
+import { channels } from '../index'
 
 export default class Authentification extends EventEmitter {
 	private appData: StateManagement
