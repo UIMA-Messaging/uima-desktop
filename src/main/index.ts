@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import isDev from 'electron-is-dev'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberd-client'
-import StateManagement from './repos/state-management'
+import AppData from './repos/app-data'
 import SqlConnection from './services/sql-connection'
 import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
@@ -38,7 +38,7 @@ app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWin
 const connection = new SqlConnection(new Database('src/main.db'))
 
 // Repositories
-const appData = new StateManagement(connection)
+const appData = new AppData(connection)
 const users = new UserRepo(connection)
 const channels = new ChannelRepo(connection)
 const messages = new MessageRepo(connection)
@@ -56,7 +56,6 @@ import './handlers/app-data-handlers'
 import './handlers/xmp-handlers'
 import './handlers/auth-handlers'
 import './handlers/message-handlers'
-import './handlers/contact-handlers'
 
 // Register events
 import './events/auth-events'

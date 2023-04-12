@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { channels } from '../../common/constants'
 import { Registration, Credentials } from '../../common/types'
-import { authentication, window } from '..'
+import { authentication } from '../index'
 
 ipcMain.on(channels.AUTH.REGISTER, async (event, registration: Registration) => {
 	try {
