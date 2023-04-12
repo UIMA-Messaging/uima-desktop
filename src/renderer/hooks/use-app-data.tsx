@@ -1,21 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function useAppData<T>(key: string, initial?: any): [T, (state: T) => void] {
-	let state: T = initial
+	const [state, setState] = useState<T>(initial)
 
 	useEffect(() => {
 		window.electron.getAppData<T>(key).then(setState)
 	}, [])
 
-	window.electron.onAppDataChange((incomingKey, incomingValue) => {
-		if (key === incomingKey) {
-			state = incomingValue
-		}
-	})
+	window.electron.onAppDataChange((k, value) => k === key && setState(value))
 
-	function setState(newValue: T) {
-		window.electron.setAppData(key, newValue).then((_) => (state = newValue))
+	function updateValue(newValue: T) {
+		window.electron.setAppData(key, newValue)
 	}
 
-	return [state, setState]
+	return [state, updateValue]
 }
