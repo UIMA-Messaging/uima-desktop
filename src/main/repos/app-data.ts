@@ -10,13 +10,15 @@ interface PersistentData {
 	modifiedAt: Date
 }
 
-export default class StateManagement {
+export default class AppData {
 	private connection: SqlConnection
 	private key: string
 
 	constructor(connection: SqlConnection) {
 		this.connection = connection
+
 		console.log('Creating `AppData` table if it does not already exist.')
+
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS AppData(
 				id TEXT PRIMARY KEY, 
@@ -38,12 +40,16 @@ export default class StateManagement {
 		if (!data) {
 			Error(`Cannot save empty data! Received \`${typeof data}\``)
 		}
+
+		data = JSON.stringify(data)
+
 		const record: PersistentData = {
 			id: id,
 			data: sensitive ? encrypt(data, this.key) : data,
 			sensitive: sensitive,
 			modifiedAt: new Date(),
 		}
+
 		await connection.execute(
 			`
 			INSERT INTO AppData(id, data, sensitive, modifiedAt) 
@@ -57,8 +63,16 @@ export default class StateManagement {
 		)
 	}
 
-	public async get(id: string): Promise<string> {
+	public async get<T>(id: string): Promise<T> {
 		const record = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
-		return record?.sensitive ? decrypt(record.data, this.key) : record?.data
+		console.log(id, record)
+		const data = record?.sensitive ? decrypt(record.data, this.key) : record?.data
+		console.log(data)
+
+		try {
+			return JSON.parse(data) as T
+		} catch {
+			return data as T
+		}
 	}
 }

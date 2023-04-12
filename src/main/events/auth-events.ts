@@ -12,7 +12,7 @@ authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials)
 authentication.on('onLogin', async (credentials: Credentials) => {
 	appData.setEncryptionKey(credentials.password + credentials.username)
 	const jabber = await appData.get('xmp.user')
-	ejabberd.connect(JSON.parse(jabber))
+	// ejabberd.connect(JSON.parse(jabber))
 })
 
 authentication.on('onLogout', () => {

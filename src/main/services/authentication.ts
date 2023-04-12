@@ -1,15 +1,15 @@
 import EventEmitter from 'events'
 import { BasicUser, Credentials, RegisteredUser, Registration } from '../../common/types'
 import { register } from '../clients/registration-client'
-import StateManagement from '../repos/state-management'
+import AppData from '../repos/app-data'
 import { v4 } from 'uuid'
 import { createHash, randomBytes } from 'crypto'
 
 export default class Authentification extends EventEmitter {
-	private appData: StateManagement
+	private appData: AppData
 	private authenticated: boolean
 
-	constructor(appData: StateManagement) {
+	constructor(appData: AppData) {
 		super()
 		this.appData = appData
 		this.authenticated = false
@@ -39,15 +39,21 @@ export default class Authentification extends EventEmitter {
 		if (this.authenticated) {
 			throw Error('A user is already authenticated. User must first logout.')
 		}
+
 		if (!(await this.isChallengePresent())) {
 			throw Error('No challenge present. Cannot validated user credentials.')
 		}
+
 		const isValid = await this.validateChallenge(credentials.password + credentials.username)
+
 		if (!isValid) {
 			throw Error('Username or password incorrect.')
 		}
+
 		this.authenticated = true
+
 		this.emit('onLogin', credentials)
+
 		return this.authenticated
 	}
 
@@ -55,8 +61,11 @@ export default class Authentification extends EventEmitter {
 		if (!this.authenticated) {
 			throw Error('No user authenticated. User must first login.')
 		}
+
 		this.authenticated = false
+
 		this.emit('onLogout')
+
 		return this.authenticated
 	}
 
@@ -74,7 +83,9 @@ export default class Authentification extends EventEmitter {
 
 	private async generateChallenge(identity: string): Promise<void> {
 		const salt = randomBytes(16).toString('hex')
-		const hash = createHash('SHA256').update(identity).digest('hex')
+		const hash = createHash('SHA256')
+			.update(identity + salt)
+			.digest('hex')
 		await this.appData.set('auth.salt', salt)
 		await this.appData.set('auth.challenge', hash)
 	}
@@ -82,7 +93,9 @@ export default class Authentification extends EventEmitter {
 	private async validateChallenge(identity: string): Promise<boolean> {
 		const salt = await this.appData.get('auth.salt')
 		const challenge = await this.appData.get('auth.challenge')
-		const hash = createHash('SHA256').update(identity).digest('hex')
+		const hash = createHash('SHA256')
+			.update(identity + salt)
+			.digest('hex')
 		return hash === challenge
 	}
 }

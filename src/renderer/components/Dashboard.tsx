@@ -3,7 +3,6 @@ import Sidebar from './Sidebar'
 import Chat from './Chat'
 import Notification from './Notification'
 import { useState, useEffect } from 'react'
-import { getOnlineState, isOnline } from '../handlers'
 import { Channel } from '../../common/types'
 
 export default () => {
@@ -11,11 +10,11 @@ export default () => {
 	const [channels, setChannels] = useState<Channel[]>([])
 	const [online, setOnline] = useState(false)
 
-	useEffect(() => {
-		getOnlineState().then(setOnline)
-	}, [])
+	// useEffect(() => {
+	// 	getOnlineState().then(setOnline)
+	// }, [])
 
-	isOnline(setOnline)
+	// isOnline(setOnline)
 
 	return (
 		<div className="app-wrapper">

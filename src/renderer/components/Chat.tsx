@@ -14,17 +14,12 @@ export default ({ channel }: { channel: Channel }) => {
 	const self = 'greffgreff'
 
 	useEffect(() => {
-		// Vibrant.from(image).getPalette().then(setPalette).catch()
 		window.electron.isOnline().then(setIsOnline)
-		window.electron.getChannelConversation(channel.id).then(setMessages)
 	}, [])
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [messages])
-
-	window.electron.onOnline((_, isOnline) => setIsOnline(isOnline))
-	window.electron.onMessageReceive((_, message) => setMessages([...messages, message]))
 
 	function sendMessage(event: any) {
 		if (event.key == 'Enter') {
