@@ -36,12 +36,14 @@ export default class AppData {
 		delete this.key
 	}
 
-	public async set(id: string, data: string, sensitive: boolean = false) {
+	public async set(id: string, data: any, sensitive: boolean = false) {
 		if (!data) {
 			Error(`Cannot save empty data! Received \`${typeof data}\``)
 		}
 
-		data = JSON.stringify(data)
+		try {
+			data = JSON.stringify(data)
+		} catch {}
 
 		const record: PersistentData = {
 			id: id,
