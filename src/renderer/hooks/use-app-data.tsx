@@ -5,9 +5,15 @@ export default function useAppData<T>(key: string, initial?: any): [T | null, (s
 
 	useEffect(() => {
 		window.electron.getAppData<T>(key).then(setState)
-	}, [state])
-
-	window.electron.onAppDataChange((k, v) => k === key && setState(v))
+		window.electron.onAppDataChange((k, v) => {
+			if (k === key && JSON.stringify(v) === JSON.stringify(state)) {
+				try {
+					v = JSON.parse(v)
+				} catch {}
+				setState(v)
+			}
+		})
+	}, [])
 
 	function updateState(newValue: T) {
 		window.electron.setAppData(key, newValue)
