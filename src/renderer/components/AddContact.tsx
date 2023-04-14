@@ -34,13 +34,6 @@ export default () => {
 	}, [user])
 
 	function onClick({ username }: { username: string }) {
-		window.electron.contactUser(username).then((result) => {
-			if (typeof result === 'string') {
-				setError(result)
-			} else {
-				setUser(result)
-			}
-		})
 	}
 
 	return (

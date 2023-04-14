@@ -7,12 +7,12 @@ export default () => {
 
 	useEffect(() => {
 		if (profile) {
+			profile.displayName = 'greffgreff#0001'
 			setProfile(profile)
 		}
 	}, [profile])
 
 	console.log(profile)
 
-	// useMemo()???
 	return <img className="profile" src={profile?.image} onClick={window.electron.logout} />
 }
