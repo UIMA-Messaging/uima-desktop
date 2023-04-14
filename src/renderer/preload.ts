@@ -1,9 +1,9 @@
 import { channels } from '../common/constants'
 import { Credentials, Registration, Message, Channel } from '../common/types'
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
-	getAppData: (key: string) => ipcRenderer.invoke(channels.APP_DATA.GET, key),
+	getAppData: <T>(key: string) => <T>ipcRenderer.invoke(channels.APP_DATA.GET, key),
 	setAppData: (key: string, value: any) => ipcRenderer.send(channels.APP_DATA.SET, key, value),
 	onAppDataChange: (callback: (key: string, value: any) => void) => ipcRenderer.on(channels.APP_DATA.ON_CHANGE, (_, key, value) => callback(key, value)),
 
