@@ -1,28 +1,21 @@
 import '../styles/Sidebar.css'
-import AddContact from './AddContact'
-import Profile from './Profile'
-import { Channel } from '../../common/types'
+import { useNavigate } from 'react-router-dom'
 
-export default ({ onClick, channels }: { onClick: (channel: Channel) => void; channels: Channel[] }) => {
+export default () => {
+	const navigation = useNavigate()
+
 	return (
-		<div className="sidebar-wrapper">
-			<Profile />
+		<div className="sidebar">
+			<div className="sidebar-item" onClick={() => navigation('/settings')} />
 			<div className="sidebar-item-separator" />
-			<AddContact />
-			<div className="profile create-group-chat" />
+			<div className="sidebar-item" onClick={() => navigation('/contacts')} />
+			<div className="sidebar-item" onClick={() => navigation('/group')} />
 			<div className="sidebar-item-separator" />
-			{channels?.map((channel) => (
-				<div className="profile" key={channel.id} onClick={() => onClick(channel)} />
-			))}
-			<div
-				className="profile"
-				onClick={() =>
-					onClick({
-						id: '123',
-						name: 'test channel',
-					})
-				}
-			/>
+			<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: '254625462456' } })} />
+			<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: '245762467356865' } })} />
+			<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: '7649768365767' } })} />
+			<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: '765825465346' } })} />
+			<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: '4769367246256' } })} />
 		</div>
 	)
 }
