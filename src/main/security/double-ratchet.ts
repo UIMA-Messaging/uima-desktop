@@ -1,4 +1,4 @@
-import { EncryptedMessage, MessageHeader, DecryptedMessage } from '../../common/types/SigalProtocol'
+import { EncryptedMessage } from '../../common/types/SigalProtocol'
 import { kdf, encrypt, decrypt } from './encryption'
 
 class Ratchet {
@@ -38,44 +38,44 @@ export default class DoubleRatchet {
 		}
 	}
 
-	public rotateSendingRatchet(chainKey: string) {
+	private rotateSendingRatchet(chainKey: string) {
 		this.sendingRatchet = new Ratchet(this.rootRatchet.next(chainKey).chainKey)
 	}
 
-	public rotateReceivingRatchet(chainKey: string) {
+	private rotateReceivingRatchet(chainKey: string) {
 		this.receivingRatchet = new Ratchet(this.rootRatchet.next(chainKey).chainKey)
 	}
 
-	public send(plaintext: string) {
+	public send(toEncrypt: any): EncryptedMessage {
 		const { chainKey, messageKey } = this.sendingRatchet.next()
 		this.rotateSendingRatchet(chainKey)
-		const ciphertext = encrypt(plaintext, messageKey)
+		const ciphertext = encrypt(toEncrypt, messageKey)
 		this.messageCounter++
 		this.latestMessageDate = new Date()
 		return {
 			header: {
 				counter: this.messageCounter,
-				date: this.latestMessageDate,
+				timestamp: this.latestMessageDate,
 			},
 			ciphertext,
 		}
 	}
 
-	public receive(message: EncryptedMessage): DecryptedMessage {
+	public receive(message: EncryptedMessage): any {
 		this.validataHeader(message.header)
 		const { chainKey, messageKey } = this.receivingRatchet.next()
 		this.rotateReceivingRatchet(chainKey)
-		const plaintext = decrypt(message.ciphertext, messageKey)
+		const decrypted = decrypt(message.ciphertext, messageKey)
 		this.messageCounter++
-		return { plaintext, ciphertext: message.ciphertext }
+		return decrypted
 	}
 
-	private validataHeader(header: MessageHeader) {
+	private validataHeader(header: { counter: number; timestamp: Date }) {
 		if (header.counter > this.messageCounter) {
 			throw Error(`Encryption out-of-sync. Message received out of order. Revceived message ${header.counter} when most resent was ${this.messageCounter}`)
 		}
-		if (header.date > this.latestMessageDate) {
-			throw Error(`Encryption out-of-sync. Message received out of order. Revceived message at ${header.date} when most resent was ${this.latestMessageDate}`)
+		if (header.timestamp > this.latestMessageDate) {
+			throw Error(`Encryption out-of-sync. Message received out of order. Revceived message at ${header.timestamp} when most resent was ${this.latestMessageDate}`)
 		}
 	}
 }
