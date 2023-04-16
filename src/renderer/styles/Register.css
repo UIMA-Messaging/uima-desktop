@@ -8,6 +8,7 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	gap: 2em;
+	color: #fff;
 }
 
 .registration-wrapper h1 {
@@ -28,12 +29,25 @@
 }
 
 .registration-form input[type='text'],
-.registration-form input[type='password'] {
+.registration-form input[type='password'],
+.registration-form input[type='submit'] {
 	margin-bottom: 15px;
+	border: unset;
+	border-radius: 5px;
+	background-color: white;
+	padding: 5px;
+	min-width: 100px;
+	color: black;
+	padding: 10px 15px;
+	font-family: inherit;
+	font-size: 100%;
 }
 
 .registration-form input[type='submit'] {
 	margin-top: 15px;
+	cursor: pointer;
+	font-weight: bold;
+	transition: 0.2s;
 }
 
 .registration-error,
@@ -46,4 +60,19 @@
 	font-size: 80%;
 	margin: 0;
 	margin-bottom: 7px;
+}
+
+input:focus {
+	border: unset;
+	outline: unset;
+}
+
+input[type='submit']:hover,
+input[type='button']:hover {
+	background-color: inherit;
+	color: inherit;
+}
+
+input:focus::-webkit-input-placeholder {
+	color: transparent;
 }

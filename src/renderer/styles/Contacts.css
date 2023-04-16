@@ -1,0 +1,18 @@
+.contact-container {
+  width: 50%;
+}
+
+
+@media screen and (max-width: 600px) {
+  .contact-container {
+    width: 90%;
+  }
+}
+
+.search-someone-prompt {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
