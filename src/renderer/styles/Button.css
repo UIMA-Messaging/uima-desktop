@@ -1,5 +1,4 @@
 .button-container {
-  color: var(--primary-color);
   border-radius: var(--default-round);
   background-color: var(--input-color);
   color: var(--button-color);
