@@ -1,0 +1,7 @@
+.app-container {
+  background-color: var(--primary-color);
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 50px auto;
+  height: 100%;
+}

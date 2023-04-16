@@ -1,0 +1,35 @@
+.sidebar {
+  background-color: var(--secondary-color);
+
+  width: 55px;
+  height: 100vh;
+  padding: 5px;
+  z-index: 1;
+  overflow: scroll;
+}
+
+.sidebar > * {
+  margin: 5px auto;
+}
+
+.sidebar-item {
+  background-color: var(--primary-color);
+
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  transition: 0.2s;
+}
+
+.sidebar-item:hover {
+  border-radius: 25%;
+  cursor: pointer;
+}
+
+.sidebar-item-separator {
+  background-color: var(--primary-color);
+
+  width: 75%;
+  height: 2.5px;
+  border-radius: 3px;
+}
