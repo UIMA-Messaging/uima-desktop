@@ -1,0 +1,77 @@
+.registration-wrapper {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	width: 300px;
+	height: fit-content;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	gap: 2em;
+	color: #fff;
+}
+
+.registration-wrapper h1 {
+	margin-top: unset;
+}
+
+.registration-note {
+	padding: 15px 20px;
+	border-radius: 5px;
+	background-color: #222222;
+	font-size: 90%;
+}
+
+.registration-form {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.registration-form input[type='text'],
+.registration-form input[type='password'],
+.registration-form input[type='submit'] {
+	margin-bottom: 15px;
+	border: unset;
+	border-radius: 5px;
+	background-color: white;
+	min-width: 100px;
+	color: black;
+	padding: 10px 15px;
+	font-family: inherit;
+	font-size: 80%;
+}
+
+.registration-form input[type='submit'] {
+	margin-top: 15px;
+	cursor: pointer;
+	font-weight: 800;
+	transition: 0.2s;
+}
+
+.registration-error,
+.validation-error {
+	color: #e51b1b;
+	font-weight: bold;
+}
+
+.validation-error {
+	font-size: 80%;
+	margin: 0;
+	margin-bottom: 7px;
+}
+
+input:focus {
+	border: unset;
+	outline: unset;
+}
+
+input[type='submit']:hover,
+input[type='button']:hover {
+	background-color: inherit;
+	color: inherit;
+}
+
+input:focus::-webkit-input-placeholder {
+	color: transparent;
+}
