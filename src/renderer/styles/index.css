@@ -1,38 +1,43 @@
 :root {
-  --primary-color: #ffffff;
-  --secondary-color: #f1f1f0;
-  --primary-font: #929aa7;
-  --highlight: #f4f4f4;
-  --input-color: #f1f1f0;
-  --button-color: #ffffff;
-  --secondary-input-color: #eeeeee;
+	--primary-color: #ffffff;
+	--secondary-color: #f1f1f0;
+	--primary-font: #626262;
+	--highlight: #f4f4f4;
+	--input-color: #f1f1f0;
+	--button-color: #ffffff;
+	--secondary-input-color: #eeeeee;
 
-  --primary-color: #0b0b0b;
-  --secondary-color: #000000;
-  --primary-font: #ffffff;
-  --highlight: #7676761a;
-  --input-color: #1a1a1a;
-  --button-color: #ffffff;
-  --secondary-input-color: #1d1d1d;
+	--primary-color: #0b0b0b;
+	--secondary-color: #000000;
+	--primary-font: #ffffff;
+	--highlight: #7676761a;
+	--input-color: #1a1a1a;
+	--button-color: #ffffff;
+	--secondary-input-color: #1d1d1d;
 
-  --default-round: 5px;
+	--default-round: 5px;
 }
 
 body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  color: var(--primary-font);
-  overflow: hidden;
+	margin: 0;
+	font-family: 'Poppins', sans-serif;
+	color: var(--primary-font);
+	overflow: hidden;
+}
+
+::selection {
+	background: rgb(58, 41, 126);
+  color: white;
 }
 
 * {
-  box-sizing: border-box;
-  user-select: none;
-  /* transition: 0.2s */
+	box-sizing: border-box;
+	user-select: none;
+	/* transition: 0.2s */
 }
 
 b {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 ::-webkit-scrollbar {
