@@ -4,9 +4,10 @@ import Page from '../components/Page'
 import Sidebar from '../components/Sidebar'
 import Input from '../components/Input'
 import ContactCard from '../components/ContactCard'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export default () => {
+	const navigatation = useNavigate()
 	const location = useLocation()
 
 	return (
@@ -37,7 +38,7 @@ export default () => {
 						</ContactCard>
 					</div>
 					<span style={{ marginTop: '50px', display: 'flex', gap: '10px' }}>
-						<Button label="Cancel" />
+						<Button label="Cancel" onClick={() => navigatation('/loggedIn', { state: { id: location.state?.id } })} />
 						<Button label="Create" type="green" />
 					</span>
 				</div>

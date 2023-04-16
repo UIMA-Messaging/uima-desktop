@@ -3,9 +3,17 @@ import ChatBubble from '../components/ChatBubble'
 import Input from '../components/Input'
 import Sidebar from '../components/Sidebar'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Message } from 'react-hook-form'
 
 export default () => {
+	const [messages, setMessages] = useState<Message[]>([])
+	const bottom = useRef(null)
 	const navigation = useNavigate()
+
+	useEffect(() => {
+		bottom.current?.scrollIntoView({ behavior: 'smooth' })
+	}, [messages])
 
 	return (
 		<div className="app-container">
@@ -21,7 +29,7 @@ export default () => {
 						<span>active 5 minutes ago</span>
 						<span>/</span>
 						<span onClick={() => navigation('/group', { state: { id: '254625462456' } })}>
-							<u>edit</u>
+							<u style={{ cursor: 'pointer' }}>edit</u>
 						</span>
 					</div>
 				</div>
@@ -40,6 +48,7 @@ export default () => {
 					<ChatBubble text="This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. " time="14:52" author="Username2" />
 					<ChatBubble text="This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. " time="14:52" author="Username2" />
 					<ChatBubble text="This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. This is a message. " time="14:52" author="Username2" />
+					<div ref={bottom} />
 				</div>
 				<div className="chat-inputs">
 					<Input placeholder="Say something to Group chat 1" />

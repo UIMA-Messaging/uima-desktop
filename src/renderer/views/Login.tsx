@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Credentials } from '../../common/types'
 import '../styles/Register.css'
+import { useForm } from 'react-hook-form'
 import useAuth from '../hooks/use-auth'
 
 export default () => {
