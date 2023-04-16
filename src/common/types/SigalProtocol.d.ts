@@ -36,3 +36,17 @@ export interface PostKeyBundle {
 	publicIdentityKey: string
 	publicEphemeralKey: string
 }
+
+export interface DoubleRatchetState {
+	rootRatchet: {
+		state: string
+	}
+	messageCounter: number
+	latestMessageDate: Date
+	sendingRatchet: {
+		state: string
+	}
+	receivingRatchet: {
+		state: string
+	}
+}

@@ -1,13 +1,14 @@
+import { DoubleRatchetState, X3DHKeyPairs } from '../../common/types/SigalProtocol'
 import { appData } from '..'
 import DoubleRatchet from '../security/double-ratchet'
 import X3DH from '../security/x3dh'
 
 export async function getX3DH(): Promise<X3DH> {
-	const instance = await appData.get<X3DH>('encryption.x3dh')
-	if (!instance) {
+	const keys = await appData.get<X3DHKeyPairs>('encryption.x3dh')
+	if (!keys) {
 		throw Error('No X3DH instance was persisted locally.')
 	}
-	return instance
+	return X3DH.fromState(keys)
 }
 
 export async function setX3DH(x3dh: X3DH) {
@@ -15,11 +16,11 @@ export async function setX3DH(x3dh: X3DH) {
 }
 
 export async function getDoubleRatchet(userId: string) {
-	const instance = await appData.get<DoubleRatchet>(`encryption.dr.${userId}`)
-	if (!instance) {
+	const state = await appData.get<DoubleRatchetState>(`encryption.dr.${userId}`)
+	if (!state) {
 		throw Error(`No double ratchet found was persisted for user ${userId}`)
 	}
-	return instance
+	return DoubleRatchet.fromState(state)
 }
 
 export async function setDoubleRatchet(userId: string, ratchet: DoubleRatchet) {
