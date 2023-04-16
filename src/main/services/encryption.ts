@@ -17,7 +17,7 @@ export default class Encryption {
 
 	public async establishExchange(keyBundle: KeyBundle): Promise<PostKeyBundle> {
 		if (this.x3dh) {
-			throw Error('Cannot decrypt when no X3DH is set.')
+			throw Error('Cannot perform exchange when no X3DH is set.')
 		}
 		const { sharedSecret, postKeyBundle } = this.x3dh.exchange(keyBundle)
 		await setDoubleRatchet(keyBundle.userId, DoubleRatchet.init(sharedSecret, true))
@@ -26,7 +26,7 @@ export default class Encryption {
 
 	public async establishedPostExchange(postKeyBundle: PostKeyBundle) {
 		if (this.x3dh) {
-			throw Error('Cannot decrypt when no X3DH is set.')
+			throw Error('Cannot perform post exchange when no X3DH is set.')
 		}
 		const { sharedSecret } = this.x3dh.postExchange(postKeyBundle)
 		await setDoubleRatchet(postKeyBundle.userId, DoubleRatchet.init(sharedSecret, false))
@@ -34,7 +34,7 @@ export default class Encryption {
 
 	public async encrypt(message: Message): Promise<NetworkMessage> {
 		if (this.x3dh) {
-			throw Error('Cannot decrypt when no X3DH is set.')
+			throw Error('Cannot encrypt when no X3DH is set.')
 		}
 		const doubleRatchet = await getDoubleRatchet(message.receiver)
 		const encrypted = doubleRatchet.send(message)
