@@ -24,8 +24,8 @@ export default class Authentification extends EventEmitter {
 		// const registeredUser = await register(basicUser)
 		const registeredUser: RegisteredUser = {
 			id: v4(),
-			displayName: `${registration.username}#0001`,
-			username: registration.username,
+			displayName: registration.username,
+			username: `${registration.username}#0001`,
 			image: null,
 			ephemeralPassword: v4(),
 			joinedAt: new Date(),

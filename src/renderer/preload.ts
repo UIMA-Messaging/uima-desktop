@@ -1,5 +1,5 @@
 import { channels } from '../common/constants'
-import { Credentials, Registration, Message, Channel } from '../common/types'
+import { Credentials, Registration, Message } from '../common/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
