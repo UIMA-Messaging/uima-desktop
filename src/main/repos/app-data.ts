@@ -32,7 +32,7 @@ export default class AppData {
 		this.key = createHash('SHA256').update(key).digest('hex')
 	}
 
-	public invalidateEncryptionKey() {
+	public invalidate() {
 		delete this.key
 	}
 
