@@ -1,0 +1,36 @@
+.chat-bubble-container {
+  width: 100%;
+  display: flex;
+  font-size: 75%;
+  gap: 10px;
+  letter-spacing: 0.2px;
+  padding: 5px 25px;
+  transition: 0.2s;
+}
+
+.chat-bubble-container:hover {
+  background-color: var(--highlight);
+}
+
+.message-time {
+  width: 30px;
+  min-width: 30px;
+  text-align: end;
+}
+
+.message-author {
+  font-weight: bold;
+  width: fit-content;
+  transition: 0.2s;
+}
+
+.message-author:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.message-text {
+  user-select: text;
+  font-weight: 500;
+  cursor: default;
+}
