@@ -1,0 +1,15 @@
+.group-container {
+  width: 50%;
+}
+
+@media screen and (max-width: 600px) {
+  .group-container {
+    width: 90%;
+  }
+}
+
+.group-contact-list {
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
