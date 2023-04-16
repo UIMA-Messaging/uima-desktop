@@ -1,8 +1,14 @@
 import { createECDH, createHash } from 'crypto'
 import { v4 as uuid } from 'uuid'
 import { ECDH } from 'crypto'
-import { OutstandingExchangeRecord, KeyPair, X3DHKeys, KeyBundle, ExchangeResult, PostKeyBundle } from '../../common/types/SigalProtocol'
+import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
 import { kdf } from './encryption'
+
+interface OutstandingExchangeRecord {
+	userId: string
+	creationDate: Date
+	privateOneTimePreKey: string
+}
 
 export default class X3DH {
 	private ecdh: ECDH
@@ -11,7 +17,7 @@ export default class X3DH {
 	private oneTimePreKeys: KeyPair[]
 	private outstandingExchanges: OutstandingExchangeRecord[]
 
-	constructor(keys: X3DHKeys) {
+	constructor(keys: X3DHKeyPairs) {
 		this.ecdh = createECDH('secp256k1')
 		this.identityKeys = keys.identityKeys
 		this.signedPreKeys = keys.signedPreKeys
@@ -42,7 +48,7 @@ export default class X3DH {
 		return this.ecdh.computeSecret(remotePublic, 'hex')
 	}
 
-	public exchange(keyBundle: KeyBundle): ExchangeResult {
+	public exchange(keyBundle: KeyBundle): { sharedSecret: string; postKeyBundle: PostKeyBundle } {
 		// TODO verify signature beforehand
 		const ephemeralKeys = X3DH.generateKeyPairs()
 		// DH1 = DH(IK, SPK)
@@ -60,14 +66,14 @@ export default class X3DH {
 		return {
 			sharedSecret,
 			postKeyBundle: {
-				id: keyBundle.id,
+				userId: keyBundle.userId,
 				publicIdentityKey: this.identityKeys.publicKey,
 				publicEphemeralKey: ephemeralKeys.publicKey,
 			},
 		}
 	}
 
-	public postExchange(postKeyBundle: PostKeyBundle) {
+	public postExchange(postKeyBundle: PostKeyBundle): { sharedSecret: string } {
 		// DH1 = DH(SPK, IK)
 		const DH1 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicIdentityKey)
 		// DH2 = DH(IK, EK)
@@ -75,7 +81,7 @@ export default class X3DH {
 		// DH3 = DH(SPK, EK)
 		const DH3 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicEphemeralKey)
 		// DH4 = DH(OPK, EK)
-		const bundle = this.getFromOutstandingExchanges(postKeyBundle.id)
+		const bundle = this.getFromOutstandingExchanges(postKeyBundle.userId)
 		const DH4 = this.diffieHellman(bundle.privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
 		// Combine computed secrets of exchanges
 		const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
@@ -85,7 +91,7 @@ export default class X3DH {
 	}
 
 	private getFromOutstandingExchanges(id: string): OutstandingExchangeRecord {
-		let i = this.outstandingExchanges.findIndex((exchange) => exchange.id === id)
+		let i = this.outstandingExchanges.findIndex((exchange) => exchange.userId === id)
 		return i !== -1 ? this.outstandingExchanges.splice(i, 1)[0] : null
 	}
 
@@ -93,25 +99,16 @@ export default class X3DH {
 	public generateKeyBundle(): KeyBundle {
 		const oneTimePreKey = this.oneTimePreKeys.shift()
 		const bundleRecord: OutstandingExchangeRecord = {
-			id: uuid(),
+			userId: uuid(),
 			creationDate: new Date(),
 			privateOneTimePreKey: oneTimePreKey.privateKey,
 		}
 		this.outstandingExchanges.push(bundleRecord)
 		return {
-			id: bundleRecord.id,
+			userId: bundleRecord.userId,
 			publicSignedPreKey: this.signedPreKeys.publicKey,
 			publicIdentityKey: this.identityKeys.publicKey,
 			publicOneTimePreKey: oneTimePreKey.publicKey,
 		}
-	}
-
-	static secretToReadable(sharedSecret: string) {
-		return createHash('sha256')
-			.update(sharedSecret)
-			.digest('hex')
-			.match(/.{1,4}/g)
-			.map((h) => parseInt(h, 16))
-			.map((n) => String(n).padStart(5, '0'))
 	}
 }
