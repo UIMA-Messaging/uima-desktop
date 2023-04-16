@@ -25,13 +25,21 @@ export default class X3DH {
 		this.outstandingExchanges = keys.outstandingExchanges
 	}
 
-	static init(numOneTimePreKeys = 200) {
+	public static init(numOneTimePreKeys = 200) {
 		return new X3DH({
 			identityKeys: X3DH.generateKeyPairs(),
 			signedPreKeys: X3DH.generateKeyPairs(),
 			oneTimePreKeys: new Array(numOneTimePreKeys).fill(null).map(X3DH.generateKeyPairs),
 			outstandingExchanges: [],
 		})
+	}
+
+	public static fromState(keys: X3DHKeyPairs) {
+		return new X3DH(keys)
+	}
+
+	public getState(): X3DHKeyPairs {
+		return JSON.parse(JSON.stringify(this)) as X3DHKeyPairs
 	}
 
 	public static generateKeyPairs(): KeyPair {
@@ -49,7 +57,6 @@ export default class X3DH {
 	}
 
 	public exchange(keyBundle: KeyBundle): { sharedSecret: string; postKeyBundle: PostKeyBundle } {
-		// TODO verify signature beforehand
 		const ephemeralKeys = X3DH.generateKeyPairs()
 		// DH1 = DH(IK, SPK)
 		const DH1 = this.diffieHellman(this.identityKeys.privateKey, keyBundle.publicSignedPreKey)
