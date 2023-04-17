@@ -7,13 +7,13 @@
 	--button-color: #ffffff;
 	--secondary-input-color: #eeeeee;
 
-	--primary-color: #0b0b0b;
+	--primary-color: #1b1b1b;
 	--secondary-color: #000000;
 	--primary-font: #ffffff;
 	--highlight: #7676761a;
-	--input-color: #1a1a1a;
+	--input-color: #3b3b3b;
 	--button-color: #ffffff;
-	--secondary-input-color: #1d1d1d;
+	--secondary-input-color: #3b3b3b;
 
 	--default-round: 5px;
 }
@@ -27,7 +27,7 @@ body {
 
 ::selection {
 	background: rgb(58, 41, 126);
-  color: white;
+	color: white;
 }
 
 * {
