@@ -3,7 +3,7 @@ import { Credentials, Registration, Message } from '../common/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
-	getAppData: <T>(key: string) => <T>ipcRenderer.invoke(channels.APP_DATA.GET, key),
+	getAppData: (key: string) => ipcRenderer.invoke(channels.APP_DATA.GET, key),
 	setAppData: (key: string, value: any) => ipcRenderer.send(channels.APP_DATA.SET, key, value),
 	onAppDataChange: (callback: (key: string, value: any) => void) => ipcRenderer.on(channels.APP_DATA.ON_CHANGE, (_, key, value) => callback(key, value)),
 
@@ -21,4 +21,6 @@ contextBridge.exposeInMainWorld('electron', {
 
 	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.CHATTING.SEND_MESSAGE, recipientJid, message),
 	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.CHATTING.RECEIVE_MESSAGE, (_, message) => callback(message)),
+
+	searchUsers: (name: string) => ipcRenderer.invoke(channels.SEARCH.USERS, name),
 })

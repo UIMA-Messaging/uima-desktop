@@ -4,7 +4,7 @@ export default function useAppData<T>(key: string, initial?: any): [T | null, (s
 	const [state, setState] = useState<T>(initial)
 
 	useEffect(() => {
-		window.electron.getAppData<string>(key).then((v) => {
+		window.electron.getAppData(key).then((v) => {
 			try {
 				setState(JSON.parse(v) as T)
 			} catch {
