@@ -1,9 +1,10 @@
 import EventEmitter from 'events'
-import { BasicUser, Credentials, RegisteredUser, Registration } from '../../common/types'
+import { BasicUser, Credentials, Registration } from '../../common/types'
 import { register } from '../clients/registration-client'
 import AppData from '../repos/app-data'
 import { createHash, randomBytes } from 'crypto'
 import X3DH from '../security/x3dh'
+import { registerExchangeKey } from '../clients/identity-client'
 
 export default class Authentification extends EventEmitter {
 	private appData: AppData
@@ -26,23 +27,14 @@ export default class Authentification extends EventEmitter {
 		}
 		const registeredUser = await register(basicUser)
 
-		// const registeredUser: RegisteredUser = {
-		// 	id: v4(),
-		// 	displayName: registration.username,
-		// 	username: `${registration.username}#0001`,
-		// 	image: null,
-		// 	ephemeralPassword: v4(),
-		// 	joinedAt: new Date(),
-		// }
-
 		const credentials: Credentials = {
 			username: registration.username,
 			password: registration.password,
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
 
-		const x3dh = X3DH.init(200)
-		await 
+		const x3dh = X3DH.init(registeredUser.id, 200)
+		await registerExchangeKey(x3dh.getExchangeKeys())
 
 		this.emit('onRegister', registeredUser, credentials, x3dh)
 		return await this.login(credentials)
@@ -57,13 +49,11 @@ export default class Authentification extends EventEmitter {
 			throw Error('No challenge present. Cannot validated user credentials.')
 		}
 
-		const isValid = await this.validateChallenge(credentials.password + credentials.username)
+		this.authenticated = await this.validateChallenge(credentials.password + credentials.username)
 
-		if (!isValid) {
+		if (!this.authenticated) {
 			throw Error('Username or password incorrect.')
 		}
-
-		this.authenticated = true
 
 		this.emit('onLogin', credentials)
 
