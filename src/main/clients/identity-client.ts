@@ -4,11 +4,11 @@ import https from 'https'
 import isDev from 'electron-is-dev'
 import { AxiosError } from 'axios'
 
-const baseContact = 'https://localhost:44354/contact/'
+const baseUrl = 'https://localhost:44354/contact/'
 
 export async function contact(username: string): Promise<User> {
 	try {
-		const res = await axios.get(baseContact + encodeURIComponent(username), headers())
+		const res = await axios.get(baseUrl + encodeURIComponent(username), headers())
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -27,6 +27,8 @@ export async function contact(username: string): Promise<User> {
 		}
 	}
 }
+
+export async function registerKeys() {}
 
 function headers() {
 	return isDev ? { httpsAgent: new https.Agent({ rejectUnauthorized: false }) } : null
