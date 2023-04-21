@@ -29,7 +29,7 @@ export async function searchUserByName(username: string, count: number = 10, off
 	}
 }
 
-const searchIdBaseUrl = 'https://localhost:44317/users/id/'
+const searchIdBaseUrl = 'https://localhost:44317/users/username/'
 
 export async function searchUserById(id: string): Promise<User> {
 	try {

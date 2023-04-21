@@ -7,13 +7,16 @@ export interface X3DHKeyPairs {
 	identityKeys: KeyPair
 	signedPreKeys: KeyPair
 	oneTimePreKeys: KeyPair[]
-	outstandingExchanges: OutstandingExchangeRecord[]
+	signature: string
+	owner: string
 }
 
-export interface OutstandingExchangeRecord {
+export interface ExchangeKeys {
 	userId: string
-	creationDate: Date
-	privateOneTimePreKey: string
+	identityKey: string
+	signedPreKey: string
+	oneTimePreKeys: string[]
+	signature: string
 }
 
 export interface NetworkMessage {
@@ -39,6 +42,7 @@ export interface KeyBundle {
 
 export interface PostKeyBundle {
 	userId: string
+	publicOneTimePreKey: string
 	publicIdentityKey: string
 	publicEphemeralKey: string
 }

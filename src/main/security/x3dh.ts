@@ -1,31 +1,33 @@
 import { createECDH, createHash } from 'crypto'
-import { v4 as uuid } from 'uuid'
 import { ECDH } from 'crypto'
-import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle, OutstandingExchangeRecord } from '../../common/types/SigalProtocol'
+import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
 import { kdf } from './encryption'
-
+import { ExchangeKeys } from '../../common/types/SigalProtocol'
 
 export default class X3DH {
 	private ecdh: ECDH
 	private identityKeys: KeyPair
 	private signedPreKeys: KeyPair
 	private oneTimePreKeys: KeyPair[]
-	private outstandingExchanges: OutstandingExchangeRecord[]
+	private signature: string
+	private owner: string
 
 	constructor(keys: X3DHKeyPairs) {
-		this.ecdh = createECDH('secp256k1')
+		this.ecdh = createECDH('prime256v1')
 		this.identityKeys = keys.identityKeys
 		this.signedPreKeys = keys.signedPreKeys
 		this.oneTimePreKeys = keys.oneTimePreKeys
-		this.outstandingExchanges = keys.outstandingExchanges
+		this.signature = keys.signature
+		this.owner = keys.owner
 	}
 
-	public static init(numOneTimePreKeys = 200) {
+	public static init(owner: string, numOneTimePreKeys = 200) {
 		return new X3DH({
 			identityKeys: X3DH.generateKeyPairs(),
 			signedPreKeys: X3DH.generateKeyPairs(),
 			oneTimePreKeys: new Array(numOneTimePreKeys).fill(null).map(X3DH.generateKeyPairs),
-			outstandingExchanges: [],
+			signature: '',
+			owner: owner,
 		})
 	}
 
@@ -38,7 +40,7 @@ export default class X3DH {
 	}
 
 	public static generateKeyPairs(): KeyPair {
-		const ecdh = createECDH('secp256k1')
+		const ecdh = createECDH('prime256v1')
 		ecdh.generateKeys()
 		return {
 			privateKey: ecdh.getPrivateKey('hex'),
@@ -68,7 +70,8 @@ export default class X3DH {
 		return {
 			sharedSecret,
 			postKeyBundle: {
-				userId: keyBundle.userId,
+				userId: this.owner,
+				publicOneTimePreKey: keyBundle.publicOneTimePreKey,
 				publicIdentityKey: this.identityKeys.publicKey,
 				publicEphemeralKey: ephemeralKeys.publicKey,
 			},
@@ -83,8 +86,8 @@ export default class X3DH {
 		// DH3 = DH(SPK, EK)
 		const DH3 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicEphemeralKey)
 		// DH4 = DH(OPK, EK)
-		const bundle = this.getFromOutstandingExchanges(postKeyBundle.userId)
-		const DH4 = this.diffieHellman(bundle.privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
+		const privateOneTimePreKey = this.getOPKFromPublic(postKeyBundle.publicOneTimePreKey)
+		const DH4 = this.diffieHellman(privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
 		// Combine computed secrets of exchanges
 		const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
 		// Compute the secret of the shared secrets
@@ -92,25 +95,18 @@ export default class X3DH {
 		return { sharedSecret }
 	}
 
-	private getFromOutstandingExchanges(id: string): OutstandingExchangeRecord {
-		const i = this.outstandingExchanges.findIndex((exchange) => exchange.userId === id)
-		return i !== -1 ? this.outstandingExchanges.splice(i, 1)[0] : null
+	private getOPKFromPublic(publicKey: string): string {
+		const i = this.oneTimePreKeys.findIndex((key) => key.publicKey === publicKey)
+		return i !== -1 ? this.oneTimePreKeys.splice(i, 1)[0].publicKey : null
 	}
 
-	// Called when user wants to establish share secret with remote party
-	public generateKeyBundle(): KeyBundle {
-		const oneTimePreKey = this.oneTimePreKeys.shift()
-		const bundleRecord: OutstandingExchangeRecord = {
-			userId: uuid(),
-			creationDate: new Date(),
-			privateOneTimePreKey: oneTimePreKey.privateKey,
-		}
-		this.outstandingExchanges.push(bundleRecord)
+	public getExchangeKeys(): ExchangeKeys {
 		return {
-			userId: bundleRecord.userId,
-			publicSignedPreKey: this.signedPreKeys.publicKey,
-			publicIdentityKey: this.identityKeys.publicKey,
-			publicOneTimePreKey: oneTimePreKey.publicKey,
+			userId: this.owner,
+			identityKey: this.identityKeys.publicKey,
+			signedPreKey: this.signedPreKeys.publicKey,
+			oneTimePreKeys: this.oneTimePreKeys.map((key) => key.publicKey),
+			signature: this.signature,
 		}
 	}
 }

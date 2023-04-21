@@ -4,7 +4,7 @@
 	font-size: 75%;
 	gap: 10px;
 	letter-spacing: 0.2px;
-	padding: 5px 25px;
+	padding: 7px 25px;
 	transition: 0.2s;
 	animation: slide 0.2s ease-out forwards;
 }
