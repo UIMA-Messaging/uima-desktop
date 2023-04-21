@@ -2,8 +2,8 @@ import EventEmitter from 'events'
 import { BasicUser, Credentials, RegisteredUser, Registration } from '../../common/types'
 import { register } from '../clients/registration-client'
 import AppData from '../repos/app-data'
-import { v4 } from 'uuid'
 import { createHash, randomBytes } from 'crypto'
+import X3DH from '../security/x3dh'
 
 export default class Authentification extends EventEmitter {
 	private appData: AppData
@@ -19,19 +19,32 @@ export default class Authentification extends EventEmitter {
 		if (await this.isChallengePresent()) {
 			throw Error('A user has already been registered to this device.')
 		}
-		const credentials: Credentials = { username: registration.username, password: registration.password }
-		// const basicUser: BasicUser = { displayName: registration.username, image: registration.image }
-		// const registeredUser = await register(basicUser)
-		const registeredUser: RegisteredUser = {
-			id: v4(),
+
+		const basicUser: BasicUser = {
 			displayName: registration.username,
-			username: `${registration.username}#0001`,
-			image: null,
-			ephemeralPassword: v4(),
-			joinedAt: new Date(),
+			image: registration.image,
+		}
+		const registeredUser = await register(basicUser)
+
+		// const registeredUser: RegisteredUser = {
+		// 	id: v4(),
+		// 	displayName: registration.username,
+		// 	username: `${registration.username}#0001`,
+		// 	image: null,
+		// 	ephemeralPassword: v4(),
+		// 	joinedAt: new Date(),
+		// }
+
+		const credentials: Credentials = {
+			username: registration.username,
+			password: registration.password,
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
-		this.emit('onRegister', registeredUser, credentials)
+
+		const x3dh = X3DH.init(200)
+		await 
+
+		this.emit('onRegister', registeredUser, credentials, x3dh)
 		return await this.login(credentials)
 	}
 

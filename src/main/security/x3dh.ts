@@ -1,14 +1,9 @@
 import { createECDH, createHash } from 'crypto'
 import { v4 as uuid } from 'uuid'
 import { ECDH } from 'crypto'
-import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
+import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle, OutstandingExchangeRecord } from '../../common/types/SigalProtocol'
 import { kdf } from './encryption'
 
-interface OutstandingExchangeRecord {
-	userId: string
-	creationDate: Date
-	privateOneTimePreKey: string
-}
 
 export default class X3DH {
 	private ecdh: ECDH
@@ -98,11 +93,11 @@ export default class X3DH {
 	}
 
 	private getFromOutstandingExchanges(id: string): OutstandingExchangeRecord {
-		let i = this.outstandingExchanges.findIndex((exchange) => exchange.userId === id)
+		const i = this.outstandingExchanges.findIndex((exchange) => exchange.userId === id)
 		return i !== -1 ? this.outstandingExchanges.splice(i, 1)[0] : null
 	}
 
-	// Called when user wants to establish share secret with rmeote party
+	// Called when user wants to establish share secret with remote party
 	public generateKeyBundle(): KeyBundle {
 		const oneTimePreKey = this.oneTimePreKeys.shift()
 		const bundleRecord: OutstandingExchangeRecord = {

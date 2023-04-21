@@ -10,6 +10,12 @@ export interface X3DHKeyPairs {
 	outstandingExchanges: OutstandingExchangeRecord[]
 }
 
+export interface OutstandingExchangeRecord {
+	userId: string
+	creationDate: Date
+	privateOneTimePreKey: string
+}
+
 export interface NetworkMessage {
 	sender: string
 	receiver: string
