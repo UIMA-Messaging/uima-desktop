@@ -8,11 +8,9 @@ export interface X3DHKeyPairs {
 	signedPreKeys: KeyPair
 	oneTimePreKeys: KeyPair[]
 	signature: string
-	owner: string
 }
 
 export interface ExchangeKeys {
-	userId: string
 	identityKey: string
 	signedPreKey: string
 	oneTimePreKeys: string[]
@@ -34,14 +32,12 @@ export interface EncryptedMessage {
 }
 
 export interface KeyBundle {
-	userId: string
 	publicSignedPreKey: string
 	publicIdentityKey: string
 	publicOneTimePreKey: string
 }
 
 export interface PostKeyBundle {
-	userId: string
 	publicOneTimePreKey: string
 	publicIdentityKey: string
 	publicEphemeralKey: string

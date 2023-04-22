@@ -10,7 +10,6 @@ export default class X3DH {
 	private signedPreKeys: KeyPair
 	private oneTimePreKeys: KeyPair[]
 	private signature: string
-	private owner: string
 
 	constructor(keys: X3DHKeyPairs) {
 		this.ecdh = createECDH('prime256v1')
@@ -18,16 +17,14 @@ export default class X3DH {
 		this.signedPreKeys = keys.signedPreKeys
 		this.oneTimePreKeys = keys.oneTimePreKeys
 		this.signature = keys.signature
-		this.owner = keys.owner
 	}
 
-	public static init(owner: string, numOneTimePreKeys = 200) {
+	public static init(numOneTimePreKeys = 200) {
 		return new X3DH({
 			identityKeys: X3DH.generateKeyPairs(),
 			signedPreKeys: X3DH.generateKeyPairs(),
 			oneTimePreKeys: new Array(numOneTimePreKeys).fill(null).map(X3DH.generateKeyPairs),
 			signature: '',
-			owner: owner,
 		})
 	}
 
@@ -70,7 +67,6 @@ export default class X3DH {
 		return {
 			sharedSecret,
 			postKeyBundle: {
-				userId: this.owner,
 				publicOneTimePreKey: keyBundle.publicOneTimePreKey,
 				publicIdentityKey: this.identityKeys.publicKey,
 				publicEphemeralKey: ephemeralKeys.publicKey,
@@ -102,7 +98,6 @@ export default class X3DH {
 
 	public getExchangeKeys(): ExchangeKeys {
 		return {
-			userId: this.owner,
 			identityKey: this.identityKeys.publicKey,
 			signedPreKey: this.signedPreKeys.publicKey,
 			oneTimePreKeys: this.oneTimePreKeys.map((key) => key.publicKey),
