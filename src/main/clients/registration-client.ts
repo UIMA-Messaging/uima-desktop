@@ -9,13 +9,17 @@ const baseUnregister = 'https://localhost:44354/users/unregister/'
 
 export async function register(user: BasicUser): Promise<RegisteredUser> {
 	try {
+		console.log(JSON.stringify(user))
 		const res = await axios.post(baseRegister, user, headers())
 		return res.data
 	} catch (error) {
+		console.log(JSON.stringify(error))
 		if (error instanceof AxiosError) {
 			switch (error?.response?.status) {
-				case 400:
+				case 404:
 					throw Error(`User with the same name already exists.`)
+				case 400:
+					throw Error(`Username already taken.`)
 				case 401:
 					throw Error(`Client is not authorised to register new users.`)
 				case 500:

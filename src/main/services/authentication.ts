@@ -4,7 +4,6 @@ import { register } from '../clients/registration-client'
 import AppData from '../repos/app-data'
 import { createHash, randomBytes } from 'crypto'
 import X3DH from '../security/x3dh'
-import { registerExchangeKey } from '../clients/identity-client'
 
 export default class Authentification extends EventEmitter {
 	private appData: AppData
@@ -12,6 +11,7 @@ export default class Authentification extends EventEmitter {
 
 	constructor(appData: AppData) {
 		super()
+
 		this.appData = appData
 		this.authenticated = false
 	}
@@ -21,9 +21,11 @@ export default class Authentification extends EventEmitter {
 			throw Error('A user has already been registered to this device.')
 		}
 
+		const x3dh = X3DH.init(200)
 		const basicUser: BasicUser = {
 			displayName: registration.username,
 			image: registration.image,
+			exchangeKeys: x3dh.getExchangeKeys()
 		}
 		const registeredUser = await register(basicUser)
 
@@ -33,10 +35,8 @@ export default class Authentification extends EventEmitter {
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
 
-		const x3dh = X3DH.init(registeredUser.id, 200)
-		await registerExchangeKey(x3dh.getExchangeKeys())
-
 		this.emit('onRegister', registeredUser, credentials, x3dh)
+		
 		return await this.login(credentials)
 	}
 
