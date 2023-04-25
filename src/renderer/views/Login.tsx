@@ -19,7 +19,7 @@ export default () => {
 			</div>
 			<form className="registration-form" onSubmit={handleSubmit(login)}>
 				{errors.username?.type === 'required' && <p className="validation-error">Username is required</p>}
-				<input type="text" placeholder="Enter your username" {...register('username', { required: true })} defaultValue="greffgreff" />
+				<input type="text" placeholder="Enter your username" {...register('username', { required: true })} defaultValue="adminadmin" />
 				{errors.password?.type === 'required' && <p className="validation-error">Password is required</p>}
 				<input type="password" placeholder="Enter your password" {...register('password', { required: true })} defaultValue="adminadmin" />
 				<input type="submit" value="Login" />

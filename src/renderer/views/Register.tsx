@@ -20,7 +20,7 @@ export default () => {
 			<form className="registration-form" onSubmit={handleSubmit(registerUser)}>
 				{errors.username?.type === 'required' && <p className="validation-error">Username is required</p>}
 				{errors.username?.type === 'maxLength' && <p className="validation-error">Username must cannot be longer than 20 characters</p>}
-				<input type="text" placeholder="Enter a username" {...formRegister('username', { required: true, maxLength: 20 })} defaultValue="greffgreff" />
+				<input type="text" placeholder="Enter a username" {...formRegister('username', { required: true, maxLength: 20 })} defaultValue="adminadmin" />
 				{errors.password?.type === 'required' && <p className="validation-error">Password is required</p>}
 				{errors.password?.type === 'minLength' && <p className="validation-error">Password must be at least 10 characters long</p>}
 				<input type="password" placeholder="Enter a password" {...formRegister('password', { required: true, minLength: 10 })} defaultValue="adminadmin" />
