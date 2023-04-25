@@ -5,8 +5,8 @@ export async function createContact(contact: User) {
 	await window.electron.createContact(contact)
 }
 
-export async function deleteContactByUsername(username: string) {
-	await window.electron.deleteContactByUsername(username)
+export async function deleteContactByUsername(id: string) {
+	await window.electron.deleteContactById(id)
 }
 
 export function useContacts(): { contacts: User[]; created: User; removed: User; changed: User } {
@@ -20,7 +20,7 @@ export function useContacts(): { contacts: User[]; created: User; removed: User;
 	}, [])
 
 	window.electron.onContactChange((user) => {
-		const index = contacts.findIndex((item) => item.username === user.username)
+		const index = contacts.findIndex((item) => item.id === user.id)
 		if (index !== -1) {
 			contacts[index] = user
 		}
@@ -34,35 +34,35 @@ export function useContacts(): { contacts: User[]; created: User; removed: User;
 	})
 
 	window.electron.onContactDelete((user) => {
-		setContacts(contacts.filter((item) => item.username !== user.username))
+		setContacts(contacts.filter((item) => item.id !== user.id))
 		setRemoved(user)
 	})
 
 	return { contacts, created, removed, changed }
 }
 
-export function useContact(username: string): User {
+export function useContact(id: string): User {
 	const [contact, setContact] = useState<User>(null)
 
 	useEffect(() => {
-		window.electron.getContactByUsername(username).then((user) => {
+		window.electron.getContactById(id).then((user) => {
 			setContact(user)
 		})
 
 		window.electron.onContactChange((user) => {
-			if (username === user.username) {
+			if (id === user.id) {
 				setContact(user)
 			}
 		})
 
 		window.electron.onContactCreate((user) => {
-			if (username === user.username) {
+			if (id === user.id) {
 				setContact(user)
 			}
 		})
 
 		window.electron.onContactDelete((user) => {
-			if (username === user.username) {
+			if (id === user.id) {
 				setContact(null)
 			}
 		})

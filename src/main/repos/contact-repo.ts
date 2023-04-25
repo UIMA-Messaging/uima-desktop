@@ -11,7 +11,8 @@ export default class ContactRepo {
 		console.log('Creating `Contacts` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS Contacts (
-				username TEXT PRIMARY KEY,
+				id TEXT PRIMARY KEY,
+				username TEXT,
 				displayName TEXT,
 				image TEXT,
 				joinedAt DATETIME,
@@ -23,16 +24,17 @@ export default class ContactRepo {
 		return await connection.query<User>('SELECT * FROM Contacts')
 	}
 
-	public async getContactByUsername(username: string): Promise<User> {
-		return await connection.querySingle<User>('SELECT * FROM Contacts WHERE username = $username LIMIT 1', { username })
+	public async getContactById(id: string): Promise<User> {
+		return await connection.querySingle<User>('SELECT * FROM Contacts WHERE id = $id LIMIT 1', { id })
 	}
 
 	public async createOrUpdateContact(contact: User): Promise<void> {
 		await connection.execute(
 			`
-				INSERT INTO Contacts (username, displayName, image, joinedAt, editedAt)
-				VALUES ($username, $displayName, $image, $joinedAt, $editedAt)
-				ON CONFLICT(username) DO UPDATE SET
+				INSERT INTO Contacts (id, username, displayName, image, joinedAt, editedAt)
+				VALUES ($id, $username, $displayName, $image, $joinedAt, $editedAt)
+				ON CONFLICT(id) DO UPDATE SET
+				username = $username,
 				displayName = $displayName,
 				image = $image,
 				joinedAt = $joinedAt,
@@ -42,7 +44,7 @@ export default class ContactRepo {
 		)
 	}
 
-	public async deleteContactByUsername(username: string) {
-		await connection.execute('DELETE FROM Contacts WHERE username = $username', { username })
+	public async deleteContactById(id: string) {
+		await connection.execute('DELETE FROM Contacts WHERE id = $id', { id })
 	}
 }

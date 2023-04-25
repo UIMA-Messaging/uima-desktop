@@ -58,7 +58,7 @@ export default () => {
 					<Input placeholder="Search someone" getValue={setQuery} />
 					<div style={isContacting ? { opacity: 0.5, pointerEvents: 'none' } : null} onScroll={handleScroll}>
 						{users.map((user) => (
-							<ContactCard key={user.username} username={user.username} displayName={user.displayName}>
+							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
 								{<Button type="green" label="Add friend" onClick={async () => handleAddFriend(user)} />}
 							</ContactCard>
 						))}
