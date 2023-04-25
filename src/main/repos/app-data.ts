@@ -18,7 +18,6 @@ export default class AppData {
 		this.connection = connection
 
 		console.log('Creating `AppData` table if it does not already exist.')
-
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS AppData(
 				id TEXT PRIMARY KEY, 

@@ -5,64 +5,68 @@ export async function createContact(contact: User) {
 	await window.electron.createContact(contact)
 }
 
-export async function deleteContact(id: string) {
-	await window.electron.deleteContact(id)
+export async function deleteContactByUsername(username: string) {
+	await window.electron.deleteContactByUsername(username)
 }
 
-export function useContacts(): User[] {
-	const [users, setUsers] = useState<User[]>([])
+export function useContacts(): { contacts: User[]; created: User; removed: User; changed: User } {
+	const [contacts, setContacts] = useState<User[]>([])
+	const [created, setCreated] = useState<User>(null)
+	const [removed, setRemoved] = useState<User>(null)
+	const [changed, setChanged] = useState<User>(null)
 
 	useEffect(() => {
-		window.electron.getAllContacts().then(setUsers)
+		window.electron.getAllContacts().then(setContacts)
+	}, [])
+
+	window.electron.onContactChange((user) => {
+		const index = contacts.findIndex((item) => item.username === user.username)
+		if (index !== -1) {
+			contacts[index] = user
+		}
+		setContacts(contacts)
+		setChanged(user)
+	})
+
+	window.electron.onContactCreate((user) => {
+		setContacts([...contacts, user])
+		setCreated(user)
+	})
+
+	window.electron.onContactDelete((user) => {
+		setContacts(contacts.filter((item) => item.username !== user.username))
+		setRemoved(user)
+	})
+
+	return { contacts, created, removed, changed }
+}
+
+export function useContact(username: string): User {
+	const [contact, setContact] = useState<User>(null)
+
+	useEffect(() => {
+		window.electron.getContactByUsername(username).then((user) => {
+			setContact(user)
+		})
 
 		window.electron.onContactChange((user) => {
-			const index = users.findIndex((item) => item.id === user.id)
-			if (index !== -1) {
-				users[index] = user
+			if (username === user.username) {
+				setContact(user)
 			}
-			setUsers(users)
 		})
 
 		window.electron.onContactCreate((user) => {
-			const index = users.findIndex((item) => item.id === user.id)
-			if (index !== -1) {
-				users[index] = user
-			}
-			setUsers(users)
-		})
-
-		window.electron.onContactDelete((user) => {
-			setUsers(users.filter((item) => item.id !== user.id))
-		})
-	}, [])
-
-	return users
-}
-
-export function useContact(id: string): User {
-	const [user, setUser] = useState<User>(null)
-
-	useEffect(() => {
-		window.electron.getContactById(id).then(setUser)
-
-		window.electron.onContactChange((user) => {
-			if (id === user.id) {
-				setUser(user)
-			}
-		})
-
-		window.electron.onContactCreate((user) => {
-			if (id === user.id) {
-				setUser(user)
+			if (username === user.username) {
+				setContact(user)
 			}
 		})
 
 		window.electron.onContactDelete((user) => {
-			if (id === user.id) {
-				setUser(null)
+			if (username === user.username) {
+				setContact(null)
 			}
 		})
 	}, [])
 
-	return user
+	return contact
 }

@@ -6,27 +6,28 @@ export default class MessageRepo {
 
 	constructor(connection: SqlConnection) {
 		this.connection = connection
+
 		console.log('Creating `Messages` table if it does not already exist.')
 		this.connection.execute(`
-      CREATE TABLE IF NOT EXISTS Messages (
-        id TEXT PRIMARY KEY,
-        channelId TEXT,
-        sender TEXT,
-        receiver TEXT,
-        content TEXT,
-        timestamp DATETIME,
-        FOREIGN KEY (sender) REFERENCES Users(id),
-        FOREIGN KEY (receiver) REFERENCES Users(id)
-      )`)
+			CREATE TABLE IF NOT EXISTS Messages (
+				id TEXT PRIMARY KEY,
+				channelId TEXT,
+				sender TEXT,
+				receiver TEXT,
+				content TEXT,
+				timestamp DATETIME,
+				FOREIGN KEY (sender) REFERENCES Users(id),
+				FOREIGN KEY (receiver) REFERENCES Users(id)
+			)`)
 	}
 
 	public async getMessagesFromChannel(channelId: string, limit: number = 100, offset: number = 0): Promise<Message[]> {
 		return await this.connection.query<Message>(
 			`
-        SELECT * FROM Messages 
-        WHERE ChannelId = $channelId 
-        LIMIT $limit OFFSET $offset
-      `,
+				SELECT * FROM Messages 
+				WHERE ChannelId = $channelId 
+				LIMIT $limit OFFSET $offset
+			`,
 			{ limit, offset, channelId }
 		)
 	}
@@ -34,9 +35,9 @@ export default class MessageRepo {
 	public async createMessage(message: Message): Promise<void> {
 		await this.connection.execute(
 			`
-        INSERT INTO Messages (Id, ChannelId, Sender, Receiver, Content, Timestamp)
-        VALUES ($id, $channelId, $sender, $receiver, $content, $timestamp)
-      `,
+				INSERT INTO Messages (Id, ChannelId, Sender, Receiver, Content, Timestamp)
+				VALUES ($id, $channelId, $sender, $receiver, $content, $timestamp)
+			`,
 			message
 		)
 	}

@@ -23,9 +23,9 @@ contextBridge.exposeInMainWorld('electron', {
 	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.CHATTING.RECEIVE_MESSAGE, (_, message) => callback(message)),
 
 	getAllContacts: () => ipcRenderer.invoke(channels.CONTACTS.GET_ALL),
-	getContactById: (id: string) => ipcRenderer.invoke(channels.CONTACTS.GET, id),
+	getContactByUsername: (username: string) => ipcRenderer.invoke(channels.CONTACTS.GET, username),
 	createContact: (contact: User) => ipcRenderer.send(channels.CONTACTS.CREATE, contact),
-	deleteContact: (id: string) => ipcRenderer.send(channels.CONTACTS.DELETE, id),
+	deleteContactByUsername: (username: string) => ipcRenderer.send(channels.CONTACTS.DELETE, username),
 	onContactChange: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_CHANGE, (_, contact) => callback(contact)),
 	onContactCreate: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_CREATE, (_, contact) => callback(contact)),
 	onContactDelete: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_DELETE, (_, contact) => callback(contact)),

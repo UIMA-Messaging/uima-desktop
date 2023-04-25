@@ -2,12 +2,13 @@ import axios from 'axios'
 import { User } from '../../common/types'
 import { AxiosError } from 'axios'
 import { SearchResults } from '../../common/types'
+import { ERROR } from 'sqlite3'
 
 const searchUserBaseUrl = 'https://localhost:44317/users/search/'
 
-export async function searchUserByName(username: string, count: number = 10, offset: number = 0): Promise<SearchResults<User>> {
+export async function searchUserByQuery(query: string, count: number = 10, offset: number = 0): Promise<SearchResults<User>> {
 	try {
-		const res = await axios.get(searchUserBaseUrl + username, { params: { count, offset } })
+		const res = await axios.get(searchUserBaseUrl + query, { params: { count, offset } })
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -29,9 +30,9 @@ export async function searchUserByName(username: string, count: number = 10, off
 
 const searchIdBaseUrl = 'https://localhost:44317/users/username/'
 
-export async function searchUserById(id: string): Promise<User> {
+export async function searchUserByUsername(username: string): Promise<User> {
 	try {
-		const res = await axios.get(searchIdBaseUrl + id)
+		const res = await axios.get(searchIdBaseUrl + username)
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
