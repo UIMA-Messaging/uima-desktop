@@ -23,7 +23,7 @@ export default () => {
 				<input type="text" placeholder="Enter a username" {...formRegister('username', { required: true, maxLength: 20 })} defaultValue="greffgreff" />
 				{errors.password?.type === 'required' && <p className="validation-error">Password is required</p>}
 				{errors.password?.type === 'minLength' && <p className="validation-error">Password must be at least 10 characters long</p>}
-				<input type="password" placeholder="Enter a password" {...formRegister('password', { required: true, minLength: 10 })} defaultValue="Gaojinglu80!" />
+				<input type="password" placeholder="Enter a password" {...formRegister('password', { required: true, minLength: 10 })} defaultValue="adminadmin" />
 				<input type="file" {...formRegister('image')} />
 				<input type="submit" value="Register" />
 			</form>
