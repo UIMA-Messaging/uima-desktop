@@ -5,11 +5,11 @@ import Button from '../components/Button'
 import ContactCard from '../components/ContactCard'
 import Sidebar from '../components/Sidebar'
 import { useNavigate } from 'react-router-dom'
-import { useContacts } from '../hooks/use-contacts'
+import { deleteContactByUsername, useContacts } from '../hooks/use-contacts'
 
 export default () => {
 	const navigation = useNavigate()
-	const contacts = useContacts()
+	const { contacts } = useContacts()
 
 	return (
 		<div className="app-container">
@@ -23,8 +23,8 @@ export default () => {
 					</div>
 					<div className="contact-list-container">
 						{contacts.map((user) => (
-							<ContactCard {...user}>
-								<Button type="red" label="Remove" />
+							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
+								<Button type="red" label="Remove" onClick={async () => await deleteContactByUsername(user.username)} />
 							</ContactCard>
 						))}
 					</div>

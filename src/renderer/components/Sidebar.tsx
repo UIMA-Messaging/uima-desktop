@@ -1,10 +1,10 @@
-import { useContacts } from '../hooks/use-contacts'
 import '../styles/Sidebar.css'
+import { useContacts } from '../hooks/use-contacts'
 import { useNavigate } from 'react-router-dom'
 
 export default () => {
 	const navigation = useNavigate()
-	const contacts = useContacts()
+	const { contacts } = useContacts()
 
 	return (
 		<div className="sidebar">
@@ -14,7 +14,7 @@ export default () => {
 			<div className="sidebar-item" onClick={() => navigation('/group')} />
 			<div className="sidebar-item-separator" />
 			{contacts.map((contact) => (
-				<div className="sidebar-item" onClick={() => navigation('/loggedIn', { state: { id: contact.id } })} />
+				<div key={contact.username} className="sidebar-item" onClick={() => navigation('/loggedIn', { replace: true, state: { type: 'dm', id: contact.username } })} />
 			))}
 		</div>
 	)
