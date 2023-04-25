@@ -1,5 +1,5 @@
 import { channels } from '../common/constants'
-import { Credentials, Registration, Message } from '../common/types'
+import { Credentials, Registration, Message, User } from '../common/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
@@ -22,5 +22,11 @@ contextBridge.exposeInMainWorld('electron', {
 	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.CHATTING.SEND_MESSAGE, recipientJid, message),
 	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.CHATTING.RECEIVE_MESSAGE, (_, message) => callback(message)),
 
-	searchUsers: (name: string) => ipcRenderer.invoke(channels.SEARCH.USERS, name),
+	getAllContacts: () => ipcRenderer.invoke(channels.CONTACTS.GET_ALL),
+	getContactById: (id: string) => ipcRenderer.invoke(channels.CONTACTS.GET, id),
+	createContact: (contact: User) => ipcRenderer.send(channels.CONTACTS.CREATE, contact),
+	deleteContact: (id: string) => ipcRenderer.send(channels.CONTACTS.DELETE, id),
+	onContactChange: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_CHANGE, (_, contact) => callback(contact)),
+	onContactCreate: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_CREATE, (_, contact) => callback(contact)),
+	onContactDelete: (callback: (contact: User) => void) => ipcRenderer.on(channels.CONTACTS.ON_DELETE, (_, contact) => callback(contact)),
 })
