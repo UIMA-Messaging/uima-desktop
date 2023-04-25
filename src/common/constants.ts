@@ -24,7 +24,6 @@ export const channels = {
 		GET: 'contacts.get',
 		GET_ALL: 'contacts.get.all',
 		CREATE: 'contacts.create',
-		UPDATE: 'contacts.update',
 		DELETE: 'contacts.delete',
 		ON_CHANGE: 'contacts.updated',
 		ON_DELETE: 'contacts.deleted',

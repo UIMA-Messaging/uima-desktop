@@ -67,9 +67,7 @@ export default class AppData {
 
 	public async get<T>(id: string): Promise<T> {
 		const record = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
-		console.log(id, record)
 		const data = record?.sensitive ? decrypt(record.data, this.key) : record?.data
-		console.log(data)
 
 		try {
 			return JSON.parse(data) as T
