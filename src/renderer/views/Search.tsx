@@ -1,4 +1,4 @@
-import { UIEventHandler, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Page from '../components/Page'
 import Input from '../components/Input'
@@ -7,12 +7,14 @@ import Button from '../components/Button'
 import '../styles/Search.css'
 import { SearchResults, User } from '../../common/types'
 import { searchUserByName } from '../api/users'
+import { createContact, useContacts } from '../hooks/use-contacts'
 
 export default () => {
 	const [users, setUsers] = useState<User[]>([])
 	const [pageNumber, setPageNumber] = useState(0)
 	const [query, setQuery] = useState('')
 	const [isScrollAtBottom, setIsScrollAtBottom] = useState(false)
+	const contacts = useContacts()
 
 	useEffect(() => {
 		if (isScrollAtBottom) {
@@ -47,7 +49,7 @@ export default () => {
 					<div onScroll={handleScroll}>
 						{users?.map((user) => (
 							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
-								<Button type="green" label="Add friend" />
+								{contacts.filter((contact) => contact.id === user.id).length && <Button type="green" label="Add friend" onClick={async () => await createContact(user)} />}
 							</ContactCard>
 						))}
 					</div>

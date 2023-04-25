@@ -19,4 +19,15 @@ export const channels = {
 		SET: 'store.set',
 		ON_CHANGE: 'store.changed',
 	},
+
+	CONTACTS: {
+		GET: 'contacts.get',
+		GET_ALL: 'contacts.get.all',
+		CREATE: 'contacts.create',
+		UPDATE: 'contacts.update',
+		DELETE: 'contacts.delete',
+		ON_CHANGE: 'contacts.updated',
+		ON_DELETE: 'contacts.deleted',
+		ON_CREATE: 'contacts.created',
+	},
 }

@@ -21,6 +21,14 @@ export declare global {
 
 			sendMessage: (recipientJid: string, message: Message) => Promise<void>
 			onMessageReceive: (callback: (message: Message) => void) => void
+
+			getAllContacts: () => Promise<User[]>
+			getContactById: (id: string) => Promise<User>
+			createContact: (contact: User) => Promise<void>
+			deleteContact: (id: string) => Promise<void>
+			onContactChange: (callback: (contact: User) => void) => void
+			onContactCreate: (callback: (contact: User) => void) => void
+			onContactDelete: (callback: (contact: User) => void) => void
 		}
 	}
 }
