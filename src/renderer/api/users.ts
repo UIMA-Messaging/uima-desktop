@@ -6,10 +6,8 @@ import { SearchResults } from '../../common/types'
 const searchUserBaseUrl = 'https://localhost:44317/users/search/'
 
 export async function searchUserByName(username: string, count: number = 10, offset: number = 0): Promise<SearchResults<User>> {
-	console.log(searchUserBaseUrl + username, { params: { count, offset } })
 	try {
 		const res = await axios.get(searchUserBaseUrl + username, { params: { count, offset } })
-		console.log(res.data)
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
