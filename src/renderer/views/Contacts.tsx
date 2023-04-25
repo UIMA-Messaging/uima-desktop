@@ -24,7 +24,7 @@ export default () => {
 					<div className="contact-list-container">
 						{contacts.map((user) => (
 							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
-								<Button type="red" label="Remove" onClick={async () => await deleteContactByUsername(user.username)} />
+								<Button type="red" label="Remove" onClick={async () => await deleteContactByUsername(user.id)} />
 							</ContactCard>
 						))}
 					</div>
