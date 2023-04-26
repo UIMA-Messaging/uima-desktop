@@ -1,7 +1,8 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { contacts } from '..'
+import { appData, contacts, encryption } from '..'
 import { User } from '../../common/types'
+import { getKeyBundleForUser } from '../clients/identity-client'
 
 ipcMain.handle(channels.CONTACTS.GET_ALL, async (_: IpcMainEvent) => {
 	return await contacts.getAllContacts()
@@ -12,13 +13,16 @@ ipcMain.handle(channels.CONTACTS.GET, async (_: IpcMainEvent, id: string) => {
 })
 
 ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) => {
-	// check if exists already locally. if doesn't, then fetch key bundle, else proceed with update
-	const user = await contacts.getContactById(contact.id)
+	const existingContact = await contacts.getContactById(contact.id)
 	await contacts.createOrUpdateContact(contact)
 
-	if (user) {
+	if (existingContact) {
 		event.sender.send(channels.CONTACTS.ON_CHANGE, contact)
 	} else {
+		const user = await appData.get<User>('user.profile')
+		const bundle = await getKeyBundleForUser(contact.id, user.id)
+		encryption.establishExchange(contact.id, bundle)
+		
 		event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 	}
 })
