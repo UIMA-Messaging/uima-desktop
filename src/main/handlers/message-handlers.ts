@@ -1,16 +1,15 @@
-import { ipcMain } from 'electron'
+import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { channels as channelsRepo, messages } from '..'
-import { Channel } from '../../common/types'
+import { ejabberd, encryption, messages, window } from '..'
+import { Message } from '../../common/types'
 
-ipcMain.handle("channels.CHATTING", async () => {
-	return await channelsRepo.getAllChannels()
+ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, jid: string, message: Message) => {
+	const encrypted = await encryption.encrypt(message)
+	ejabberd.sendMessage(jid, encrypted)
+	await messages.createMessage(message)
+	event.sender.send(channels.MESSAGES.ON_SENT, message)
 })
 
-ipcMain.handle("channels.CREATE_CHANNEL", async (_, channel: Channel) => {
-	return await channelsRepo.createOrUpdateChannel(channel)
-})
-
-ipcMain.handle("channels.CONVERSATIONS", async (_, channelId: string) => {
-	return await messages.getMessagesFromChannel(channelId)
-})
+export function notifyOfNewMessage(message: Message) {
+	window.webContents.send(channels.MESSAGES.ON_RECEIVED, message)
+}

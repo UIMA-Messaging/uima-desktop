@@ -8,10 +8,18 @@ export const channels = {
 		LOGOUT: 'auth.logout',
 	},
 
-	CHATTING: {
+	XMP: {
 		ONLINE: 'xmp.online',
-		SEND_MESSAGE: 'message.send',
-		RECEIVE_MESSAGE: 'message.receive',
+	},
+
+	CHANNELS: {
+		GET: 'channels.get',
+	},
+
+	MESSAGES: {
+		SEND: 'messages.send',
+		ON_SENT: 'messages.sent',
+		ON_RECEIVED: 'messages.received',
 	},
 
 	APP_DATA: {

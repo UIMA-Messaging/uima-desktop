@@ -2,7 +2,6 @@ import axios from 'axios'
 import { User } from '../../common/types'
 import { AxiosError } from 'axios'
 import { SearchResults } from '../../common/types'
-import { ERROR } from 'sqlite3'
 
 const searchUserBaseUrl = 'https://localhost:44317/users/search/'
 

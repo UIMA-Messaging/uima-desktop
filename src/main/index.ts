@@ -2,9 +2,9 @@ import { app, BrowserWindow } from 'electron'
 import isDev from 'electron-is-dev'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberd-client'
+import { Database } from 'sqlite3'
 import AppData from './repos/app-data'
 import SqlConnection from './services/sql-connection'
-import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import ContactRepo from './repos/contact-repo'
@@ -48,7 +48,7 @@ const messages = new MessageRepo(connection)
 const authentication = new Authentification(appData)
 
 // Clients
-const ejabberd = new EjabberdClient('localhost', 5222)
+const ejabberd = new EjabberdClient('localhost', 5223)
 
 // Encryption
 const encryption = new Encryption()
