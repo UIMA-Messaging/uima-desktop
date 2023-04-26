@@ -1,24 +1,22 @@
-import { Message } from '../../common/types'
-import { notifyOfMessage, notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
-import { ejabberd, messages } from '..'
+import { Message, NetworkMessage } from '../../common/types'
+import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
+import { ejabberd, encryption, messages } from '..'
+import { notifyOfNewMessage } from '../handlers/message-handlers'
 
-ejabberd.on('onConnected', (isConnected) => {
+ejabberd.on('onConnected', () => {
 	console.log('User now connected to chating server.')
-	notifyOfStatus(isConnected)
+	notifyOfStatus(true)
 })
 
-ejabberd.on('onDisconnected', (isConnected) => {
+ejabberd.on('onDisconnected', () => {
 	console.log('User disconnected from chating server.')
-	notifyOfStatus(isConnected)
+	notifyOfStatus(false)
 })
 
-ejabberd.on('onMessageReceived', (message: Message) => {
-	notifyOfMessage(message)
-	messages.createMessage(message)
-})
-
-ejabberd.on('onMessageSent', (message: Message) => {
-	messages.createMessage(message)
+ejabberd.on('onMessageReceived', async (encryptedMessage: NetworkMessage) => {
+	const { message } = await encryption.decrypt(encryptedMessage)
+	await messages.createMessage(message)
+	notifyOfNewMessage(message)
 })
 
 ejabberd.on('onError', (error: string) => {

@@ -4,10 +4,12 @@ import Input from '../components/Input'
 import Sidebar from '../components/Sidebar'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Message } from 'react-hook-form'
 import { useContact } from '../hooks/use-contacts'
+import { Message, User } from '../../common/types'
+import useAppData from '../hooks/use-app-data'
 
 export default () => {
+	const [profile, _] = useAppData<User>('user.profile')
 	const location = useLocation()
 	const contact = useContact(location.state?.id)
 	const [messages, setMessages] = useState<Message[]>([])
@@ -22,6 +24,22 @@ export default () => {
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [messages])
+
+	function handleSendMessage(content: string) {
+		if (!content) return
+		const message: Message = {
+			channelId: contact.id,
+			sender: profile.id,
+			receiver: contact.id,
+			content: content,
+			timestamp: new Date(),
+		}
+		window.electron.sendMessage('admin@localhost', message)
+	}
+
+	window.electron.onMessageReceive((message: Message) => {
+		setMessages([...messages, message])
+	})
 
 	return (
 		<div className="app-container">
@@ -51,7 +69,7 @@ export default () => {
 					<div ref={bottom} />
 				</div>
 				<div className="chat-inputs">
-					<Input placeholder="Say something to Group chat 1" />
+					<Input getValue={handleSendMessage} placeholder="Say something to Group chat 1" />
 				</div>
 			</div>
 		</div>

@@ -16,11 +16,11 @@ contextBridge.exposeInMainWorld('electron', {
 	getAuthState: () => ipcRenderer.invoke(channels.AUTH.STATE),
 	onAuthStateChange: (callback: (state: 'notRegistered' | 'loggedOut' | 'loggedIn') => void) => ipcRenderer.on(channels.AUTH.STATE, (_, state) => callback(state)),
 
-	isOnline: () => ipcRenderer.invoke(channels.CHATTING.ONLINE),
-	onOnline: (callback: (isOnline: boolean) => void) => ipcRenderer.on(channels.CHATTING.ONLINE, (_, isOnline) => callback(isOnline)),
+	isOnline: () => ipcRenderer.invoke(channels.XMP.ONLINE),
+	onOnline: (callback: (isOnline: boolean) => void) => ipcRenderer.on(channels.XMP.ONLINE, (_, isOnline) => callback(isOnline)),
 
-	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.CHATTING.SEND_MESSAGE, recipientJid, message),
-	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.CHATTING.RECEIVE_MESSAGE, (_, message) => callback(message)),
+	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.MESSAGES.SEND, recipientJid, message),
+	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVED, (_, message) => callback(message)),
 
 	getAllContacts: () => ipcRenderer.invoke(channels.CONTACTS.GET_ALL),
 	getContactById: (id: string) => ipcRenderer.invoke(channels.CONTACTS.GET, id),
