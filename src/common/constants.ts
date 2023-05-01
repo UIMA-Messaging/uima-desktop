@@ -14,13 +14,17 @@ export const channels = {
 
 	CHANNELS: {
 		GET: 'channels.get',
+		GET_ALL: 'channels.get.all',
+		DELETE: 'channels.delete',
+		ON_CREATE: 'channels.created',
+		ON_DELETE: 'channels.deleted',
 	},
 
 	MESSAGES: {
 		GET: 'messages.get',
 		SEND: 'messages.send',
 		ON_SENT: 'messages.sent',
-		ON_RECEIVED: 'messages.received',
+		ON_RECEIVE: 'messages.received',
 	},
 
 	APP_DATA: {

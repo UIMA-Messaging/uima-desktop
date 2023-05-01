@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.MESSAGES.SEND, recipientJid, message),
 	getMessagesFromContact: (callback: (id: string) => void) => ipcRenderer.on(channels.MESSAGES.GET, (_, message) => callback(message)),
-	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVED, (_, message) => callback(message)),
+	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVE, (_, message) => callback(message)),
 	onMessageSent: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_SENT, (_, message) => callback(message)),
 
 	getAllContacts: () => ipcRenderer.invoke(channels.CONTACTS.GET_ALL),

@@ -15,7 +15,7 @@ ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, id: string) => {
 })
 
 export function notifyOfNewMessage(message: Message) {
-	window.webContents.send(channels.MESSAGES.ON_RECEIVED, message)
+	window.webContents.send(channels.MESSAGES.ON_RECEIVE, message)
 }
 
 export function notifyOfSentMessage(message: Message) {
