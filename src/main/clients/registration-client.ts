@@ -14,8 +14,10 @@ export async function register(user: BasicUser): Promise<RegisteredUser> {
 	} catch (error) {
 		if (error instanceof AxiosError) {
 			switch (error?.response?.status) {
-				case 400:
+				case 404:
 					throw Error(`User with the same name already exists.`)
+				case 400:
+					throw Error(`Username already taken.`)
 				case 401:
 					throw Error(`Client is not authorised to register new users.`)
 				case 500:

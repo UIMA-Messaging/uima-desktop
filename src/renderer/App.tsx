@@ -9,6 +9,7 @@ import Contacts from './views/Contacts'
 import Settings from './views/Settings'
 import Search from './views/Search'
 import Group from './views/Group'
+import Sidebar from "./components/Sidebar";
 
 export default () => {
 	const { state } = useAuth()

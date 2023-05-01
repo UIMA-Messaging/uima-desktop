@@ -5,10 +5,12 @@ import Sidebar from '../components/Sidebar'
 import Input from '../components/Input'
 import ContactCard from '../components/ContactCard'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useContacts } from '../hooks/use-contacts'
 
 export default () => {
 	const navigatation = useNavigate()
 	const location = useLocation()
+	const { contacts } = useContacts()
 
 	return (
 		<div className="app-container">
@@ -18,26 +20,13 @@ export default () => {
 					<Input label={<b>Name you group chat</b>} placeholder="Something nice" />
 					<Input label={<b>Invite some friends</b>} placeholder="Search among you friends" />
 					<div className="group-contact-list">
-						<ContactCard username="usernergqergqame1#0001" displayName="Userqergqregname1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
+						{contacts.map((user) => (
+							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
+								<Button type="red" label="Remove" />
+							</ContactCard>
+						))}
 					</div>
-					<span style={{ marginTop: '50px', display: 'flex', gap: '10px' }}>
+					<span style={{ marginTop: '30px', display: 'flex', gap: '10px' }}>
 						<Button label="Cancel" onClick={() => navigatation('/loggedIn', { state: { id: location.state?.id } })} />
 						<Button label="Create" type="green" />
 					</span>

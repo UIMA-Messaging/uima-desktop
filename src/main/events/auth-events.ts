@@ -1,21 +1,26 @@
 import { Credentials, RegisteredUser } from '../../common/types'
-import { authentication, ejabberd, appData } from '..'
+import { authentication, ejabberd, appData, encryption } from '..'
+import X3DH from '../security/x3dh'
+import { getX3DH, setX3DH } from '../repos/encryption-persistence'
 
-authentication.on('onRegister', (user: RegisteredUser, credentials: Credentials) => {
+authentication.on('onRegister', async (user: RegisteredUser, credentials: Credentials, x3dh: X3DH) => {
 	appData.setEncryptionKey(credentials.password + credentials.username)
-	appData.set('user.profile', JSON.stringify(user), true)
+	await appData.set('user.profile', JSON.stringify(user), true)
 	const jabber = ejabberd.createJabberUser(user.username, user.ephemeralPassword)
-	appData.set('xmp.user', JSON.stringify(jabber), true)
-	appData.invalidateEncryptionKey()
+	await appData.set('xmp.credentials', JSON.stringify(jabber), true)
+	await setX3DH(x3dh)
+	appData.invalidate()
 })
 
 authentication.on('onLogin', async (credentials: Credentials) => {
 	appData.setEncryptionKey(credentials.password + credentials.username)
-	const jabber = await appData.get('xmp.user')
+	encryption.setX3DH(await getX3DH())
+	// const jabber = await appData.get('xmp.credentials')
 	// ejabberd.connect(JSON.parse(jabber))
 })
 
 authentication.on('onLogout', () => {
-	appData.invalidateEncryptionKey()
+	appData.invalidate()
+	encryption.invalidate()
 	ejabberd.disconnect()
 })

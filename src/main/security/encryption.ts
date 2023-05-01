@@ -1,4 +1,4 @@
-import { createHash, createCipher, createDecipher, randomBytes } from 'crypto'
+import { createHash, createCipher, createDecipher } from 'crypto'
 
 export function encrypt(plaintext: string, key: string): string {
 	const cipher = createCipher('aes-256-cbc', key)
@@ -14,4 +14,13 @@ export function decrypt(ciphertext: string, key: string): string {
 
 export function kdf(input: any): string {
 	return createHash('sha256').update(input).digest('hex')
+}
+
+export function secretToReadable(sharedSecret: string) {
+	return createHash('sha256')
+		.update(sharedSecret)
+		.digest('hex')
+		.match(/.{1,4}/g)
+		.map((h) => parseInt(h, 16))
+		.map((n) => String(n).padStart(5, '0'))
 }
