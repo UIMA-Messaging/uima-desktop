@@ -1,4 +1,5 @@
 import { KeyBundle } from './Keys'
+import { ExchangeKeys } from './SigalProtocol'
 
 export interface User {
 	id: string
@@ -21,7 +22,7 @@ export interface RegisteredUser {
 export interface BasicUser {
 	displayName: string
 	image: string
-	keyBundle?: KeyBundle
+	exchangeKeys: ExchangeKeys
 }
 
 export interface JabberUser {

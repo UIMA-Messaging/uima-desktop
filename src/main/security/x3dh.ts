@@ -1,35 +1,43 @@
 import { createECDH, createHash } from 'crypto'
-import { v4 as uuid } from 'uuid'
 import { ECDH } from 'crypto'
-import { OutstandingExchangeRecord, KeyPair, X3DHKeys, KeyBundle, ExchangeResult, PostKeyBundle } from '../../common/types/SigalProtocol'
+import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
 import { kdf } from './encryption'
+import { ExchangeKeys } from '../../common/types/SigalProtocol'
 
 export default class X3DH {
 	private ecdh: ECDH
 	private identityKeys: KeyPair
 	private signedPreKeys: KeyPair
 	private oneTimePreKeys: KeyPair[]
-	private outstandingExchanges: OutstandingExchangeRecord[]
+	private signature: string
 
-	constructor(keys: X3DHKeys) {
-		this.ecdh = createECDH('secp256k1')
+	constructor(keys: X3DHKeyPairs) {
+		this.ecdh = createECDH('prime256v1')
 		this.identityKeys = keys.identityKeys
 		this.signedPreKeys = keys.signedPreKeys
 		this.oneTimePreKeys = keys.oneTimePreKeys
-		this.outstandingExchanges = keys.outstandingExchanges
+		this.signature = keys.signature
 	}
 
-	static init(numOneTimePreKeys = 200) {
+	public static init(numOneTimePreKeys = 200) {
 		return new X3DH({
 			identityKeys: X3DH.generateKeyPairs(),
 			signedPreKeys: X3DH.generateKeyPairs(),
 			oneTimePreKeys: new Array(numOneTimePreKeys).fill(null).map(X3DH.generateKeyPairs),
-			outstandingExchanges: [],
+			signature: '',
 		})
 	}
 
+	public static fromState(keys: X3DHKeyPairs) {
+		return new X3DH(keys)
+	}
+
+	public getState(): X3DHKeyPairs {
+		return JSON.parse(JSON.stringify(this)) as X3DHKeyPairs
+	}
+
 	public static generateKeyPairs(): KeyPair {
-		const ecdh = createECDH('secp256k1')
+		const ecdh = createECDH('prime256v1')
 		ecdh.generateKeys()
 		return {
 			privateKey: ecdh.getPrivateKey('hex'),
@@ -42,8 +50,7 @@ export default class X3DH {
 		return this.ecdh.computeSecret(remotePublic, 'hex')
 	}
 
-	public exchange(keyBundle: KeyBundle): ExchangeResult {
-		// TODO verify signature beforehand
+	public exchange(keyBundle: KeyBundle): { sharedSecret: string; postKeyBundle: PostKeyBundle } {
 		const ephemeralKeys = X3DH.generateKeyPairs()
 		// DH1 = DH(IK, SPK)
 		const DH1 = this.diffieHellman(this.identityKeys.privateKey, keyBundle.publicSignedPreKey)
@@ -60,14 +67,14 @@ export default class X3DH {
 		return {
 			sharedSecret,
 			postKeyBundle: {
-				id: keyBundle.id,
+				publicOneTimePreKey: keyBundle.publicOneTimePreKey,
 				publicIdentityKey: this.identityKeys.publicKey,
 				publicEphemeralKey: ephemeralKeys.publicKey,
 			},
 		}
 	}
 
-	public postExchange(postKeyBundle: PostKeyBundle) {
+	public postExchange(postKeyBundle: PostKeyBundle): { sharedSecret: string } {
 		// DH1 = DH(SPK, IK)
 		const DH1 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicIdentityKey)
 		// DH2 = DH(IK, EK)
@@ -75,8 +82,8 @@ export default class X3DH {
 		// DH3 = DH(SPK, EK)
 		const DH3 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicEphemeralKey)
 		// DH4 = DH(OPK, EK)
-		const bundle = this.getFromOutstandingExchanges(postKeyBundle.id)
-		const DH4 = this.diffieHellman(bundle.privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
+		const privateOneTimePreKey = this.getOPKFromPublic(postKeyBundle.publicOneTimePreKey)
+		const DH4 = this.diffieHellman(privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
 		// Combine computed secrets of exchanges
 		const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
 		// Compute the secret of the shared secrets
@@ -84,34 +91,17 @@ export default class X3DH {
 		return { sharedSecret }
 	}
 
-	private getFromOutstandingExchanges(id: string): OutstandingExchangeRecord {
-		let i = this.outstandingExchanges.findIndex((exchange) => exchange.id === id)
-		return i !== -1 ? this.outstandingExchanges.splice(i, 1)[0] : null
+	private getOPKFromPublic(publicKey: string): string {
+		const i = this.oneTimePreKeys.findIndex((key) => key.publicKey === publicKey)
+		return i !== -1 ? this.oneTimePreKeys.splice(i, 1)[0].publicKey : null
 	}
 
-	// Called when user wants to establish share secret with rmeote party
-	public generateKeyBundle(): KeyBundle {
-		const oneTimePreKey = this.oneTimePreKeys.shift()
-		const bundleRecord: OutstandingExchangeRecord = {
-			id: uuid(),
-			creationDate: new Date(),
-			privateOneTimePreKey: oneTimePreKey.privateKey,
-		}
-		this.outstandingExchanges.push(bundleRecord)
+	public getExchangeKeys(): ExchangeKeys {
 		return {
-			id: bundleRecord.id,
-			publicSignedPreKey: this.signedPreKeys.publicKey,
-			publicIdentityKey: this.identityKeys.publicKey,
-			publicOneTimePreKey: oneTimePreKey.publicKey,
+			identityKey: this.identityKeys.publicKey,
+			signedPreKey: this.signedPreKeys.publicKey,
+			oneTimePreKeys: this.oneTimePreKeys.map((key) => key.publicKey),
+			signature: this.signature,
 		}
-	}
-
-	static secretToReadable(sharedSecret: string) {
-		return createHash('sha256')
-			.update(sharedSecret)
-			.digest('hex')
-			.match(/.{1,4}/g)
-			.map((h) => parseInt(h, 16))
-			.map((n) => String(n).padStart(5, '0'))
 	}
 }

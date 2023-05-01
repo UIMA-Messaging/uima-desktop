@@ -3,48 +3,56 @@ export interface KeyPair {
 	privateKey: string
 }
 
-export interface EncryptedMessage {
-	header: MessageHeader
-	ciphertext: string
-}
-
-export interface DecryptedMessage {
-	ciphertext: string
-	plaintext: string
-}
-
-export interface MessageHeader {
-	counter: number
-	date: Date
-}
-
-export interface X3DHKeys {
+export interface X3DHKeyPairs {
 	identityKeys: KeyPair
 	signedPreKeys: KeyPair
 	oneTimePreKeys: KeyPair[]
-	outstandingExchanges: OutstandingExchangeRecord[]
+	signature: string
+}
+
+export interface ExchangeKeys {
+	identityKey: string
+	signedPreKey: string
+	oneTimePreKeys: string[]
+	signature: string
+}
+
+export interface NetworkMessage {
+	sender: string
+	receiver: string
+	content: EncryptedMessage
+}
+
+export interface EncryptedMessage {
+	header: {
+		counter: number
+		timestamp: Date
+	}
+	ciphertext: string
 }
 
 export interface KeyBundle {
-	id: string
 	publicSignedPreKey: string
 	publicIdentityKey: string
 	publicOneTimePreKey: string
 }
 
 export interface PostKeyBundle {
-	id: string
+	publicOneTimePreKey: string
 	publicIdentityKey: string
 	publicEphemeralKey: string
 }
 
-export interface ExchangeResult {
-	sharedSecret: string
-	postKeyBundle: PostKeyBundle
-}
-
-export interface OutstandingExchangeRecord {
-	id: string
-	creationDate: Date
-	privateOneTimePreKey: string
+export interface DoubleRatchetState {
+	rootRatchet: {
+		state: string
+	}
+	messageCounter: number
+	latestMessageDate: Date
+	sendingRatchet: {
+		state: string
+	}
+	receivingRatchet: {
+		state: string
+	}
 }

@@ -7,7 +7,8 @@ import SqlConnection from './services/sql-connection'
 import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
-import UserRepo from './repos/user-repo'
+import ContactRepo from './repos/contact-repo'
+import Encryption from './services/encryption'
 
 require('electron-squirrel-startup') && app.quit()
 
@@ -39,7 +40,7 @@ const connection = new SqlConnection(new Database('src/main.db'))
 
 // Repositories
 const appData = new AppData(connection)
-const users = new UserRepo(connection)
+const contacts = new ContactRepo(connection)
 const channels = new ChannelRepo(connection)
 const messages = new MessageRepo(connection)
 
@@ -49,13 +50,17 @@ const authentication = new Authentification(appData)
 // Clients
 const ejabberd = new EjabberdClient('localhost', 5222)
 
-export { authentication, appData, ejabberd, connection, messages, channels, users, window }
+// Encryption
+const encryption = new Encryption()
+
+export { authentication, appData, ejabberd, connection, messages, channels, contacts, encryption, window }
 
 // Register handlers
 import './handlers/app-data-handlers'
 import './handlers/xmp-handlers'
 import './handlers/auth-handlers'
 import './handlers/message-handlers'
+import './handlers/contacts-handlers'
 
 // Register events
 import './events/auth-events'

@@ -5,9 +5,11 @@ import Button from '../components/Button'
 import ContactCard from '../components/ContactCard'
 import Sidebar from '../components/Sidebar'
 import { useNavigate } from 'react-router-dom'
+import { deleteContactByUsername, useContacts } from '../hooks/use-contacts'
 
 export default () => {
 	const navigation = useNavigate()
+	const { contacts } = useContacts()
 
 	return (
 		<div className="app-container">
@@ -20,24 +22,11 @@ export default () => {
 						<Button label="Search someone" type="green" onClick={() => navigation('/search')} />
 					</div>
 					<div className="contact-list-container">
-						<ContactCard username="usernergqergqame1#0001" displayName="Userqergqregname1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
-						<ContactCard username="username1#0001" displayName="Username1" friendsSince={new Date()} online>
-							<Button type="red" label="Remove" />
-						</ContactCard>
+						{contacts.map((user) => (
+							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
+								<Button type="red" label="Remove" onClick={async () => await deleteContactByUsername(user.id)} />
+							</ContactCard>
+						))}
 					</div>
 				</div>
 			</Page>

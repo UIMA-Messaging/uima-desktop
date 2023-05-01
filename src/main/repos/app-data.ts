@@ -18,7 +18,6 @@ export default class AppData {
 		this.connection = connection
 
 		console.log('Creating `AppData` table if it does not already exist.')
-
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS AppData(
 				id TEXT PRIMARY KEY, 
@@ -32,7 +31,7 @@ export default class AppData {
 		this.key = createHash('SHA256').update(key).digest('hex')
 	}
 
-	public invalidateEncryptionKey() {
+	public invalidate() {
 		delete this.key
 	}
 
@@ -67,9 +66,7 @@ export default class AppData {
 
 	public async get<T>(id: string): Promise<T> {
 		const record = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
-		console.log(id, record)
 		const data = record?.sensitive ? decrypt(record.data, this.key) : record?.data
-		console.log(data)
 
 		try {
 			return JSON.parse(data) as T
