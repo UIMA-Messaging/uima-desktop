@@ -4,7 +4,7 @@ export default ({ text, author, time, color }: { text: string; author: string; t
 	return (
 		<div className="chat-bubble-container">
 			<span className="message-time">{time}</span>
-			<span style={{ color }} className="message-author">
+			<span style={{ color: color }} className="message-author">
 				{author}
 			</span>
 			<span className="message-text">{text}</span>

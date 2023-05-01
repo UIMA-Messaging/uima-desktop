@@ -30,7 +30,7 @@
 .sidebar-item-separator {
   background-color: var(--primary-color);
 
-  width: 75%;
-  height: 2.5px;
+  width: 80%;
+  height: 3px;
   border-radius: 3px;
 }
