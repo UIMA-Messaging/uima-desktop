@@ -24,6 +24,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			const bundle = await getKeyBundleForUser(contact.id, user.id)
 			encryption.establishExchange(contact.id, bundle)
 			await contacts.createOrUpdateContact(contact)
+			
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 		} catch (error) {
 			event.sender.send(channels.ON_ERROR, 'contacts.error', error)
