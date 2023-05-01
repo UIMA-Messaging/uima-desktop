@@ -1,6 +1,6 @@
+import { ejabberd, encryption, messages, window } from '..'
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { ejabberd, encryption, messages, window } from '..'
 import { Message } from '../../common/types'
 
 ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, jid: string, message: Message) => {
@@ -10,6 +10,14 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, jid: string, mess
 	event.sender.send(channels.MESSAGES.ON_SENT, message)
 })
 
+ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, id: string) => {
+	return await messages.getMessagesFromChannel(id)
+})
+
 export function notifyOfNewMessage(message: Message) {
 	window.webContents.send(channels.MESSAGES.ON_RECEIVED, message)
+}
+
+export function notifyOfSentMessage(message: Message) {
+	window.webContents.send(channels.MESSAGES.ON_SENT, message)
 }
