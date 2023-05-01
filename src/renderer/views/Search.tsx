@@ -13,7 +13,7 @@ import useAppError from '../hooks/user-app-error'
 export default () => {
 	const [users, setUsers] = useState<User[]>([])
 	const [pageNumber, setPageNumber] = useState(0)
-	const [query, setQuery] = useState('')
+	const [query, setQuery] = useState(null)
 	const [isScrollAtBottom, setIsScrollAtBottom] = useState(false)
 	const { created, changed } = useContacts()
 	const [isContacting, setIsContacting] = useState(false)
