@@ -20,7 +20,9 @@ export declare global {
 			isOnline: () => Promise<boolean>
 
 			sendMessage: (recipientJid: string, message: Message) => Promise<void>
+			getMessagesFromChannel: (id: string) => Promise<Message[]>
 			onMessageReceive: (callback: (message: Message) => void) => void
+			onMessageSent: (callback: (message: Message) => void) => void
 
 			getAllContacts: () => Promise<User[]>
 			getContactById: (id: string) => Promise<User>

@@ -17,6 +17,7 @@ export const channels = {
 	},
 
 	MESSAGES: {
+		GET: 'messages.get',
 		SEND: 'messages.send',
 		ON_SENT: 'messages.sent',
 		ON_RECEIVED: 'messages.received',
