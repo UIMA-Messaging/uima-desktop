@@ -19,7 +19,7 @@
 			"driver": "SQLite",
 			"name": "main.db",
 			"group": "instantmessaging",
-			"database": "${workspaceFolder:uima}/src/main.db"
+			"database": "${workspaceFolder:uima-desktop}/src/main.db"
 		}
 	]
 }
