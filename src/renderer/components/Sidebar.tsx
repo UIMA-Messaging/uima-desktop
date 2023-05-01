@@ -1,6 +1,7 @@
 import '../styles/Sidebar.css'
 import { useContacts } from '../hooks/use-contacts'
 import { useNavigate } from 'react-router-dom'
+import ProfilePicture from './ProfilePicture'
 
 export default () => {
 	const navigation = useNavigate()
@@ -14,7 +15,9 @@ export default () => {
 			<div className="sidebar-item" onClick={() => navigation('/group')} />
 			<div className="sidebar-item-separator" />
 			{contacts.map((contact) => (
-				<div key={contact.username} className="sidebar-item" onClick={() => navigation('/loggedIn', { replace: true, state: { type: 'dm', id: contact.username } })} />
+				<div key={contact.username} className="sidebar-item" onClick={() => navigation('/loggedIn', { replace: true, state: { type: 'dm', id: contact.username } })}>
+					<ProfilePicture user={contact} />
+				</div>
 			))}
 		</div>
 	)

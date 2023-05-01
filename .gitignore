@@ -92,3 +92,5 @@ typings/
 # Electron-Forge
 out/
 main.db
+main.db.session.sql
+.vscode/
