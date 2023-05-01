@@ -8,16 +8,17 @@ import { useContact } from '../hooks/use-contacts'
 import { Message, User } from '../../common/types'
 import useAppData from '../hooks/use-app-data'
 import ColorHash from 'color-hash'
+import ProfilePicture from '../components/ProfilePicture'
 
 export default () => {
-	const [profile, _] = useAppData<User>('user.profile')
 	const location = useLocation()
-	const contact = useContact(location.state?.id)
-	const [messages, setMessages] = useState<Message[]>([])
-	const [type, setType] = useState('')
 	const navigation = useNavigate()
+	const contact = useContact(location.state?.id)
+	const [profile] = useAppData<User>('user.profile')
+	const [messages, setMessages] = useState<Message[]>([])
+	const [type, setType] = useState(null)
+	const [color, setColor] = useState(null)
 	const bottom = useRef(null)
-	const [color, setColor] = useState('')
 
 	useEffect(() => {
 		setType(location.state?.type)
@@ -55,7 +56,12 @@ export default () => {
 			<Sidebar />
 			<div className="chat-container">
 				<div className="chat-header">
-					<div className="chat-title">{contact?.displayName}</div>
+					<div className="chat-title">
+						<div className="chat-header-picture">
+							<ProfilePicture name={contact?.displayName} image={contact?.image} />
+						</div>
+						{contact?.displayName}
+					</div>
 					<div className="chat-header-bread-crumbs">
 						<span>{type === 'dm' ? 'direct messaging' : 'group chat'}</span>
 						<span>/</span>

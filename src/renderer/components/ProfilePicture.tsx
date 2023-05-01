@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import ColorHash from 'color-hash'
 
 export default ({ image, name }: { image?: string; name?: string }) => {
-	const [color, setColor] = useState('')
+	const [color, setColor] = useState(null)
 
 	useEffect(() => {
 		if (!image && name) {

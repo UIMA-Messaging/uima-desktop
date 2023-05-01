@@ -66,7 +66,7 @@ export function useContact(id: string): User {
 				setContact(null)
 			}
 		})
-	}, [])
+	}, [id])
 
 	return contact
 }
