@@ -4,7 +4,7 @@
 	width: 100%;
     max-width: 200px;
 	aspect-ratio: 1;
-    color: var(--primary-font);
+    color: white;
 }
 
 .profile-picture-container img {
