@@ -20,7 +20,7 @@ export default () => {
 			<div className="sidebar-item" onClick={() => navigation('/group')} />
 			<div className="sidebar-item-separator" />
 			{contacts.map((contact) => (
-				<div key={contact.username} className="sidebar-item" onClick={() => navigation('/loggedIn', { replace: true, state: { type: 'dm', id: contact.id } })}>
+				<div key={contact.username} className="sidebar-item" onClick={() => navigation('/chat', { state: { type: 'dm', id: contact.id } })}>
 					<ProfilePicture image={contact.image} name={contact.displayName} />
 				</div>
 			))}
