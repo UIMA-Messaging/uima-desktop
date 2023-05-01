@@ -1,12 +1,13 @@
 .chat-bubble-container {
 	width: 100%;
 	display: flex;
-	font-size: 75%;
+	font-size: 80%;
 	gap: 10px;
 	letter-spacing: 0.2px;
 	padding: 7px 25px;
 	transition: 0.2s;
 	animation: slide 0.2s ease-out forwards;
+	align-items: center;
 }
 
 @keyframes slide {
@@ -28,18 +29,19 @@
 	width: 30px;
 	min-width: 30px;
 	text-align: end;
+	font-size: 10px;
 }
 
 .message-author {
-	font-weight: bold;
+	font-weight: bolder;
 	width: fit-content;
 	transition: 0.2s;
 }
 
-.message-author:hover {
+/* .message-author:hover {
 	opacity: 0.5;
 	cursor: pointer;
-}
+} */
 
 .message-text {
 	user-select: text;

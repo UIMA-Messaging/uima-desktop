@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useContact } from '../hooks/use-contacts'
 import { Message, User } from '../../common/types'
 import useAppData from '../hooks/use-app-data'
+import ColorHash from 'color-hash'
 
 export default () => {
 	const [profile, _] = useAppData<User>('user.profile')
@@ -16,10 +17,18 @@ export default () => {
 	const [type, setType] = useState('')
 	const navigation = useNavigate()
 	const bottom = useRef(null)
+	const [color, setColor] = useState('')
 
 	useEffect(() => {
 		setType(location.state?.type)
 	}, [])
+
+	useEffect(() => {
+		if (contact) {
+			const colorHash = new ColorHash()
+			setColor(colorHash.hex(contact?.displayName))
+		}
+	}, [contact])
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
@@ -65,7 +74,7 @@ export default () => {
 				</div>
 				<div className="chat-messages">
 					<div className="chat-greeting">{type === 'dm' ? `Direct messages to ${contact?.displayName}` : `Welcome to ${'some name'} group chat`}</div>
-					<ChatBubble text="This is a message" time="12:12" author={contact?.displayName} />
+					<ChatBubble text="This is a message" time="12:12" author={contact?.username} color={color} />
 					<div ref={bottom} />
 				</div>
 				<div className="chat-inputs">
