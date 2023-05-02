@@ -36,6 +36,7 @@ export default class MessageRepo {
 			`
 				SELECT * FROM Messages 
 				WHERE channelId = $channelId 
+				ORDER BY timestamp DESC
 				LIMIT $limit OFFSET $offset
 			`,
 			{ channelId, limit, offset }
