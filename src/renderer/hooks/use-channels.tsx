@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Channel, Message } from '../../common/types'
 
 export function useChannels(): { channels: Channel[]; created: Channel; removed: Channel; changed: Channel } {
-	const [channels, setChannels] = useState<Channel[]>()
+	const [channels, setChannels] = useState<Channel[]>([])
 	const [created, setCreated] = useState<Channel>(null)
 	const [removed, setRemoved] = useState<Channel>(null)
 	const [changed, setChanged] = useState<Channel>(null)
@@ -34,9 +34,9 @@ export function useChannels(): { channels: Channel[]; created: Channel; removed:
 }
 
 export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void } {
-	const [channel, setChannel] = useState<Channel>()
-	const [messages, setMessages] = useState<Message[]>()
-
+	const [channel, setChannel] = useState<Channel>(null)
+	const [messages, setMessages] = useState<Message[]>([])
+	
 	useEffect(() => {
 		window.electron.getChannelById(id).then(setChannel)
 	}, [id])

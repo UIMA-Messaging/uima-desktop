@@ -24,17 +24,17 @@ export default () => {
 				<div className="chat-header">
 					<div className="chat-title">
 						<div className="chat-header-picture">
-							<ProfilePicture name={channel.name} image={channel?.image} />
+							<ProfilePicture name={channel?.name} image={channel?.image} />
 						</div>
 						{channel?.name}
 					</div>
 					<div className="chat-header-bread-crumbs">
-						<span>{channel.type === 'dm' ? 'direct messaging' : 'group chat'}</span>
+						<span>{channel?.type === 'dm' ? 'direct messaging' : 'group chat'}</span>
 						<span>/</span>
 						<span>1 online</span>
 						<span>/</span>
 						<span>active 5 minutes ago</span>
-						{channel.type !== 'dm' && (
+						{channel?.type !== 'dm' && (
 							<>
 								<span>/</span>
 								<span onClick={() => navigation('/group', { state: { id: '254625462456' } })}>
@@ -45,9 +45,9 @@ export default () => {
 					</div>
 				</div>
 				<div className="chat-messages">
-					<div className="chat-greeting">{channel.type === 'dm' ? `Direct messages to ${channel.members[0].displayName}` : `Welcome to ${channel.name} group chat`}</div>
+					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 					{messages.map((message) => (
-						<ChatBubble text="This is a message" time={message.timestamp} author={message.author.displayName} />
+						<ChatBubble key={message.id} text={message.content} time={message.timestamp} author={message.author.displayName} />
 					))}
 					<div ref={bottom} />
 				</div>

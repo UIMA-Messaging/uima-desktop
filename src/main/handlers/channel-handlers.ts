@@ -7,7 +7,7 @@ ipcMain.handle(channels.CHANNELS.GET_ALL, async (_: IpcMainEvent) => {
 	return await chattingChannels.getAllChannels()
 })
 
-ipcMain.on(channels.CHANNELS.GET, async (_: IpcMainEvent, id: string) => {
+ipcMain.handle(channels.CHANNELS.GET, async (_: IpcMainEvent, id: string) => {
 	return await chattingChannels.getChannelById(id)
 })
 

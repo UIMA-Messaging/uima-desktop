@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('electron', {
 	getAllChannels: () => ipcRenderer.invoke(channels.CHANNELS.GET_ALL),
 	getChannelById: (id: string) => ipcRenderer.invoke(channels.CHANNELS.GET, id),
 	createChannel: (channel: Channel) => ipcRenderer.send(channels.CHANNELS.CREATE, channel),
-	deleteChannel: (id: string) => ipcRenderer.send(channels.CHANNELS.DELETE, id),
+	deleteChannelById: (id: string) => ipcRenderer.send(channels.CHANNELS.DELETE, id),
 	onChannelCreate: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_CREATE, (_, channel) => callback(channel)),
 	onChannelChange: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_CHANGE, (_, channel) => callback(channel)),
 	onChannelDelete: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_DELETE, (_, channel) => callback(channel)),

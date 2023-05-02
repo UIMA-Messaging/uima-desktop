@@ -61,6 +61,7 @@ import './handlers/xmp-handlers'
 import './handlers/auth-handlers'
 import './handlers/message-handlers'
 import './handlers/contacts-handlers'
+import './handlers/channel-handlers'
 
 // Register events
 import './events/auth-events'
