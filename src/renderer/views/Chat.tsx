@@ -45,9 +45,9 @@ export default () => {
 					</div>
 				</div>
 				<div className="chat-messages">
-					<div className="chat-greeting">{channel.type === 'dm' ? `Direct messages to ${channel.members[0].user.displayName}` : `Welcome to ${channel.name} group chat`}</div>
+					<div className="chat-greeting">{channel.type === 'dm' ? `Direct messages to ${channel.members[0].displayName}` : `Welcome to ${channel.name} group chat`}</div>
 					{messages.map((message) => (
-						<ChatBubble text="This is a message" time="12:12" author={message.sender} color={color} />
+						<ChatBubble text="This is a message" time={message.timestamp} author={message.author.displayName} />
 					))}
 					<div ref={bottom} />
 				</div>

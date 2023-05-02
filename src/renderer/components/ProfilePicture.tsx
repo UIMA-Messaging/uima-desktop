@@ -8,8 +8,7 @@ export default ({ image, name }: { image?: string; name?: string }) => {
 	useEffect(() => {
 		if (!image && name) {
 			const colorHash = new ColorHash()
-			const color_ = colorHash.hex(name)
-			setColor(color_)
+			setColor(colorHash.hex(name))
 		}
 	}, [image, name])
 
