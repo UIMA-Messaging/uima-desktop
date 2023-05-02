@@ -25,7 +25,15 @@ export default class ContactRepo {
 	}
 
 	public async getContactById(id: string): Promise<User> {
-		return await this.connection.querySingle<User>('SELECT * FROM Contacts WHERE id = $id LIMIT 1', { id })
+		return await this.connection.querySingle<User>(
+			`
+				SELECT * 
+				FROM Contacts 
+				WHERE id = $id 
+				LIMIT 1
+			`,
+			{ id }
+		)
 	}
 
 	public async createOrUpdateContact(contact: User): Promise<void> {
