@@ -22,7 +22,7 @@ export declare global {
 			getAllChannels: () => Promise<Channel[]>
 			getChannelById: (id: string) => Promise<Channel>
 			createChannel: (channel: Channel) => Promise<void>
-			deleteChannel: (id: string) => Promise<void>
+			deleteChannelById: (id: string) => Promise<void>
 			onChannelCreate: (callback: (channel: Channel) => void) => void
 			onChannelChange: (callback: (channel: Channel) => void) => void
 			onChannelDelete: (callback: (channel: Channel) => void) => void

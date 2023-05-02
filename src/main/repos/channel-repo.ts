@@ -38,7 +38,7 @@ export default class ChannelRepo {
 	public async getAllChannels(): Promise<Channel[]> {
 		const channels = await this.connection.query<Channel>('SELECT * FROM Channels')
 		channels.forEach(async (channel) => {
-			channel.members = await this.getAllMembersFromChannel(channel.id)
+			channel.members = await this.getAllMembersByChannelId(channel.id)
 		})
 		return channels
 	}
@@ -52,22 +52,24 @@ export default class ChannelRepo {
 			`,
 			{ id }
 		)
-		channel.members = await this.getAllMembersFromChannel(channel.id)
+		channel.members = await this.getAllMembersByChannelId(channel.id)
 		return channel
 	}
 
-	public async getAllMembersFromChannel(channelId: string): Promise<User[]> {
+	public async getAllMembersByChannelId(channelId: string): Promise<User[]> {
 		const stored = await this.connection.query<StoredChannelMember>(
 			`
-				SELECT * 
-				FROM ChannelMembers 
-				WHERE ChannelId = $channelId
+			SELECT * 
+			FROM ChannelMembers 
+			WHERE channelId = $channelId
 			`,
 			{ channelId }
 		)
 
 		const members: User[] = []
-		stored.forEach(async (m) => members.push(await this.contacts.getContactById(m.userId)))
+		stored.forEach(async (member) => {
+			members.push(await this.contacts.getContactById(member.userId))
+		})
 
 		return members
 	}
@@ -101,13 +103,13 @@ export default class ChannelRepo {
 	public async createOrUpdateChannelMember(channelId: string, member: User): Promise<void> {
 		await this.connection.execute(
 			`
-				INSERT INTO ChannelMembers (id, nick, userId, channelId)
-				VALUES ($id, $nick, $userId, $channelId)
-				ON CONFLICT(id)
-				DO UPDATE SET
-					nick = $nick,
-					userId = $userId,
-					channelId = $channelId;
+				INSERT INTO ChannelMembers (
+					userId, 
+					channelId)
+				VALUES (
+					$userId, 
+					$channelId)
+				ON CONFLICT(userId) DO NOTHING;
 			`,
 			{
 				channelId: channelId,

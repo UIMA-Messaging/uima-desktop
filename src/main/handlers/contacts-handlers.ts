@@ -1,8 +1,9 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { appData, contacts, ejabberd, encryption } from '..'
-import { User } from '../../common/types'
+import { appData, contacts, ejabberd, encryption, channels as chattingChannels } from '..'
+import { Channel, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
+import { v4 } from 'uuid'
 
 ipcMain.handle(channels.CONTACTS.GET_ALL, async (_: IpcMainEvent) => {
 	return await contacts.getAllContacts()
@@ -27,8 +28,17 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			ejabberd.send(contact.jid, postBunble)
 
 			await contacts.createOrUpdateContact(contact)
-
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
+
+			const channel: Channel = {
+				id: v4(),
+				name: contact.displayName,
+				type: 'dm',
+				members: [contact],
+			}
+
+			await chattingChannels.createOrUpdateChannel(channel)
+			event.sender.send(channels.CHANNELS.ON_CREATE, channel)
 		} catch (error) {
 			event.sender.send(channels.ON_ERROR, 'contacts.error', error)
 		}
