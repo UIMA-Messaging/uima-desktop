@@ -1,11 +1,15 @@
 import { appData, ejabberd, encryption, messages, channels as chattingChannels, window, contacts } from '..'
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { Message } from '../../common/types'
+import { Message, User } from '../../common/types'
 import { v4 } from 'uuid'
 
+ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, channelId: string, limit: number, offset: number) => {
+	return await messages.getMessagesByChannelId(channelId, limit, offset)
+})
+
 ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string, content: string) => {
-	const sender = await appData.get<any>('user.profile')
+	const sender = JSON.parse(await appData.get<any>('user.profile')) as User
 	const channel = await chattingChannels.getChannelById(channelId)
 
 	if (!channel) {
@@ -30,10 +34,6 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 
 	await messages.createMessage(channelId, message)
 	event.sender.send(channels.MESSAGES.ON_SENT, channelId, message)
-})
-
-ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, channelId: string, limit: number, offset: number) => {
-	return await messages.getMessagesByChannelId(channelId, limit, offset)
 })
 
 export function notifyOfNewMessage(channelId: string, message: Message) {

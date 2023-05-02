@@ -33,11 +33,13 @@ export function useChannels(): { channels: Channel[]; created: Channel; removed:
 	return { channels, created, removed, changed }
 }
 
-export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void } {
+export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void; loadNextMessages: () => void } {
 	const [channel, setChannel] = useState<Channel>(null)
 	const [messages, setMessages] = useState<Message[]>([])
-	
+	const [page, setPage] = useState(0)
+
 	useEffect(() => {
+		window.electron.getMessageByChannelId(id, 100, page).then(setMessages)
 		window.electron.getChannelById(id).then(setChannel)
 	}, [id])
 
@@ -73,5 +75,12 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 		}
 	}
 
-	return { channel, messages, sendMessage }
+	function loadNextMessages() {
+		window.electron.getMessageByChannelId(id, 100, page + 1).then((loaded) => {
+			setPage(page + 1)
+			setMessages([...messages, ...loaded])
+		})
+	}
+
+	return { channel, messages, sendMessage, loadNextMessages }
 }

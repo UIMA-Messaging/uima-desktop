@@ -11,11 +11,14 @@ export default () => {
 	const navigation = useNavigate()
 	const location = useLocation()
 	const { channel, messages, sendMessage } = useChannel(location.state?.id)
+	const top = useRef(null)
 	const bottom = useRef(null)
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [messages])
+
+	console.log(channel, messages)
 
 	return (
 		<div className="app-container">
@@ -46,13 +49,14 @@ export default () => {
 				</div>
 				<div className="chat-messages">
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
+					<div ref={top} />
 					{messages.map((message) => (
 						<ChatBubble key={message.id} text={message.content} time={message.timestamp} author={message.author.displayName} />
 					))}
 					<div ref={bottom} />
 				</div>
 				<div className="chat-inputs">
-					<Input getValue={sendMessage} placeholder="Say something to Group chat 1" />
+					<Input getValue={sendMessage} placeholder="Say something..." />
 				</div>
 			</div>
 		</div>

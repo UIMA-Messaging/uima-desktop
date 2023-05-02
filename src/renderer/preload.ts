@@ -27,7 +27,7 @@ contextBridge.exposeInMainWorld('electron', {
 	onChannelChange: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_CHANGE, (_, channel) => callback(channel)),
 	onChannelDelete: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_DELETE, (_, channel) => callback(channel)),
 
-	getMessageByChannelId: (channelId: string, limit: number, offset: number) => ipcRenderer.send(channels.MESSAGES.GET, channelId, limit, offset),
+	getMessageByChannelId: (channelId: string, limit: number, offset: number) => ipcRenderer.invoke(channels.MESSAGES.GET, channelId, limit, offset),
 	sendMessage: (channelId: string, content: string) => ipcRenderer.send(channels.MESSAGES.SEND, channelId, content),
 	onMessageReceive: (callback: (channelId: string, message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVE, (_, channelId, message) => callback(channelId, message)),
 	onMessageSent: (callback: (channelId: string, message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_SENT, (_, channelId, message) => callback(channelId, message)),

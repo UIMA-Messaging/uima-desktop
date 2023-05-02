@@ -27,7 +27,7 @@ export default class MessageRepo {
 				content TEXT,
 				timestamp DATETIME,
 				FOREIGN KEY (channelId) REFERENCES Channels(id),
-				FOREIGN KEY (authorId) REFERENCES Users(id)
+				FOREIGN KEY (authorId) REFERENCES Contacts(id)
 			)`)
 	}
 
@@ -38,18 +38,18 @@ export default class MessageRepo {
 				WHERE channelId = $channelId 
 				LIMIT $limit OFFSET $offset
 			`,
-			{ limit, offset, channelId }
+			{ channelId, limit, offset }
 		)
 
 		const messages: Message[] = []
-		stored.forEach(async (message) => {
+		for (const message of stored) {
 			messages.push({
 				id: message.id,
 				author: await this.contacts.getContactById(message.authorId),
 				content: message.content,
 				timestamp: message.timestamp,
 			})
-		})
+		}
 
 		return messages
 	}
