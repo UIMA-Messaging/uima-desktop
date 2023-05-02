@@ -6,7 +6,7 @@ export default ({ image, username, displayName, online, joinedAt, children }: { 
 	return (
 		<div className="contact-card-container">
 			<div className="contact-card-image">
-				<ProfilePicture image={image} name={displayName} />
+				<ProfilePicture image={image} name={username} />
 			</div>
 			<div className="contact-card-meta-container">
 				<div className="contact-card-credentials">

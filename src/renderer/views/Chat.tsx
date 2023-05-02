@@ -10,13 +10,22 @@ import { useChannel } from '../hooks/use-channels'
 export default () => {
 	const navigation = useNavigate()
 	const location = useLocation()
-	const { channel, messages, sendMessage } = useChannel(location.state?.id)
-	const top = useRef(null)
+	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(location.state?.id)
 	const bottom = useRef(null)
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [messages])
+
+	useEffect(() => {
+		bottom.current?.scrollIntoView({ behavior: 'smooth' })
+	}, [newMessage])
+
+	function handleScroll(event: any) {
+		if (event.target.scrollTop === 0) {
+			loadNextMessages()
+		}
+	}
 
 	return (
 		<div className="app-container">
@@ -45,10 +54,9 @@ export default () => {
 						)}
 					</div>
 				</div>
-				<div className="chat-messages">
+				<div className="chat-messages" onScroll={handleScroll}>
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
-					<div ref={top} />
-					{messages.map((message) => (
+					{messages.reverse().map((message) => (
 						<ChatBubble key={message.id} text={message.content} time={message.timestamp} author={message.author.displayName} />
 					))}
 					<div ref={bottom} />
