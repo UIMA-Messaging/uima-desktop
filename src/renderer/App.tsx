@@ -1,15 +1,14 @@
 import './styles/App.css'
-import Login from './views/Login'
-import Register from './views/Register'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import useAuth from './hooks/use-auth'
+import Login from './views/Login'
+import Register from './views/Register'
 import Chat from './views/Chat'
 import Contacts from './views/Contacts'
 import Settings from './views/Settings'
 import Search from './views/Search'
 import Group from './views/Group'
-import Sidebar from './components/Sidebar'
 
 export default () => {
 	const { state } = useAuth()

@@ -32,21 +32,21 @@ export default class Encryption {
 		await setDoubleRatchet(userId, DoubleRatchet.init(sharedSecret, false))
 	}
 
-	public async encrypt(message: Message): Promise<NetworkMessage> {
+	public async encrypt(recepientId: string, message: any): Promise<NetworkMessage> {
 		console.log('encrypting message', message)
 		if (!this.x3dh) {
 			throw Error('Cannot encrypt when no X3DH is set.')
 		}
-		const doubleRatchet = await getDoubleRatchet(message.receiver)
+		const doubleRatchet = await getDoubleRatchet(recepientId)
 		const encrypted = doubleRatchet.send(message)
 		return {
-			sender: message.sender,
-			receiver: message.receiver,
+			sender: message.author.user.id,
+			receiver: recepientId,
 			content: encrypted,
 		}
 	}
 
-	public async decrypt(message: NetworkMessage): Promise<{ message: Message; ciphertext: string }> {
+	public async decrypt(message: NetworkMessage): Promise<{ message: any; ciphertext: string }> {
 		if (!this.x3dh) {
 			throw Error('Cannot decrypt when no X3DH is set.')
 		}

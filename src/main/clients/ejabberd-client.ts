@@ -2,7 +2,6 @@ import xml from '@xmpp/xml'
 import EventEmitter from 'events'
 import { Client, Stanza } from 'node-xmpp-client'
 import { JabberUser } from '../../common/types'
-import { NetworkMessage } from '../../common/types/SigalProtocol'
 
 export default class EjabberdClient extends EventEmitter {
 	private client: Client
@@ -50,16 +49,12 @@ export default class EjabberdClient extends EventEmitter {
 		this.client.connect()
 	}
 
-	public createJabberUser(username: string, password: string): JabberUser {
-		return { username: `${username}@${this.host}`, password }
-	}
-
 	public disconnect() {
 		this.client?.disconnect()
 		this.connected = false
 	}
 
-	public sendMessage(recipientJid: string, message: NetworkMessage) {
+	public send(recipientJid: string, message: any) {
 		if (!this.client) {
 			throw Error('Ejabberd user not configured yet.')
 		}
