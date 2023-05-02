@@ -1,6 +1,6 @@
-import { Message, NetworkMessage } from '../../common/types'
+import { NetworkMessage } from '../../common/types'
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
-import { ejabberd, encryption, messages } from '..'
+import { ejabberd, encryption } from '..'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 
 ejabberd.on('onConnected', () => {
@@ -15,8 +15,7 @@ ejabberd.on('onDisconnected', () => {
 
 ejabberd.on('onMessageReceived', async (encryptedMessage: NetworkMessage) => {
 	const { message } = await encryption.decrypt(encryptedMessage)
-	await messages.createMessage(message)
-	notifyOfNewMessage(message)
+	// notifyOfNewMessage(message)
 })
 
 ejabberd.on('onError', (error: string) => {

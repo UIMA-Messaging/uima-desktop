@@ -1,6 +1,6 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
-import { appData, contacts, encryption } from '..'
+import { appData, contacts, ejabberd, encryption } from '..'
 import { User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 
@@ -21,10 +21,13 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 	} else {
 		try {
 			const user = JSON.parse(await appData.get<any>('user.profile')) as User
+
 			const bundle = await getKeyBundleForUser(contact.id, user.id)
-			encryption.establishExchange(contact.id, bundle)
+			const postBunble = await encryption.establishExchange(contact.id, bundle)
+			ejabberd.send(contact.jid, postBunble)
+
 			await contacts.createOrUpdateContact(contact)
-			
+
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 		} catch (error) {
 			event.sender.send(channels.ON_ERROR, 'contacts.error', error)

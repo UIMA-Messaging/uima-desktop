@@ -1,7 +1,7 @@
 import { createECDH, createHash } from 'crypto'
 import { ECDH } from 'crypto'
 import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
-import { kdf } from './encryption'
+import { kdf } from './utils'
 import { ExchangeKeys } from '../../common/types/SigalProtocol'
 
 export default class X3DH {

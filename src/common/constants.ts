@@ -15,7 +15,9 @@ export const channels = {
 	CHANNELS: {
 		GET: 'channels.get',
 		GET_ALL: 'channels.get.all',
+		CREATE: 'channels.create',
 		DELETE: 'channels.delete',
+		ON_CHANGE: 'channels.updated',
 		ON_CREATE: 'channels.created',
 		ON_DELETE: 'channels.deleted',
 	},

@@ -1,5 +1,4 @@
-import { connection } from '../index'
-import { decrypt, encrypt } from '../security/encryption'
+import { decrypt, encrypt } from '../security/utils'
 import { createHash } from 'crypto'
 import SqlConnection from '../services/sql-connection'
 
@@ -51,7 +50,7 @@ export default class AppData {
 			modifiedAt: new Date(),
 		}
 
-		await connection.execute(
+		await this.connection.execute(
 			`
 			INSERT INTO AppData(id, data, sensitive, modifiedAt) 
 			VALUES ($id, $data, $sensitive, $modifiedAt)
@@ -65,7 +64,7 @@ export default class AppData {
 	}
 
 	public async get<T>(id: string): Promise<T> {
-		const record = await connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
+		const record = await this.connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
 		const data = record?.sensitive ? decrypt(record.data, this.key) : record?.data
 
 		try {

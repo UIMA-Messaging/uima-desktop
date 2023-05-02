@@ -1,5 +1,5 @@
 import { channels } from '../common/constants'
-import { Credentials, Registration, Message, User } from '../common/types'
+import { Credentials, Registration, Message, User, Channel } from '../common/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
@@ -19,10 +19,18 @@ contextBridge.exposeInMainWorld('electron', {
 	isOnline: () => ipcRenderer.invoke(channels.XMP.ONLINE),
 	onOnline: (callback: (isOnline: boolean) => void) => ipcRenderer.on(channels.XMP.ONLINE, (_, isOnline) => callback(isOnline)),
 
-	sendMessage: (recipientJid: string, message: Message) => ipcRenderer.send(channels.MESSAGES.SEND, recipientJid, message),
-	getMessagesFromContact: (callback: (id: string) => void) => ipcRenderer.on(channels.MESSAGES.GET, (_, message) => callback(message)),
-	onMessageReceive: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVE, (_, message) => callback(message)),
-	onMessageSent: (callback: (message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_SENT, (_, message) => callback(message)),
+	getAllChannels: () => ipcRenderer.invoke(channels.CHANNELS.GET_ALL),
+	getChannelById: (id: string) => ipcRenderer.invoke(channels.CHANNELS.GET, id),
+	createChannel: (channel: Channel) => ipcRenderer.send(channels.CHANNELS.CREATE, channel),
+	deleteChannel: (id: string) => ipcRenderer.send(channels.CHANNELS.DELETE, id),
+	onChannelCreate: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_CREATE, (_, channel) => callback(channel)),
+	onChannelChange: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_CHANGE, (_, channel) => callback(channel)),
+	onChannelDelete: (callback: (channel: Channel) => void) => ipcRenderer.on(channels.CHANNELS.ON_DELETE, (_, channel) => callback(channel)),
+
+	getMessageByChannelId: (channelId: string, limit: number, offset: number) => ipcRenderer.send(channels.MESSAGES.GET, channelId, limit, offset),
+	sendMessage: (channelId: string, content: string) => ipcRenderer.send(channels.MESSAGES.SEND, channelId, content),
+	onMessageReceive: (callback: (channelId: string, message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_RECEIVE, (_, channelId, message) => callback(channelId, message)),
+	onMessageSent: (callback: (channelId: string, message: Message) => void) => ipcRenderer.on(channels.MESSAGES.ON_SENT, (_, channelId, message) => callback(channelId, message)),
 
 	getAllContacts: () => ipcRenderer.invoke(channels.CONTACTS.GET_ALL),
 	getContactById: (id: string) => ipcRenderer.invoke(channels.CONTACTS.GET, id),

@@ -41,8 +41,8 @@ const connection = new SqlConnection(new Database('src/main.db'))
 // Repositories
 const appData = new AppData(connection)
 const contacts = new ContactRepo(connection)
-const channels = new ChannelRepo(connection)
-const messages = new MessageRepo(connection)
+const channels = new ChannelRepo(connection, contacts)
+const messages = new MessageRepo(connection, contacts)
 
 // Services
 const authentication = new Authentification(appData)
@@ -53,7 +53,7 @@ const ejabberd = new EjabberdClient('localhost', 5223)
 // Encryption
 const encryption = new Encryption()
 
-export { authentication, appData, ejabberd, connection, messages, channels, contacts, encryption, window }
+export { authentication, appData, ejabberd, messages, channels, contacts, encryption, window }
 
 // Register handlers
 import './handlers/app-data-handlers'
