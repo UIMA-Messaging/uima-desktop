@@ -20,7 +20,7 @@ export default () => {
 				navigation('contacts')
 				break
 			case 'loggedOut':
-				navigation('login')
+				navigation('')
 				break
 			case 'notRegistered':
 				navigation('register')
@@ -30,7 +30,7 @@ export default () => {
 
 	return (
 		<Routes>
-			<Route path="/login" element={<Login />} />
+			<Route path="/" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/chat" element={<Chat />} />
 			<Route path="/group" element={<Group />} />
