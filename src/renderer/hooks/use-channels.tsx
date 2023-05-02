@@ -44,29 +44,33 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 	}, [id])
 
 	window.electron.onChannelChange((changed) => {
-		if (changed.id === channel.id) {
+		if (changed.id === id) {
 			setChannel(changed)
 		}
 	})
 
 	window.electron.onChannelCreate((created) => {
-		if (created.id === channel.id) {
+		if (created.id === id) {
 			setChannel(created)
 		}
 	})
 
 	window.electron.onChannelDelete((deleted) => {
-		if (deleted.id === channel.id) {
+		if (deleted.id === id) {
 			setChannel(deleted)
 		}
 	})
 
-	window.electron.onMessageReceive((message) => {
-		setMessages([...messages, message])
+	window.electron.onMessageReceive((channelId, message) => {
+		if (channelId === id) {
+			setMessages([...messages, message])
+		}
 	})
 
-	window.electron.onMessageSent((message) => {
-		setMessages([...messages, message])
+	window.electron.onMessageSent((channelId, message) => {
+		if (channelId === id) {
+			setMessages([...messages, message])
+		}
 	})
 
 	function sendMessage(message: string) {

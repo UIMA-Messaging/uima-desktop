@@ -18,8 +18,6 @@ export default () => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [messages])
 
-	console.log(channel, messages)
-
 	return (
 		<div className="app-container">
 			<Sidebar />

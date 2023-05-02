@@ -12,7 +12,8 @@ export default ({ text, author, time }: { text: string; author: string; time: Da
 
 	return (
 		<div className="chat-bubble-container">
-			<span className="message-time">{time.toLocaleDateString()}</span>
+			<span className="message-time">12:31</span>
+			{/* <span className="message-time">{time?.toLocaleDateString()}</span> */}
 			<span style={{ color: color }} className="message-author">
 				{author}
 			</span>
