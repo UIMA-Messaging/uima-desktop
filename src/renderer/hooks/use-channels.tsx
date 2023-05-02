@@ -33,7 +33,7 @@ export function useChannels(): { channels: Channel[]; created: Channel; removed:
 	return { channels, created, removed, changed }
 }
 
-export function useChannel(id: string): { channel: Channel; sendMessage: (message: string) => void } {
+export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void } {
 	const [channel, setChannel] = useState<Channel>()
 	const [messages, setMessages] = useState<Message[]>()
 
@@ -73,5 +73,5 @@ export function useChannel(id: string): { channel: Channel; sendMessage: (messag
 		}
 	}
 
-	return { channel, sendMessage }
+	return { channel, messages, sendMessage }
 }
