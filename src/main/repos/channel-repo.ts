@@ -59,25 +59,25 @@ export default class ChannelRepo {
 	public async getAllMembersByChannelId(channelId: string): Promise<User[]> {
 		const stored = await this.connection.query<StoredChannelMember>(
 			`
-			SELECT * 
-			FROM ChannelMembers 
-			WHERE channelId = $channelId
+				SELECT * 
+				FROM ChannelMembers 
+				WHERE channelId = $channelId
 			`,
 			{ channelId }
 		)
 
 		const members: User[] = []
-		stored.forEach(async (member) => {
+		for (const member of stored) {
 			members.push(await this.contacts.getContactById(member.userId))
-		})
+		}
 
 		return members
 	}
 
 	public async createOrUpdateChannel(channel: Channel): Promise<void> {
-		channel.members.forEach(async (member) => {
+		for (const member of channel.members) {
 			await this.createOrUpdateChannelMember(channel.id, member)
-		})
+		}
 
 		await this.connection.execute(
 			`

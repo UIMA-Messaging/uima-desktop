@@ -10,8 +10,6 @@ export default () => {
 	const { channels } = useChannels()
 	const [profile] = useAppData<User>('user.profile')
 
-	console.log(channels)
-
 	return (
 		<div className="sidebar">
 			<div className="sidebar-item" onClick={() => navigation('/settings')}>
