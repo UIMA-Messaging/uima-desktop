@@ -44,7 +44,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 		setPage(0)
 		setNewMessage(null)
 		setSent(0)
-		window.electron.getMessageByChannelId(id, 50, 0).then(setMessages)
+		window.electron.getMessageByChannelId(id, 50, 0).then(m => setMessages(m.reverse()))
 		window.electron.getChannelById(id).then(setChannel)
 	}, [id])
 
@@ -68,7 +68,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 
 	window.electron.onMessageReceive((channelId, message) => {
 		if (channelId === id) {
-			setMessages([message, ...messages.reverse()])
+			setMessages([message, ...messages])
 			setNewMessage(message)
 			setSent(sent + 1)
 		}
@@ -76,7 +76,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 
 	window.electron.onMessageSent((channelId, message) => {
 		if (channelId === id) {
-			setMessages([message, ...messages.reverse()])
+			setMessages([message, ...messages])
 			setNewMessage(message)
 			setSent(sent + 1)
 		}
@@ -91,7 +91,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 	function loadNextMessages() {
 		window.electron.getMessageByChannelId(id, 50, (page + 1) * 50 + sent).then((loaded) => {
 			setPage(page + 1)
-			setMessages([...messages.reverse(), ...loaded])
+			setMessages([...messages, ...loaded.reverse()])
 		})
 	}
 
