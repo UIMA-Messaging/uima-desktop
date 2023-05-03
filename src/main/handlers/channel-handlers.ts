@@ -12,13 +12,13 @@ ipcMain.handle(channels.CHANNELS.GET, async (_: IpcMainEvent, id: string) => {
 })
 
 ipcMain.handle(channels.CHANNELS.CREATE, async (event: IpcMainEvent, channel: Channel) => {
-	const exists = chattingChannels.getChannelById(channel.id)
+	const exists = await chattingChannels.getChannelById(channel.id)
 	await chattingChannels.createOrUpdateChannel(channel)
 
 	if (exists) {
 		event.sender.send(channels.CHANNELS.ON_CHANGE, channel)
 	} else {
-		// send invites to memebers
+		// send invites to members
 
 		event.sender.send(channels.CHANNELS.ON_CREATE, channel)
 	}
