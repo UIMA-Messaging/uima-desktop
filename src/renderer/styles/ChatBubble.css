@@ -5,9 +5,8 @@
 	letter-spacing: 0.2px;
 	padding: 7px 30px;
 	transition: 0.2s;
+	gap: 10px;
 	animation: slide 0.2s ease-out forwards;
-	align-items: center;
-	justify-content: space-between;
 }
 
 @keyframes slide {
@@ -37,6 +36,8 @@
 	font-weight: bold;
 	opacity: 0;
 	transition: 0.2s;
+	margin-left: 15px;
+	white-space:nowrap;
 }
 
 .message-author {
@@ -54,10 +55,4 @@
 	user-select: text;
 	font-weight: 500;
 	cursor: default;
-}
-
-.chat-bubble-message {
-	display: flex;
-	align-items: center;
-	gap: 10px;
 }
