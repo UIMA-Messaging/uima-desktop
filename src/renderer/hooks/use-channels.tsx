@@ -44,7 +44,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 		setPage(0)
 		setNewMessage(null)
 		setSent(0)
-		window.electron.getMessageByChannelId(id, 50, 0).then(m => setMessages(m.reverse()))
+		window.electron.getMessageByChannelId(id, 50, 0).then(setMessages)
 		window.electron.getChannelById(id).then(setChannel)
 	}, [id])
 
@@ -91,7 +91,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 	function loadNextMessages() {
 		window.electron.getMessageByChannelId(id, 50, (page + 1) * 50 + sent).then((loaded) => {
 			setPage(page + 1)
-			setMessages([...messages, ...loaded.reverse()])
+			setMessages([...messages, ...loaded])
 		})
 	}
 
