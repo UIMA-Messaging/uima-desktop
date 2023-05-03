@@ -36,7 +36,7 @@
 	font-weight: bold;
 	opacity: 0;
 	transition: 0.2s;
-	margin-left: 15px;
+	margin-left: 10px;
 	white-space:nowrap;
 }
 
@@ -45,11 +45,6 @@
 	width: fit-content;
 	transition: 0.2s;
 }
-
-/* .message-author:hover {
-	opacity: 0.5;
-	cursor: pointer;
-} */
 
 .message-text {
 	user-select: text;
