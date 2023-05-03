@@ -9,20 +9,17 @@ import { useChannel } from '../hooks/use-channels'
 
 export default () => {
 	const navigation = useNavigate()
-	const location = useLocation()
-	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(location.state?.id)
+	const { state } = useLocation()
+	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(state?.id)
 	const bottom = useRef(null)
-
-	useEffect(() => {
-		bottom.current?.scrollIntoView({ behavior: 'smooth' })
-	}, [messages])
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [newMessage])
 
 	function handleScroll(event: any) {
-		if (event.target.scrollTop === 0) {
+		const target = event.target
+		if (Math.round(-target.scrollTop) === target.scrollHeight - target.clientHeight) {
 			loadNextMessages()
 		}
 	}
@@ -55,11 +52,11 @@ export default () => {
 					</div>
 				</div>
 				<div className="chat-messages" onScroll={handleScroll}>
-					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
-					{messages.reverse().map((message) => (
+					<div ref={bottom} />
+					{messages.map((message) => (
 						<ChatBubble key={message.id} text={message.content} time={message.timestamp} author={message.author.displayName} />
 					))}
-					<div ref={bottom} />
+					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>
 				<div className="chat-inputs">
 					<Input getValue={sendMessage} placeholder="Say something..." />
