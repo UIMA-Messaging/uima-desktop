@@ -19,7 +19,7 @@ export default () => {
 
 	function handleScroll(event: any) {
 		const target = event.target
-		if (Math.round(-target.scrollTop) === target.scrollHeight - target.clientHeight) {
+		if (Math.round(-target.scrollTop) >= target.scrollHeight - target.clientHeight - 200) {
 			loadNextMessages()
 		}
 	}
