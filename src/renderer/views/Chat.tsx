@@ -2,7 +2,7 @@ import '../styles/Chat.css'
 import ChatBubble from '../components/ChatBubble'
 import Input from '../components/Input'
 import Sidebar from '../components/Sidebar'
-import ProfilePicture from '../components/ProfilePicture'
+import Picture from '../components/Picture'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import { useChannel } from '../hooks/use-channels'
@@ -31,7 +31,7 @@ export default () => {
 				<div className="chat-header">
 					<div className="chat-title">
 						<div className="chat-header-picture">
-							<ProfilePicture name={channel?.name} image={channel?.image} />
+							<Picture name={channel?.name} image={channel?.image} />
 						</div>
 						{channel?.name}
 					</div>
@@ -54,7 +54,7 @@ export default () => {
 				<div className="chat-messages" onScroll={handleScroll}>
 					<div ref={bottom} />
 					{messages.map((message) => (
-						<ChatBubble key={message.id} text={message.content} time={message.timestamp} author={message.author.displayName} />
+						<ChatBubble key={message.id} text={message.content} timestamp={message.timestamp} author={message.author.displayName} />
 					))}
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>

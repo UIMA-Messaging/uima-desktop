@@ -1,6 +1,6 @@
 import '../styles/Sidebar.css'
 import { useNavigate } from 'react-router-dom'
-import ProfilePicture from './ProfilePicture'
+import Picture from './Picture'
 import { User } from '../../common/types'
 import { useChannels } from '../hooks/use-channels'
 import useAppData from '../hooks/use-app-data'
@@ -13,7 +13,7 @@ export default () => {
 	return (
 		<div className="sidebar">
 			<div className="sidebar-item" onClick={() => navigation('/settings')}>
-				<ProfilePicture image={profile?.image} name={profile?.displayName} />
+				<Picture image={profile?.image} name={profile?.displayName} />
 			</div>
 			<div className="sidebar-item-separator" />
 			<div className="sidebar-item" onClick={() => navigation('/contacts')} />
@@ -21,7 +21,7 @@ export default () => {
 			<div className="sidebar-item-separator" />
 			{channels.map((channel) => (
 				<div key={channel.id} className="sidebar-item" onClick={() => navigation('/chat', { state: { id: channel.id } })}>
-					<ProfilePicture image={channel.image} name={channel.name} />
+					<Picture image={channel.image} name={channel.name} />
 				</div>
 			))}
 		</div>
