@@ -7,7 +7,7 @@ export function getNaturalTimeFromDate(date: Date, relativeThreshold: number = 3
 	if (date < thresholdTime) {
 		return moment(date).calendar(null, {
 			sameDay: '[today at] HH:mm',
-			nextDay: '[tomorrow at] HH:mm',
+			lastDay: '[yesterday at] HH:mm',
 			sameElse: 'MMM D [at] HH:mm',
 		})
 	} else {

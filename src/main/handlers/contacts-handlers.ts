@@ -1,7 +1,7 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels } from '../../common/constants'
 import { appData, contacts, ejabberd, encryption, channels as chattingChannels } from '..'
-import { Channel, User } from '../../common/types'
+import { Channel, Invitation, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 import { v4 } from 'uuid'
 
@@ -24,8 +24,15 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			const user = JSON.parse(await appData.get<any>('user.profile')) as User
 
 			const bundle = await getKeyBundleForUser(contact.id, user.id)
-			const postBunble = await encryption.establishExchange(contact.id, bundle)
-			ejabberd.send(contact.jid, postBunble)
+			const postKeyBunble = await encryption.establishExchange(contact.id, bundle)
+
+			const invitation: Invitation = {
+				id: v4(),
+				timestamp: new Date(),
+				user: user,
+				postKeyBundle: postKeyBunble,
+			}
+			ejabberd.send(contact.jid, 'invitation', invitation)
 
 			await contacts.createOrUpdateContact(contact)
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)

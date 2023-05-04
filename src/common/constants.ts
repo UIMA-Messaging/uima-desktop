@@ -45,3 +45,17 @@ export const channels = {
 		ON_CREATE: 'contacts.created',
 	},
 }
+
+export const messageTypes = {
+	GROUP: {
+		INVITATION: 'group.invite',
+	},
+
+	CONTACT: {
+		INVITATION: 'contact.invite',
+	},
+
+	CHANNELS: {
+		MESSAGE: 'channel.message',
+	},
+}

@@ -43,7 +43,7 @@ export default class EjabberdClient extends EventEmitter {
 
 		this.client.on('stanza', (stanza: Stanza) => {
 			console.log(JSON.stringify(stanza, null, 2))
-			this.emit('onMessageReceived', null)
+			this.emit('onReceived', null, null)
 		})
 
 		this.client.connect()
@@ -54,7 +54,7 @@ export default class EjabberdClient extends EventEmitter {
 		this.connected = false
 	}
 
-	public send(recipientJid: string, message: any) {
+	public send(recipientJid: string, type: string, message: any) {
 		if (!this.client) {
 			throw Error('Ejabberd user not configured yet.')
 		}
@@ -62,7 +62,7 @@ export default class EjabberdClient extends EventEmitter {
 			throw Error('User not connected to XMP client.')
 		}
 		const payload = xml('body', null, JSON.stringify(message))
-		const stanza = xml('message', { to: recipientJid, type: 'chat' }, payload)
+		const stanza = xml('message', { to: recipientJid, type: type }, payload)
 		this.client.send(stanza)
 	}
 

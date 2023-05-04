@@ -4,3 +4,4 @@ export { Registration, Credentials, BasicUser, RegisteredUser } from './Registra
 export { SearchResults } from './Clients'
 export { NetworkMessage } from './SigalProtocol'
 export { SearchResults } from './Clients'
+export { Invitation } from './Invitations'
