@@ -1,82 +1,124 @@
-import { Channel, ChannelMemeber } from '../../common/types'
+import { Channel, User } from '../../common/types'
 import SqlConnection from '../services/sql-connection'
+import ContactRepo from './contact-repo'
+
+interface StoredChannelMember {
+	userId: string
+	channelId: string
+}
 
 export default class ChannelRepo {
 	private connection: SqlConnection
+	private contacts: ContactRepo
 
-	constructor(connection: SqlConnection) {
+	constructor(connection: SqlConnection, contacts: ContactRepo) {
 		this.connection = connection
+		this.contacts = contacts
 
-		console.log('Creating `Channels` table if it does not already exist.')
-		this.connection.execute(`
-      CREATE TABLE IF NOT EXISTS Channels (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT,
-        image TEXT
-      );`)
+		console.log('Creating `Channels` and `ChannelMembers` tables if they do not already exist.')
 
-		console.log('Creating `ChannelMembers` table if it does not already exist.')
 		this.connection.execute(`
-      CREATE TABLE IF NOT EXISTS ChannelMembers (
-        id TEXT PRIMARY KEY,
-        nick TEXT NOT NULL,
-        userId TEXT NOT NULL,
-        channelId TEXT NOT NULL,
-        FOREIGN KEY (userId) REFERENCES Users(id),
-        FOREIGN KEY (channelId) REFERENCES Channels(id)
-      );`)
+			CREATE TABLE IF NOT EXISTS Channels (
+				id TEXT PRIMARY KEY,
+				name TEXT NOT NULL,
+				type TEXT,
+				image TEXT
+			);`)
+
+		this.connection.execute(`
+			CREATE TABLE IF NOT EXISTS ChannelMembers (
+				userId TEXT NOT NULL,
+				channelId TEXT NOT NULL,
+				FOREIGN KEY (userId) REFERENCES Users(id),
+				FOREIGN KEY (channelId) REFERENCES Channels(id)
+				PRIMARY KEY (userId, channelId)
+			);`)
 	}
 
 	public async getAllChannels(): Promise<Channel[]> {
 		const channels = await this.connection.query<Channel>('SELECT * FROM Channels')
 		channels.forEach(async (channel) => {
-			channel.memebers = await this.getAllMembersFromChannel(channel.id)
+			channel.members = await this.getAllMembersByChannelId(channel.id)
 		})
 		return channels
 	}
 
-	public async getAllMembersFromChannel(channelId: string): Promise<ChannelMemeber[]> {
-		return await this.connection.query<ChannelMemeber>('SELECT * FROM ChannelMemebers WHERE ChannelId = $channelId', { channelId })
+	public async getChannelById(id: string): Promise<Channel> {
+		const channel = await this.connection.querySingle<Channel>(
+			`
+				SELECT * FROM Channels 
+				WHERE id = $id 
+				LIMIT 1
+			`,
+			{ id }
+		)
+		channel.members = await this.getAllMembersByChannelId(channel.id)
+		return channel
+	}
+
+	public async getAllMembersByChannelId(channelId: string): Promise<User[]> {
+		const stored = await this.connection.query<StoredChannelMember>(
+			`
+				SELECT * 
+				FROM ChannelMembers 
+				WHERE channelId = $channelId
+			`,
+			{ channelId }
+		)
+
+		const members: User[] = []
+		for (const member of stored) {
+			members.push(await this.contacts.getContactById(member.userId))
+		}
+
+		return members
 	}
 
 	public async createOrUpdateChannel(channel: Channel): Promise<void> {
-		channel.memebers.forEach(async (member) => {
-			await this.createOrUpdateChannelMemeber(channel.id, member)
-		})
+		for (const member of channel.members) {
+			await this.createOrUpdateChannelMember(channel.id, member)
+		}
+
 		await this.connection.execute(
 			`
-        INSERT INTO Channels (
-          id,
-          name,
-          image,
-          description
-        ) VALUES (
-          $id,
-          $name,
-          $image,
-          $description
-        ) ON CONFLICT(id) DO UPDATE SET
-          name = $name,
-          image = $image,
-          description = $description
-      `,
-			channel
+				INSERT INTO Channels (
+					id,
+					name,
+					image,
+					type
+				) VALUES (
+					$id,
+					$name,
+					$image,
+					$type
+				) ON CONFLICT(id) DO UPDATE SET
+					name = $name,
+					image = $image,
+					type = $type
+			`,
+			{ ...channel }
 		)
 	}
 
-	public async createOrUpdateChannelMemeber(channelId: string, memeber: ChannelMemeber): Promise<void> {
+	public async createOrUpdateChannelMember(channelId: string, member: User): Promise<void> {
 		await this.connection.execute(
 			`
-        INSERT INTO ChannelMembers (id, nick, userId, channelId)
-        VALUES ($id, $nick, $userId, $channelId)
-        ON CONFLICT(id)
-        DO UPDATE SET
-            nick = $nick,
-            userId = $userId,
-            channelId = $channelId;
-      `,
-			{ channelId, ...memeber }
+				INSERT INTO ChannelMembers (
+					userId, 
+					channelId)
+				VALUES (
+					$userId, 
+					$channelId)
+				ON CONFLICT(userId) DO NOTHING;
+			`,
+			{
+				channelId: channelId,
+				userId: member.id,
+			}
 		)
+	}
+
+	public async deleteChannelById(id: string): Promise<void> {
+		await this.connection.execute('DELETE FROM Channels WHERE id = $id', { id })
 	}
 }

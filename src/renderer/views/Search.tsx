@@ -8,14 +8,16 @@ import Button from '../components/Button'
 import { SearchResults, User } from '../../common/types'
 import { searchUserByQuery } from '../api/users'
 import { createContact, useContacts } from '../hooks/use-contacts'
+import useAppError from '../hooks/user-app-error'
 
 export default () => {
 	const [users, setUsers] = useState<User[]>([])
 	const [pageNumber, setPageNumber] = useState(0)
-	const [query, setQuery] = useState('')
+	const [query, setQuery] = useState(null)
 	const [isScrollAtBottom, setIsScrollAtBottom] = useState(false)
 	const { created, changed } = useContacts()
 	const [isContacting, setIsContacting] = useState(false)
+	const { message } = useAppError('contacts.error')
 
 	useEffect(() => {
 		if (isScrollAtBottom) {
@@ -37,7 +39,7 @@ export default () => {
 
 	useEffect(() => {
 		setIsContacting(false)
-	}, [created, changed])
+	}, [created, changed, message])
 
 	function handleScroll(event: any) {
 		const target = event.target
@@ -56,6 +58,7 @@ export default () => {
 			<Page title="Search someone">
 				<div className="search-container">
 					<Input placeholder="Search someone" getValue={setQuery} />
+					<p style={{ fontSize: '12px', color: 'red' }}>{message}</p>
 					<div style={isContacting ? { opacity: 0.5, pointerEvents: 'none' } : null} onScroll={handleScroll}>
 						{users.map((user) => (
 							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>

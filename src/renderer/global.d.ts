@@ -19,8 +19,18 @@ export declare global {
 			onOnline: (callback: (isOnline: boolean) => void) => void
 			isOnline: () => Promise<boolean>
 
-			sendMessage: (recipientJid: string, message: Message) => Promise<void>
-			onMessageReceive: (callback: (message: Message) => void) => void
+			getAllChannels: () => Promise<Channel[]>
+			getChannelById: (id: string) => Promise<Channel>
+			createChannel: (channel: Channel) => Promise<void>
+			deleteChannelById: (id: string) => Promise<void>
+			onChannelCreate: (callback: (channel: Channel) => void) => void
+			onChannelChange: (callback: (channel: Channel) => void) => void
+			onChannelDelete: (callback: (channel: Channel) => void) => void
+
+			getMessageByChannelId: (channelId: string, limit: number, offset: number) => Promise<Message[]>
+			sendMessage: (channelId: string, content: string) => Promise<void>
+			onMessageReceive: (callback: (channelId, message: Message) => void) => void
+			onMessageSent: (callback: (channelId, message: Message) => void) => void
 
 			getAllContacts: () => Promise<User[]>
 			getContactById: (id: string) => Promise<User>

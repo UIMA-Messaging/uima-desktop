@@ -3,13 +3,14 @@ import { User } from './User'
 export interface Channel {
 	id: string
 	name: string
+	type: 'dm' | 'group'
 	image?: string
-	description?: string
-	memebers?: ChannelMemeber[]
+	members: User[]
 }
 
-export interface ChannelMemeber {
+export interface Message {
 	id: string
-	nick?: string
-	user: User
+	author: User
+	content: string
+	timestamp: Date
 }

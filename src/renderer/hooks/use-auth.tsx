@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Credentials, Registration } from '../../common/types'
-import imageToUrl from '../api/images'
+import imageToUrl from '../utils/images'
 import useAppError from './user-app-error'
 
 export default function useAuth() {

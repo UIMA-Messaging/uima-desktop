@@ -26,15 +26,14 @@ body {
 }
 
 ::selection {
-	background: rgb(58, 41, 126);
-	color: white;
+	color: var(--primary-color);
+	background: var(--primary-font);
 }
 
 * {
-	transition: 0.2s;
+	/* transition: 0.2s; */
 	box-sizing: border-box;
 	user-select: none;
-	/* transition: 0.2s */
 }
 
 b {

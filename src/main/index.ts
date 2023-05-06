@@ -2,9 +2,9 @@ import { app, BrowserWindow } from 'electron'
 import isDev from 'electron-is-dev'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberd-client'
+import { Database } from 'sqlite3'
 import AppData from './repos/app-data'
 import SqlConnection from './services/sql-connection'
-import { Database } from 'sqlite3'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import ContactRepo from './repos/contact-repo'
@@ -41,19 +41,19 @@ const connection = new SqlConnection(new Database('src/main.db'))
 // Repositories
 const appData = new AppData(connection)
 const contacts = new ContactRepo(connection)
-const channels = new ChannelRepo(connection)
-const messages = new MessageRepo(connection)
+const channels = new ChannelRepo(connection, contacts)
+const messages = new MessageRepo(connection, contacts)
 
 // Services
 const authentication = new Authentification(appData)
 
 // Clients
-const ejabberd = new EjabberdClient('localhost', 5222)
+const ejabberd = new EjabberdClient('localhost', 5223)
 
 // Encryption
 const encryption = new Encryption()
 
-export { authentication, appData, ejabberd, connection, messages, channels, contacts, encryption, window }
+export { authentication, appData, ejabberd, messages, channels, contacts, encryption, window }
 
 // Register handlers
 import './handlers/app-data-handlers'
@@ -61,6 +61,7 @@ import './handlers/xmp-handlers'
 import './handlers/auth-handlers'
 import './handlers/message-handlers'
 import './handlers/contacts-handlers'
+import './handlers/channel-handlers'
 
 // Register events
 import './events/auth-events'

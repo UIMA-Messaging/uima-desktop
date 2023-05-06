@@ -1,5 +1,5 @@
 import { DoubleRatchetState, EncryptedMessage } from '../../common/types/SigalProtocol'
-import { kdf, encrypt, decrypt } from './encryption'
+import { kdf, encrypt, decrypt } from './utils'
 
 class Ratchet {
 	private state: string
@@ -34,8 +34,8 @@ export default class DoubleRatchet {
 
 	public static init(rootKey: string, isInitiator = false): DoubleRatchet {
 		const rootRatchet = new Ratchet(rootKey)
-		let sendingRatchet
-		let receivingRatchet
+		let sendingRatchet: Ratchet
+		let receivingRatchet: Ratchet
 		if (isInitiator) {
 			sendingRatchet = new Ratchet(rootRatchet.next().chainKey)
 			receivingRatchet = new Ratchet(rootRatchet.next().chainKey)

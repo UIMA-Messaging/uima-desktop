@@ -1,36 +1,54 @@
 .sidebar {
-  background-color: var(--secondary-color);
+	background-color: var(--secondary-color);
 
-  width: 55px;
-  height: 100vh;
-  padding: 5px;
-  z-index: 1;
-  overflow: scroll;
+	width: 55px;
+	height: 100vh;
+	padding: 5px;
+	z-index: 1;
+	overflow: scroll;
 }
 
 .sidebar > * {
-  margin: 5px auto;
+	margin: 5px auto;
 }
 
 .sidebar-item {
-  background-color: var(--primary-color);
+	background-color: var(--primary-color);
 
-  border-radius: 50%;
-  width: 100%;
-  aspect-ratio: 1;
-  transition: 0.2s;
-  overflow: hidden;
+	border-radius: 50%;
+	width: 100%;
+	aspect-ratio: 1;
+	transition: 0.2s;
+	overflow: hidden;
+
+	/* animation: grow 0.2s ease-out forwards; */
 }
 
+/* @keyframes grow {
+	0% {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+  50% {
+		opacity: 1;
+  }
+  70% {
+		transform: scale(1.1);
+  }
+	100% {
+		transform: scale(1);
+	}
+} */
+
 .sidebar-item:hover {
-  border-radius: 25%;
-  cursor: pointer;
+	border-radius: 25%;
+	cursor: pointer;
 }
 
 .sidebar-item-separator {
-  background-color: var(--primary-color);
+	background-color: var(--primary-color);
 
-  width: 75%;
-  height: 2.5px;
-  border-radius: 3px;
+	width: 80%;
+	height: 3px;
+	border-radius: 3px;
 }

@@ -32,15 +32,15 @@ export interface EncryptedMessage {
 }
 
 export interface KeyBundle {
-	publicSignedPreKey: string
-	publicIdentityKey: string
-	publicOneTimePreKey: string
+	signedPreKey: string
+	identityKey: string
+	oneTimePreKey: string
 }
 
 export interface PostKeyBundle {
-	publicOneTimePreKey: string
-	publicIdentityKey: string
-	publicEphemeralKey: string
+	oneTimePreKey: string
+	identityKey: string
+	ephemeralKey: string
 }
 
 export interface DoubleRatchetState {
