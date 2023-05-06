@@ -9,8 +9,12 @@ import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import ContactRepo from './repos/contact-repo'
 import Encryption from './services/encryption'
+import dotenv from 'dotenv'
 
 require('electron-squirrel-startup') && app.quit()
+
+// Environment variables
+dotenv.config()
 
 // Window creation
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
@@ -38,7 +42,7 @@ app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
 
 // Repositories
-const connection = new SqlConnection(new Database('src/main.db'))
+const connection = new SqlConnection(new Database(process.env.DEFAULT_LOCAL_DATABASE))
 const appData = new AppData(connection)
 const contacts = new ContactRepo(connection)
 const channels = new ChannelRepo(connection, contacts)
@@ -48,7 +52,7 @@ const messages = new MessageRepo(connection, contacts)
 const authentication = new Authentification(appData)
 
 // Clients
-const ejabberd = new EjabberdClient('13.41.64.126', 5222)
+const ejabberd = new EjabberdClient(process.env.EJABBERD_HOST, Number(process.env.EJABBERD_PORT))
 
 // Encryption
 const encryption = new Encryption()

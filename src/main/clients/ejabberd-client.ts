@@ -44,7 +44,7 @@ export default class EjabberdClient extends EventEmitter {
 		})
 
 		this.client.on('stanza', (stanza: Stanza) => {
-			console.log("Received message:", JSON.stringify(stanza, null, 2))
+			console.log('Received message:', JSON.stringify(stanza, null, 2))
 			// this.emit('onReceived', null, null)
 		})
 
@@ -52,8 +52,13 @@ export default class EjabberdClient extends EventEmitter {
 	}
 
 	public disconnect() {
-		this.client?.disconnect()
-		this.connected = false
+		try {
+			// @ts-ignore
+			this.client.end()
+			this.connected = false
+		} catch {
+			console.log('Could not disconnect from chat servers.')
+		}
 	}
 
 	public send(recipientJid: string, type: string, message: object) {

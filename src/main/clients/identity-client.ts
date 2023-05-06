@@ -3,7 +3,7 @@ import isDev from 'electron-is-dev'
 import { Agent } from 'https'
 import { KeyBundle } from '../../common/types/SigalProtocol'
 
-const registerExchangeKeysBaseUrl = 'https://localhost:44317/keys/bundle/'
+const registerExchangeKeysBaseUrl = process.env.IDENTITY_SERVICE_BASE_URL + '/keys/bundle/'
 
 export async function getKeyBundleForUser(from: string, to: string): Promise<KeyBundle> {
 	try {

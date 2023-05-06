@@ -4,8 +4,8 @@ import https from 'https'
 import isDev from 'electron-is-dev'
 import { AxiosError } from 'axios'
 
-const baseRegister = 'https://localhost:44354/users/register/'
-const baseUnregister = 'https://localhost:44354/users/unregister/'
+const baseRegister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/register/'
+const baseUnregister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
 
 export async function register(user: BasicUser): Promise<RegisteredUser> {
 	try {

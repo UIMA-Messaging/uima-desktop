@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react'
 import { User } from '../../common/types'
 
-export async function createContact(contact: User) {
-	await window.electron.createContact(contact)
-}
-
-export async function deleteContactByUsername(id: string) {
-	await window.electron.deleteContactById(id)
-}
-
-export function useContacts(): { contacts: User[]; created: User; removed: User; changed: User } {
+export function useContacts(): { contacts: User[]; remove: (id: string) => void, create: (contact: User) => void, created: User; removed: User; changed: User } {
 	const [contacts, setContacts] = useState<User[]>([])
 	const [created, setCreated] = useState<User>(null)
 	const [removed, setRemoved] = useState<User>(null)
@@ -38,7 +30,15 @@ export function useContacts(): { contacts: User[]; created: User; removed: User;
 		setRemoved(deleted)
 	})
 
-	return { contacts, created, removed, changed }
+	function create(contact: User) {
+		window.electron.createContact(contact)
+	}
+	
+	function remove(id: string) {
+		window.electron.deleteContactById(id)
+	}
+
+	return { contacts, create, remove, created, removed, changed }
 }
 
 export function useContact(id: string): User {
