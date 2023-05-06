@@ -3,7 +3,8 @@ import { User } from '../../common/types'
 import { AxiosError } from 'axios'
 import { SearchResults } from '../../common/types'
 
-const searchUserBaseUrl = 'https://localhost:44317/users/search/'
+const searchUserBaseUrl = process.env.IDENTITY_SERVICE_BASE_URL + '/users/search/'
+const searchIdBaseUrl = process.env.IDENTITY_SERVICE_BASE_URL + '/users/username/'
 
 export async function searchUserByQuery(query: string, count: number = 10, offset: number = 0): Promise<SearchResults<User>> {
 	try {
@@ -26,8 +27,6 @@ export async function searchUserByQuery(query: string, count: number = 10, offse
 		}
 	}
 }
-
-const searchIdBaseUrl = 'https://localhost:44317/users/username/'
 
 export async function searchUserByUsername(username: string): Promise<User> {
 	try {
