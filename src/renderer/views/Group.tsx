@@ -9,13 +9,13 @@ import { useContacts } from '../hooks/use-contacts'
 
 export default () => {
 	const navigatation = useNavigate()
-	const location = useLocation()
+	const { state } = useLocation()
 	const { contacts } = useContacts()
 
 	return (
 		<div className="app-container">
 			<Sidebar />
-			<Page title={location.state?.id ? 'Edit Group chat 1' : 'Create a group chat'}>
+			<Page title={state?.id ? 'Edit Group chat 1' : 'Create a group chat'}>
 				<div className="group-container">
 					<Input label={<b>Name you group chat</b>} placeholder="Something nice" />
 					<Input label={<b>Invite some friends</b>} placeholder="Search among you friends" />
@@ -27,7 +27,7 @@ export default () => {
 						))}
 					</div>
 					<span style={{ marginTop: '30px', display: 'flex', gap: '10px' }}>
-						<Button label="Cancel" onClick={() => navigatation('/loggedIn', { state: { id: location.state?.id } })} />
+						<Button label="Cancel" onClick={() => navigatation('/loggedIn', { state: { id: state?.id } })} />
 						<Button label="Create" type="green" />
 					</span>
 				</div>

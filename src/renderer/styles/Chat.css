@@ -4,6 +4,7 @@
 	display: flex;
 	flex-direction: column;
 	animation: open 0.2s ease-out forwards;
+	padding-left: 5px;
 }
 
 @keyframes open {
@@ -24,11 +25,8 @@
 	height: fit-content;
 	display: flex;
 	align-items: center;
-	padding: 10px 0;
-}
-
-.chat-header > * {
-	margin-left: 15px;
+	justify-content: space-between;
+	padding: 10px 15px;
 }
 
 .chat-title {
@@ -36,6 +34,16 @@
 
 	font-size: 80%;
 	font-weight: 700;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.chat-header-picture {
+	height: 30px;
+	border-radius: 50%;
+	aspect-ratio: 1;
+	overflow: hidden;
 }
 
 .chat-header-bread-crumbs {
@@ -43,7 +51,7 @@
 
 	display: flex;
 	gap: 5px;
-	font-size: 50%;
+	font-size: 65%;
 	font-weight: 600;
 	opacity: 50%;
 }
@@ -53,7 +61,7 @@
 	overflow-x: hidden;
 	height: fit-content;
 	display: flex;
-	flex-direction: column;
+	flex-direction: column-reverse;
 	padding-bottom: 80px;
 }
 

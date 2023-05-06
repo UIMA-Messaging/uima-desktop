@@ -1,7 +1,7 @@
 import { createECDH, createHash } from 'crypto'
 import { ECDH } from 'crypto'
 import { KeyPair, X3DHKeyPairs, KeyBundle, PostKeyBundle } from '../../common/types/SigalProtocol'
-import { kdf } from './encryption'
+import { kdf } from './utils'
 import { ExchangeKeys } from '../../common/types/SigalProtocol'
 
 export default class X3DH {
@@ -53,13 +53,13 @@ export default class X3DH {
 	public exchange(keyBundle: KeyBundle): { sharedSecret: string; postKeyBundle: PostKeyBundle } {
 		const ephemeralKeys = X3DH.generateKeyPairs()
 		// DH1 = DH(IK, SPK)
-		const DH1 = this.diffieHellman(this.identityKeys.privateKey, keyBundle.publicSignedPreKey)
+		const DH1 = this.diffieHellman(this.identityKeys.privateKey, keyBundle.signedPreKey)
 		// DH2 = DH(EK, IK)
-		const DH2 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.publicIdentityKey)
+		const DH2 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.identityKey)
 		// DH3 = DH(EK, SPK)
-		const DH3 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.publicSignedPreKey)
+		const DH3 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.signedPreKey)
 		// DH4 = DH(EK, OPK)
-		const DH4 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.publicOneTimePreKey)
+		const DH4 = this.diffieHellman(ephemeralKeys.privateKey, keyBundle.oneTimePreKey)
 		// Combine computed secrets of exchanges
 		const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
 		// Compute the secret of the shared secrets
@@ -67,23 +67,23 @@ export default class X3DH {
 		return {
 			sharedSecret,
 			postKeyBundle: {
-				publicOneTimePreKey: keyBundle.publicOneTimePreKey,
-				publicIdentityKey: this.identityKeys.publicKey,
-				publicEphemeralKey: ephemeralKeys.publicKey,
+				oneTimePreKey: keyBundle.oneTimePreKey,
+				identityKey: this.identityKeys.publicKey,
+				ephemeralKey: ephemeralKeys.publicKey,
 			},
 		}
 	}
 
 	public postExchange(postKeyBundle: PostKeyBundle): { sharedSecret: string } {
 		// DH1 = DH(SPK, IK)
-		const DH1 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicIdentityKey)
+		const DH1 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.identityKey)
 		// DH2 = DH(IK, EK)
-		const DH2 = this.diffieHellman(this.identityKeys.privateKey, postKeyBundle.publicEphemeralKey)
+		const DH2 = this.diffieHellman(this.identityKeys.privateKey, postKeyBundle.ephemeralKey)
 		// DH3 = DH(SPK, EK)
-		const DH3 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.publicEphemeralKey)
+		const DH3 = this.diffieHellman(this.signedPreKeys.privateKey, postKeyBundle.ephemeralKey)
 		// DH4 = DH(OPK, EK)
-		const privateOneTimePreKey = this.getOPKFromPublic(postKeyBundle.publicOneTimePreKey)
-		const DH4 = this.diffieHellman(privateOneTimePreKey, postKeyBundle.publicEphemeralKey)
+		const privateOneTimePreKey = this.getOPKFromPublic(postKeyBundle.oneTimePreKey)
+		const DH4 = this.diffieHellman(privateOneTimePreKey, postKeyBundle.ephemeralKey)
 		// Combine computed secrets of exchanges
 		const combinedKeys = Buffer.concat([DH1, DH2, DH3, DH4])
 		// Compute the secret of the shared secrets

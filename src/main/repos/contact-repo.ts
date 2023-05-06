@@ -1,5 +1,4 @@
 import { User } from '../../common/types'
-import { connection } from '..'
 import SqlConnection from '../services/sql-connection'
 
 export default class ContactRepo {
@@ -12,6 +11,7 @@ export default class ContactRepo {
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS Contacts (
 				id TEXT PRIMARY KEY,
+				jid TEXT,
 				username TEXT,
 				displayName TEXT,
 				image TEXT,
@@ -21,30 +21,53 @@ export default class ContactRepo {
 	}
 
 	public async getAllContacts(): Promise<User[]> {
-		return await connection.query<User>('SELECT * FROM Contacts')
+		return await this.connection.query<User>('SELECT * FROM Contacts')
 	}
 
 	public async getContactById(id: string): Promise<User> {
-		return await connection.querySingle<User>('SELECT * FROM Contacts WHERE id = $id LIMIT 1', { id })
+		return await this.connection.querySingle<User>(
+			`
+				SELECT * 
+				FROM Contacts 
+				WHERE id = $id 
+				LIMIT 1
+			`,
+			{ id }
+		)
 	}
 
 	public async createOrUpdateContact(contact: User): Promise<void> {
-		await connection.execute(
+		await this.connection.execute(
 			`
-				INSERT INTO Contacts (id, username, displayName, image, joinedAt, editedAt)
-				VALUES ($id, $username, $displayName, $image, $joinedAt, $editedAt)
+				INSERT INTO Contacts (
+					id,
+					jid, 
+					username, 
+					displayName, 
+					image, 
+					joinedAt, 
+					editedAt)
+				VALUES (
+					$id, 
+					$jid, 
+					$username, 
+					$displayName, 
+					$image, 
+					$joinedAt, 
+					$editedAt)
 				ON CONFLICT(id) DO UPDATE SET
-				username = $username,
-				displayName = $displayName,
-				image = $image,
-				joinedAt = $joinedAt,
-				editedAt = $editedAt;
+					jid = $jid,
+					username = $username,
+					displayName = $displayName,
+					image = $image,
+					joinedAt = $joinedAt,
+					editedAt = $editedAt;
 			`,
 			contact
 		)
 	}
 
 	public async deleteContactById(id: string) {
-		await connection.execute('DELETE FROM Contacts WHERE id = $id', { id })
+		await this.connection.execute('DELETE FROM Contacts WHERE id = $id', { id })
 	}
 }

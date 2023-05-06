@@ -8,10 +8,25 @@ export const channels = {
 		LOGOUT: 'auth.logout',
 	},
 
-	CHATTING: {
+	XMP: {
 		ONLINE: 'xmp.online',
-		SEND_MESSAGE: 'message.send',
-		RECEIVE_MESSAGE: 'message.receive',
+	},
+
+	CHANNELS: {
+		GET: 'channels.get',
+		GET_ALL: 'channels.get.all',
+		CREATE: 'channels.create',
+		DELETE: 'channels.delete',
+		ON_CHANGE: 'channels.updated',
+		ON_CREATE: 'channels.created',
+		ON_DELETE: 'channels.deleted',
+	},
+
+	MESSAGES: {
+		GET: 'messages.get',
+		SEND: 'messages.send',
+		ON_SENT: 'messages.sent',
+		ON_RECEIVE: 'messages.received',
 	},
 
 	APP_DATA: {
@@ -28,5 +43,19 @@ export const channels = {
 		ON_CHANGE: 'contacts.updated',
 		ON_DELETE: 'contacts.deleted',
 		ON_CREATE: 'contacts.created',
+	},
+}
+
+export const messageTypes = {
+	GROUP: {
+		INVITATION: 'group.invite',
+	},
+
+	CONTACT: {
+		INVITATION: 'contact.invite',
+	},
+
+	CHANNELS: {
+		MESSAGE: 'channel.message',
 	},
 }
