@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { BasicUser, RegisteredUser, User } from '../../common/types'
 import https from 'https'
 import isDev from 'electron-is-dev'
@@ -7,9 +7,9 @@ import { AxiosError } from 'axios'
 const baseRegister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/register/'
 const baseUnregister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
 
-export async function register(user: BasicUser): Promise<RegisteredUser> {
+export async function register(user: BasicUser, token: string): Promise<RegisteredUser> {
 	try {
-		const res = await axios.post(baseRegister, user, headers())
+		const res = await axios.post(baseRegister, user, configure(token))
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -31,10 +31,13 @@ export async function register(user: BasicUser): Promise<RegisteredUser> {
 	}
 }
 
-export async function unregister(user: User): Promise<void> {
-	await axios.delete(baseUnregister + user.id)
+export async function unregister(user: User, token: string): Promise<void> {
+	await axios.delete(baseUnregister + user.id, configure(token))
 }
 
-function headers() {
-	return isDev ? { httpsAgent: new https.Agent({ rejectUnauthorized: false }) } : null
+function configure(token: string): AxiosRequestConfig {
+	return {
+		headers: { Authorization: `Bearer ${token}` },
+		httpsAgent: new https.Agent({ rejectUnauthorized: !isDev }),
+	}
 }

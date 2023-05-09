@@ -3,7 +3,8 @@ import { Credentials, RegisteredUser, JabberUser } from '../../common/types'
 import { getX3DH, setX3DH } from '../repos/encryption-persistence'
 import X3DH from '../security/x3dh'
 
-authentication.on('onRegister', async (user: RegisteredUser, credentials: Credentials, x3dh: X3DH) => {
+authentication.on('onRegister', async (user: RegisteredUser, credentials: Credentials, x3dh: X3DH, token: string) => {
+	await appData.set('user.token', token, true)
 	appData.setEncryptionKey(credentials.password + credentials.username)
 	await appData.set('user.profile', JSON.stringify(user), true)
 	await contacts.createOrUpdateContact({ ...user })
