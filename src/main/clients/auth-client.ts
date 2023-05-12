@@ -7,7 +7,7 @@ const authServiceBaseUrl = process.env.AUTH_SERVICE_BASE_URL + '/tokens/'
 
 export async function getToken(user: BasicUser) {
 	try {
-		const res = await axios.post(authServiceBaseUrl, null, configure())
+		const res = await axios.post(authServiceBaseUrl, user, configure())
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
