@@ -17,6 +17,8 @@ export default class EjabberdClient extends EventEmitter {
 	}
 
 	public connect(user: JabberUser) {
+		console.log('Connecting with:', user)
+
 		this.client = new Client({
 			jid: user.username,
 			password: user.password,
@@ -42,19 +44,25 @@ export default class EjabberdClient extends EventEmitter {
 		})
 
 		this.client.on('stanza', (stanza: Stanza) => {
-			console.log(JSON.stringify(stanza, null, 2))
-			this.emit('onReceived', null, null)
+			console.log('Received message:', JSON.stringify(stanza, null, 2))
+			// this.emit('onReceived', null, null)
 		})
 
 		this.client.connect()
 	}
 
 	public disconnect() {
-		this.client?.disconnect()
-		this.connected = false
+		try {
+			// @ts-ignore
+			this.client.end()
+			this.connected = false
+		} catch {
+			console.log('Could not disconnect from chat servers.')
+		}
 	}
 
-	public send(recipientJid: string, type: string, message: any) {
+	public send(recipientJid: string, type: string, message: object) {
+		console.log('Sending message to:', recipientJid, message)
 		if (!this.client) {
 			throw Error('Ejabberd user not configured yet.')
 		}

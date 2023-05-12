@@ -1,16 +1,20 @@
 import { app, BrowserWindow } from 'electron'
+import { Database } from 'sqlite3'
 import isDev from 'electron-is-dev'
 import Authentification from './services/authentication'
 import EjabberdClient from './clients/ejabberd-client'
-import { Database } from 'sqlite3'
 import AppData from './repos/app-data'
 import SqlConnection from './services/sql-connection'
 import MessageRepo from './repos/message-repo'
 import ChannelRepo from './repos/channel-repo'
 import ContactRepo from './repos/contact-repo'
 import Encryption from './services/encryption'
+import dotenv from 'dotenv'
 
 require('electron-squirrel-startup') && app.quit()
+
+// Environment variables
+dotenv.config()
 
 // Window creation
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
@@ -36,9 +40,9 @@ let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
-const connection = new SqlConnection(new Database('src/main.db'))
 
 // Repositories
+const connection = new SqlConnection(new Database(process.env.DEFAULT_LOCAL_DATABASE))
 const appData = new AppData(connection)
 const contacts = new ContactRepo(connection)
 const channels = new ChannelRepo(connection, contacts)
@@ -48,7 +52,7 @@ const messages = new MessageRepo(connection, contacts)
 const authentication = new Authentification(appData)
 
 // Clients
-const ejabberd = new EjabberdClient('localhost', 5223)
+const ejabberd = new EjabberdClient(process.env.EJABBERD_HOST, Number(process.env.EJABBERD_PORT))
 
 // Encryption
 const encryption = new Encryption()

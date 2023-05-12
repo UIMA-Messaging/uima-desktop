@@ -1,8 +1,9 @@
-import EventEmitter from 'events'
 import { BasicUser, Credentials, Registration } from '../../common/types'
 import { register } from '../clients/registration-client'
-import AppData from '../repos/app-data'
 import { createHash, randomBytes } from 'crypto'
+import { getToken } from '../clients/auth-client'
+import EventEmitter from 'events'
+import AppData from '../repos/app-data'
 import X3DH from '../security/x3dh'
 
 export default class Authentification extends EventEmitter {
@@ -22,12 +23,16 @@ export default class Authentification extends EventEmitter {
 		}
 
 		const x3dh = X3DH.init(200)
+
 		const basicUser: BasicUser = {
 			displayName: registration.username,
 			image: registration.image,
 			exchangeKeys: x3dh.getExchangeKeys()
 		}
-		const registeredUser = await register(basicUser)
+
+		const token = await getToken(basicUser)
+
+		const registeredUser = await register(basicUser, token)
 
 		const credentials: Credentials = {
 			username: registration.username,
@@ -35,7 +40,7 @@ export default class Authentification extends EventEmitter {
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
 
-		this.emit('onRegister', registeredUser, credentials, x3dh)
+		this.emit('onRegister', registeredUser, credentials, x3dh, token)
 		
 		return await this.login(credentials)
 	}
