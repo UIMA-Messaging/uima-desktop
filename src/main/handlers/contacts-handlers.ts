@@ -22,8 +22,9 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 	} else {
 		try {
 			const user = JSON.parse(await appData.get<any>('user.profile')) as User
+			const token = await appData.get<string>('user.token')
 
-			const bundle = await getKeyBundleForUser(contact.id, user.id)
+			const bundle = await getKeyBundleForUser(contact.id, user.id, token)
 			const postKeyBunble = await encryption.establishExchange(contact.id, bundle)
 
 			const invitation: Invitation = {

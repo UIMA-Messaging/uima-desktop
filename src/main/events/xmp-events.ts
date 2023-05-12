@@ -5,22 +5,26 @@ import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
 
 ejabberd.on('onReceived', async (type: string, encryptedMessage: NetworkMessage) => {
-	const { message: decrypted } = await encryption.decrypt(encryptedMessage)
+	try {
+		const { message: decrypted } = await encryption.decrypt(encryptedMessage)
 
-	switch (type) {
-		case messageTypes.CONTACT.INVITATION:
-			const invitation = decrypted as Invitation
-			await encryption.establishedPostExchange(invitation.user.id, invitation.postKeyBundle)
-			break
-		case messageTypes.CHANNELS.MESSAGE:
-			const channelMessage = decrypted as { channelId: string; message: Message }
-			notifyOfNewMessage(channelMessage.channelId, channelMessage.message)
-			break
-		case messageTypes.GROUP.INVITATION:
-			break
-		default:
-			console.log('Unhandled message:', decrypted)
-			break
+		switch (type) {
+			case messageTypes.CONTACT.INVITATION:
+				const invitation = decrypted as Invitation
+				await encryption.establishedPostExchange(invitation.user.id, invitation.postKeyBundle)
+				break
+			case messageTypes.CHANNELS.MESSAGE:
+				const channelMessage = decrypted as { channelId: string; message: Message }
+				notifyOfNewMessage(channelMessage.channelId, channelMessage.message)
+				break
+			case messageTypes.GROUP.INVITATION:
+				break
+			default:
+				console.log('Unhandled message:', decrypted)
+				break
+		}
+	} catch (error) {
+		console.log('Could not handle message received from XMP host:', error.message)
 	}
 })
 

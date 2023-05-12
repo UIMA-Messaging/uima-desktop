@@ -1,14 +1,13 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import isDev from 'electron-is-dev'
 import { Agent } from 'https'
 import { KeyBundle } from '../../common/types/SigalProtocol'
 
-const registerExchangeKeysBaseUrl = 'https://localhost:44317/keys/bundle/'
+const registerExchangeKeysBaseUrl = process.env.IDENTITY_SERVICE_BASE_URL + '/keys/bundle/'
 
-export async function getKeyBundleForUser(from: string, to: string): Promise<KeyBundle> {
+export async function getKeyBundleForUser(from: string, to: string, token: string): Promise<KeyBundle> {
 	try {
-		console.log(registerExchangeKeysBaseUrl + `${from}/${to}`)
-		const res = await axios.post(registerExchangeKeysBaseUrl + `${from}/${to}`, null, headers())
+		const res = await axios.post(registerExchangeKeysBaseUrl + `${from}/${to}`, null, configure(token))
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -28,6 +27,9 @@ export async function getKeyBundleForUser(from: string, to: string): Promise<Key
 	}
 }
 
-function headers() {
-	return isDev ? { httpsAgent: new Agent({ rejectUnauthorized: false }) } : null
+function configure(token: string): AxiosRequestConfig {
+	return {
+		headers: { Authorization: `Bearer ${token}` },
+		httpsAgent: new Agent({ rejectUnauthorized: !isDev }),
+	}
 }
