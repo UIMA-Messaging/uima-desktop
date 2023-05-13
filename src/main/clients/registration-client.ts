@@ -4,12 +4,10 @@ import https from 'https'
 import isDev from 'electron-is-dev'
 import { AxiosError } from 'axios'
 
-const baseRegister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/register/'
-const baseUnregister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
-
 export async function register(user: BasicUser, token: string): Promise<RegisteredUser> {
 	try {
-		const res = await axios.post(baseRegister, user, configuration(token))
+		const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/register/'
+		const res = await axios.post(url, user, configuration(token))
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -32,7 +30,8 @@ export async function register(user: BasicUser, token: string): Promise<Register
 }
 
 export async function unregister(user: User, token: string): Promise<void> {
-	await axios.delete(baseUnregister + user.id, configuration(token))
+	const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
+	await axios.delete(url + user.id, configuration(token))
 }
 
 function configuration(token: string): AxiosRequestConfig {
