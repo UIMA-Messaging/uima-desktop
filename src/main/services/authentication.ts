@@ -5,6 +5,7 @@ import { getToken } from '../clients/auth-client'
 import EventEmitter from 'events'
 import AppData from '../repos/app-data'
 import X3DH from '../security/x3dh'
+import { promisify } from 'util'
 
 export default class Authentification extends EventEmitter {
 	private appData: AppData
@@ -27,7 +28,7 @@ export default class Authentification extends EventEmitter {
 		const basicUser: BasicUser = {
 			displayName: registration.username,
 			image: registration.image,
-			exchangeKeys: x3dh.getExchangeKeys()
+			exchangeKeys: x3dh.getExchangeKeys(),
 		}
 
 		const token = await getToken(basicUser)
@@ -41,7 +42,7 @@ export default class Authentification extends EventEmitter {
 		await this.generateChallenge(credentials.password + credentials.username)
 
 		this.emit('onRegister', registeredUser, credentials, x3dh, token)
-		
+
 		return await this.login(credentials)
 	}
 

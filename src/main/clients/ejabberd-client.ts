@@ -59,14 +59,14 @@ export default class EjabberdClient extends EventEmitter {
 			this.client.end()
 			this.connected = false
 		} catch {
-			console.log('Could not disconnect from chat servers.')
+			console.log('Could not disconnect from XMP client.')
 		}
 	}
 
 	public send(recipientJid: string, type: string, message: object) {
 		console.log('Sending message to:', recipientJid, message)
 		if (!this.client) {
-			throw Error('Ejabberd user not configured yet.')
+			throw Error('XMP user not configured yet.')
 		}
 		if (!this.connected) {
 			throw Error('User not connected to XMP client.')

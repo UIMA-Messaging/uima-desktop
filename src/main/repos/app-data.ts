@@ -26,8 +26,13 @@ export default class AppData {
 			);`)
 	}
 
-	public setEncryptionKey(key: string) {
-		this.key = createHash('SHA256').update(key).digest('hex')
+	public setEncryptionKey(cipherStrategy: () => string) {
+		console.log('setting encryption key')
+		this.key = cipherStrategy()
+	}
+
+	public static defaultCipherStrategy(...args: any) {
+		return createHash('SHA256').update(JSON.stringify(args)).digest('hex')
 	}
 
 	public invalidate() {
@@ -52,12 +57,12 @@ export default class AppData {
 
 		await this.connection.execute(
 			`
-			INSERT INTO AppData(id, data, sensitive, modifiedAt) 
-			VALUES ($id, $data, $sensitive, $modifiedAt)
-			ON CONFLICT(id) DO UPDATE SET 
-				data = excluded.data,
-				modifiedAt = excluded.modifiedAt,
-				sensitive = excluded.sensitive;
+				INSERT INTO AppData(id, data, sensitive, modifiedAt) 
+				VALUES ($id, $data, $sensitive, $modifiedAt)
+				ON CONFLICT(id) DO UPDATE SET 
+					data = excluded.data,
+					modifiedAt = excluded.modifiedAt,
+					sensitive = excluded.sensitive;
 			`,
 			record
 		)
