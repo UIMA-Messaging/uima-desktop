@@ -13,7 +13,7 @@ export default () => {
 	return (
 		<div className="sidebar">
 			<div className="sidebar-item" onClick={() => navigation('/settings')}>
-				<Picture image={profile?.image} name={profile?.displayName} />
+				<Picture image={profile?.image} name={profile?.username} />
 			</div>
 			<div className="sidebar-item-separator" />
 			<div className="sidebar-item" onClick={() => navigation('/contacts')} />
