@@ -22,7 +22,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 function createWindow(): BrowserWindow {
 	const window = new BrowserWindow({
-		height: 600,
+		height: 700,
 		width: 800,
 		backgroundColor: 'black',
 		webPreferences: {
