@@ -7,7 +7,7 @@ const registerExchangeKeysBaseUrl = process.env.IDENTITY_SERVICE_BASE_URL + '/ke
 
 export async function getKeyBundleForUser(from: string, to: string, token: string): Promise<KeyBundle> {
 	try {
-		const res = await axios.post(registerExchangeKeysBaseUrl + `${from}/${to}`, null, configure(token))
+		const res = await axios.post(registerExchangeKeysBaseUrl + `${from}/${to}`, null, configuration(token))
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -27,7 +27,7 @@ export async function getKeyBundleForUser(from: string, to: string, token: strin
 	}
 }
 
-function configure(token: string): AxiosRequestConfig {
+function configuration(token: string): AxiosRequestConfig {
 	return {
 		headers: { Authorization: `Bearer ${token}` },
 		httpsAgent: new Agent({ rejectUnauthorized: !isDev }),

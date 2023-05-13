@@ -3,11 +3,13 @@ import { BasicUser } from '../../common/types'
 import { Agent } from 'https'
 import isDev from 'electron-is-dev'
 
-const authServiceBaseUrl = process.env.AUTH_SERVICE_BASE_URL + '/tokens/'
+const authServiceBaseUrl = process.env.AUTH_SERVICE_BASE_URL + '/tokens/create'
+
+console.log(authServiceBaseUrl)
 
 export async function getToken(user: BasicUser) {
 	try {
-		const res = await axios.post(authServiceBaseUrl, user, configure())
+		const res = await axios.post(authServiceBaseUrl, user, configuration())
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -25,6 +27,6 @@ export async function getToken(user: BasicUser) {
 	}
 }
 
-function configure() {
+function configuration() {
 	return isDev ? { httpsAgent: new Agent({ rejectUnauthorized: false }) } : null
 }

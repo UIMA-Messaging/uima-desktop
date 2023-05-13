@@ -9,7 +9,7 @@ const baseUnregister = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unreg
 
 export async function register(user: BasicUser, token: string): Promise<RegisteredUser> {
 	try {
-		const res = await axios.post(baseRegister, user, configure(token))
+		const res = await axios.post(baseRegister, user, configuration(token))
 		return res.data
 	} catch (error) {
 		if (error instanceof AxiosError) {
@@ -32,10 +32,10 @@ export async function register(user: BasicUser, token: string): Promise<Register
 }
 
 export async function unregister(user: User, token: string): Promise<void> {
-	await axios.delete(baseUnregister + user.id, configure(token))
+	await axios.delete(baseUnregister + user.id, configuration(token))
 }
 
-function configure(token: string): AxiosRequestConfig {
+function configuration(token: string): AxiosRequestConfig {
 	return {
 		headers: { Authorization: `Bearer ${token}` },
 		httpsAgent: new https.Agent({ rejectUnauthorized: !isDev }),
