@@ -2,6 +2,7 @@ import { Message } from '../../common/types'
 import { KeyBundle, NetworkMessage, PostKeyBundle } from '../../common/types/SigalProtocol'
 import { getDoubleRatchet, setDoubleRatchet } from '../repos/encryption-persistence'
 import DoubleRatchet from '../security/double-ratchet'
+import { secretToReadable } from '../security/utils'
 import X3DH from '../security/x3dh'
 
 export default class Encryption {
@@ -15,13 +16,16 @@ export default class Encryption {
 		delete this.x3dh
 	}
 
-	public async establishExchange(userId: string, keyBundle: KeyBundle): Promise<PostKeyBundle> {
+	public async establishExchange(userId: string, keyBundle: KeyBundle): Promise<{ fingerprint: string[]; postKeyBundle: PostKeyBundle }> {
 		if (!this.x3dh) {
 			throw Error('Cannot perform exchange when no X3DH is set.')
 		}
 		const { sharedSecret, postKeyBundle } = this.x3dh.exchange(keyBundle)
 		await setDoubleRatchet(userId, DoubleRatchet.init(sharedSecret, true))
-		return postKeyBundle
+		return {
+			fingerprint: secretToReadable(sharedSecret),
+			postKeyBundle: postKeyBundle,
+		}
 	}
 
 	public async establishedPostExchange(userId: string, postKeyBundle: PostKeyBundle) {

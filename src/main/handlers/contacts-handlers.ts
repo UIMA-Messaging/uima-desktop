@@ -25,16 +25,17 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			const token = await appData.get<string>('user.token')
 
 			const bundle = await getKeyBundleForUser(contact.id, user.id, token)
-			const postKeyBunble = await encryption.establishExchange(contact.id, bundle)
+			const { postKeyBundle, fingerprint } = await encryption.establishExchange(contact.id, bundle)
 
 			const invitation: Invitation = {
 				id: v4(),
 				timestamp: new Date(),
 				user: user,
-				postKeyBundle: postKeyBunble,
+				postKeyBundle: postKeyBundle,
 			}
 			ejabberd.send(contact.jid, 'invitation', invitation)
 
+			contact.fingerprint = fingerprint
 			await contacts.createOrUpdateContact(contact)
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 

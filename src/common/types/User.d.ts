@@ -7,6 +7,7 @@ export interface User {
 	displayName: string
 	username: string
 	image: string
+	fingerprint?: string[]
 	joinedAt: Date
 	editedAt?: Date
 }

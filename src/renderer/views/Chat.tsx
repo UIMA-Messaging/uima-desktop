@@ -36,19 +36,19 @@ export default () => {
 						{channel?.name}
 					</div>
 					<div className="chat-header-bread-crumbs">
-						<span>{channel?.type === 'dm' ? 'direct messaging' : 'group chat'}</span>
-						<span>/</span>
-						<span>1 online</span>
-						<span>/</span>
-						<span>active 5 minutes ago</span>
-						{channel?.type !== 'dm' && (
+						{/* <span>{channel?.type === 'dm' ? 'direct messaging' : 'group chat'}</span> */}
+						{/* <span>/</span> */}
+						{/* <span>1 online</span> */}
+						{/* <span>/</span> */}
+						{/* <span>active 5 minutes ago</span> */}
+						{/* {channel?.type !== 'dm' && (
 							<>
 								<span>/</span>
 								<span onClick={() => navigation('/group', { state: { id: '254625462456' } })}>
 									<u style={{ cursor: 'pointer' }}>edit</u>
 								</span>
 							</>
-						)}
+						)} */}
 					</div>
 				</div>
 				<div className="chat-messages" onScroll={handleScroll}>
@@ -56,6 +56,7 @@ export default () => {
 					{messages.map((message) => (
 						<ChatBubble key={message.id} text={message.content} timestamp={message.timestamp} author={message.author.displayName} />
 					))}
+					{channel?.type === 'dm' && <div className="fingerprint">{channel?.members[0].fingerprint}</div>}
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>
 				<div className="chat-inputs">

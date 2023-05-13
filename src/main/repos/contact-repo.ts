@@ -15,6 +15,7 @@ export default class ContactRepo {
 				username TEXT,
 				displayName TEXT,
 				image TEXT,
+				fingerprint TEXT,
 				joinedAt DATETIME,
 				editedAt DATETIME
 			);`)
