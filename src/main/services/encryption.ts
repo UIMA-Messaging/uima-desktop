@@ -37,7 +37,6 @@ export default class Encryption {
 	}
 
 	public async encrypt(recepientId: string, message: any): Promise<NetworkMessage> {
-		console.log('encrypting message', message)
 		if (!this.x3dh) {
 			throw Error('Cannot encrypt when no X3DH is set.')
 		}
