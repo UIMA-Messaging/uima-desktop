@@ -12,6 +12,23 @@ ipcMain.on(channels.AUTH.REGISTER, async (event, registration: Registration) => 
 	}
 })
 
+ipcMain.on(channels.AUTH.UNREGISTER, async (event, credentials: Credentials) => {
+	try {
+		const authenticated = await authentication.unregister(credentials)
+
+		try {
+		} catch (error) {
+			console.log('Could not delete client data:', error.message)
+			event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
+		}
+
+		event.sender.send(channels.AUTH.STATE, authenticated ? 'loggedIn' : 'notRegistered')
+	} catch (error) {
+		console.log('Could not deregister user:', error.message)
+		event.sender.send(channels.ON_ERROR, 'auth.error', error.message)
+	}
+})
+
 ipcMain.on(channels.AUTH.LOGIN, async (event, credentials: Credentials) => {
 	try {
 		const authenticated = await authentication.login(credentials)

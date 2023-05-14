@@ -38,6 +38,6 @@ ejabberd.on('onDisconnected', () => {
 	notifyOfStatus(false)
 })
 
-ejabberd.on('onError', (error: string) => {
+ejabberd.on('onError', (error: any) => {
 	notifyOfError(error)
 })

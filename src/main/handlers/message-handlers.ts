@@ -10,7 +10,7 @@ ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, channelId: string,
 
 ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string, content: string) => {
 	try {
-		const sender = JSON.parse(await appData.get<any>('user.profile')) as User
+		const sender = await appData.get<User>('user.profile')
 		const channel = await chattingChannels.getChannelById(channelId)
 
 		if (!channel) {

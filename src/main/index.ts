@@ -48,14 +48,14 @@ const contacts = new ContactRepo(connection)
 const channels = new ChannelRepo(connection, contacts)
 const messages = new MessageRepo(connection, contacts)
 
+// Encryption
+const encryption = new Encryption()
+
 // Services
-const authentication = new Authentification(appData)
+const authentication = new Authentification(appData, encryption)
 
 // Clients
 const ejabberd = new EjabberdClient(process.env.EJABBERD_HOST, Number(process.env.EJABBERD_PORT))
-
-// Encryption
-const encryption = new Encryption()
 
 export { authentication, appData, ejabberd, messages, channels, contacts, encryption, window }
 

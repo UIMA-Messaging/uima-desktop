@@ -1,14 +1,13 @@
 import '../styles/Sidebar.css'
 import { useNavigate } from 'react-router-dom'
-import Picture from './Picture'
-import { User } from '../../common/types'
 import { useChannels } from '../hooks/use-channels'
-import useAppData from '../hooks/use-app-data'
+import Picture from './Picture'
+import useAuth from '../hooks/use-auth'
 
 export default () => {
 	const navigation = useNavigate()
 	const { channels } = useChannels()
-	const [profile] = useAppData<User>('user.profile')
+	const { profile } = useAuth()
 
 	return (
 		<div className="sidebar">

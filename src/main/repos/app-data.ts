@@ -40,6 +40,13 @@ export default class AppData {
 	}
 
 	public async set(id: string, data: any, sensitive: boolean = false) {
+		console.log(this.key)
+		console.log(!this.key)
+
+		if (sensitive && !this.key) {
+			throw Error('Cannot encrypt data when no encryption key is set.')
+		}
+
 		if (!data) {
 			Error(`Cannot save empty data! Received \`${typeof data}\``)
 		}
@@ -70,12 +77,36 @@ export default class AppData {
 
 	public async get<T>(id: string): Promise<T> {
 		const record = await this.connection.querySingle<PersistentData>('SELECT * FROM AppData WHERE id = $id', { id })
-		const data = record?.sensitive ? decrypt(record.data, this.key) : record?.data
+
+		if (!record) {
+			return null
+		}
+
+		if (record.sensitive && !this.key) {
+			throw Error('Cannot decrypt sensitive data when encryption key is unset.')
+		}
+
+		const data = record.sensitive ? decrypt(record.data, this.key) : record.data
 
 		try {
 			return JSON.parse(data) as T
 		} catch {
 			return data as T
+		}
+	}
+
+	public async delete(id: string): Promise<void> {
+		await this.connection.execute('DELETE FROM AppData WHERE id = $id', { id })
+	}
+
+	public async erase(cipherStrategy: () => string): Promise<void> {
+		if (cipherStrategy() !== this.key) {
+			throw Error('Invalid encryption key')
+		}
+
+		const tables = await this.connection.query<{ name: string }>("SELECT name FROM sqlite_master WHERE type='table'")
+		for (var table of tables) {
+			await this.connection.execute(`DROP TABLE ${table.name}`)
 		}
 	}
 }

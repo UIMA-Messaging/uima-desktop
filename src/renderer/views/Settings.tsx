@@ -4,12 +4,11 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 import Sidebar from '../components/Sidebar'
 import useAuth from '../hooks/use-auth'
-import useAppData from '../hooks/use-app-data'
-import { User } from '../../common/types'
+import { useNavigate } from 'react-router-dom'
 
 export default () => {
-	const { logout } = useAuth()
-	const [profile, setProfile] = useAppData<User>('user.profile')
+	const { logout, profile } = useAuth()
+	const navigatation = useNavigate()
 
 	return (
 		<div className="app-container">
@@ -42,7 +41,7 @@ export default () => {
 					<span style={{ marginTop: '50px', display: 'flex', gap: '10px' }}>
 						<Button label="Logout" onClick={logout} />
 						<Button label="Save" type="green" />
-						<Button label="Delete Account" type="red" />
+						<Button label="Delete Account" type="red" onClick={() => navigatation('/deregister')} />
 					</span>
 				</div>
 			</Page>

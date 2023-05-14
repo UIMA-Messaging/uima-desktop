@@ -21,7 +21,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 		event.sender.send(channels.CONTACTS.ON_CHANGE, contact)
 	} else {
 		try {
-			const user = JSON.parse(await appData.get<any>('user.profile')) as User
+			const user = await appData.get<User>('user.profile')
 			const token = await appData.get<string>('user.token')
 
 			const bundle = await getKeyBundleForUser(contact.id, user.id, token)

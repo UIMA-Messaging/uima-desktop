@@ -57,6 +57,7 @@ export default class EjabberdClient extends EventEmitter {
 		try {
 			// @ts-ignore
 			this.client.end()
+			delete this.client
 			this.connected = false
 		} catch {
 			console.log('Could not disconnect from XMP client.')

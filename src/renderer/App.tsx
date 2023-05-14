@@ -9,6 +9,7 @@ import Contacts from './views/Contacts'
 import Settings from './views/Settings'
 import Search from './views/Search'
 import Group from './views/Group'
+import Deregister from './views/Deregister'
 
 export default () => {
 	const { state } = useAuth()
@@ -17,7 +18,7 @@ export default () => {
 	useEffect(() => {
 		switch (state) {
 			case 'loggedIn':
-				navigation('contacts')
+				navigation('deregister')
 				break
 			case 'loggedOut':
 				navigation('')
@@ -37,6 +38,7 @@ export default () => {
 			<Route path="/contacts" element={<Contacts />} />
 			<Route path="/settings" element={<Settings />} />
 			<Route path="/search" element={<Search />} />
+			<Route path="/deregister" element={<Deregister />} />
 		</Routes>
 	)
 }
