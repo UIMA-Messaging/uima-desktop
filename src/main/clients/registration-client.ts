@@ -13,7 +13,7 @@ export async function register(user: BasicUser, token: string): Promise<Register
 		if (error instanceof AxiosError) {
 			switch (error?.response?.status) {
 				case 404:
-					throw Error(`User with the same name already exists.`)
+					throw Error(`User not found.`)
 				case 400:
 					throw Error(`Username already taken.`)
 				case 401:
@@ -30,8 +30,25 @@ export async function register(user: BasicUser, token: string): Promise<Register
 }
 
 export async function unregister(user: User, token: string): Promise<void> {
-	const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
-	await axios.delete(url + user.id, configuration(token))
+	try {
+		const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
+		await axios.delete(url + user.id, configuration(token))
+	} catch (error) {
+		if (error instanceof AxiosError) {
+			switch (error?.response?.status) {
+				case 404:
+					throw Error(`User not found.`)
+				case 401:
+					throw Error(`Client is not authorised to deregister new users.`)
+				case 500:
+					throw Error('Could not deregister user as there was an internal server error.')
+				default:
+					throw Error('Could not deregister user.')
+			}
+		} else {
+			throw Error('Could not connect to registration services')
+		}
+	}
 }
 
 function configuration(token: string): AxiosRequestConfig {

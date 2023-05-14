@@ -102,7 +102,7 @@ export default class AppData {
 
 		const tables = await this.connection.query<{ name: string }>("SELECT name FROM sqlite_master WHERE type='table'")
 		for (var table of tables) {
-			await this.connection.execute(`DROP TABLE ${table.name}`)
+			await this.connection.execute(`DELETE FROM ${table.name}`)
 		}
 	}
 }

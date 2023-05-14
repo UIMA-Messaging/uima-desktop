@@ -38,8 +38,8 @@ export default class EjabberdClient extends EventEmitter {
 			this.emit('onDisconnected')
 		})
 
-		this.client.on('error', (error: Error) => {
-			console.log(error.message)
+		this.client.on('error', (error: any) => {
+			console.log(error)
 			this.emit('onError', error)
 		})
 
@@ -55,8 +55,11 @@ export default class EjabberdClient extends EventEmitter {
 
 	public disconnect() {
 		try {
-			// @ts-ignore
-			this.client.end()
+			this.client.send(xml('presence', { type: 'unavailable' }))
+			setTimeout(() => {
+				// @ts-ignore
+				this.client?.end()
+			}, 100)
 			delete this.client
 			this.connected = false
 		} catch {

@@ -14,7 +14,6 @@ authentication.on('onRegister', async (user: RegisteredUser) => {
 authentication.on('onLogin', async () => {
 	try {
 		const jabber = await appData.get<JabberUser>('xmp.credentials')
-		console.log(jabber)
 		ejabberd.connect(jabber)
 	} catch (error) {
 		console.log('XMP client not connected:', error.message)
