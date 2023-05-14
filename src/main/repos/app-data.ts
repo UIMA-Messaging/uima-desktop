@@ -27,7 +27,6 @@ export default class AppData {
 	}
 
 	public setEncryptionKey(cipherStrategy: () => string) {
-		console.log('setting encryption key')
 		this.key = cipherStrategy()
 	}
 
@@ -40,9 +39,6 @@ export default class AppData {
 	}
 
 	public async set(id: string, data: any, sensitive: boolean = false) {
-		console.log(this.key)
-		console.log(!this.key)
-
 		if (sensitive && !this.key) {
 			throw Error('Cannot encrypt data when no encryption key is set.')
 		}
