@@ -1,8 +1,8 @@
-import { authentication, ejabberd, appData, encryption, contacts } from '..'
-import { Credentials, RegisteredUser, JabberUser } from '../../common/types'
+import { authentication, appData, contacts, ejabberd } from '..'
+import { RegisteredUser, JabberUser } from '../../common/types'
 
 authentication.on('onRegister', async (user: RegisteredUser) => {
-	await contacts.createOrUpdateContact({ ...user })
+	await contacts.createOrUpdateContact({ ...user }) // not useful
 
 	const jabber: JabberUser = {
 		username: user.jid,

@@ -44,10 +44,12 @@ export default class EjabberdClient extends EventEmitter {
 		})
 
 		this.client.on('stanza', (stanza: Stanza) => {
-			console.log('Received message:', JSON.stringify(stanza, null, 2))
-
-			const { type, content } = JSON.parse(null)
-			this.emit('onReceived', type, content)
+			try {
+				const { type, content } = JSON.parse(null)
+				this.emit('onReceived', type, content)
+			} catch {
+				console.log('Generic XMP message received:', stanza)
+			}
 		})
 
 		this.client.connect()
