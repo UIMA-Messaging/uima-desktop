@@ -109,7 +109,7 @@ export default class ChannelRepo {
 				VALUES (
 					$userId, 
 					$channelId)
-				ON CONFLICT(userId) DO NOTHING;
+				ON CONFLICT(userId, channelId) DO NOTHING;
 			`,
 			{
 				channelId: channelId,
