@@ -81,11 +81,11 @@ export default class DoubleRatchet {
 	}
 
 	public receive(message: EncryptedMessage): any {
+		this.messageCounter++
 		this.validataHeader(message.header)
 		const { chainKey, messageKey } = this.receivingRatchet.next()
 		this.rotateReceivingRatchet(chainKey)
 		const decrypted = decrypt(message.ciphertext, messageKey)
-		this.messageCounter++
 		return decrypted
 	}
 
@@ -93,7 +93,7 @@ export default class DoubleRatchet {
 		if (header.counter > this.messageCounter) {
 			throw Error(`Message received out of order. Received message ${header.counter} when most resent was ${this.messageCounter}`)
 		}
-		if (header.timestamp > this.latestMessageDate) {
+		if (header.timestamp < this.latestMessageDate) {
 			throw Error(`Encryption out-of-sync. Received message at ${header.timestamp} when most resent was ${this.latestMessageDate}`)
 		}
 	}
