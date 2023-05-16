@@ -24,7 +24,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			const user = await appData.get<User>('user.profile')
 			const token = await appData.get<string>('user.token')
 
-			const bundle = await getKeyBundleForUser(contact.id, user.id, token)
+			const bundle = await getKeyBundleForUser(user.id, contact.id, token)
 			const { postKeyBundle, fingerprint } = await encryption.establishExchange(contact.id, bundle)
 
 			const invitation: Invitation = {
