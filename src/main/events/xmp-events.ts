@@ -1,8 +1,10 @@
-import { contacts, ejabberd, encryption } from '..'
-import { Invitation, Message, NetworkMessage } from '../../common/types'
+import { channels, contacts, ejabberd, encryption } from '..'
+import { Channel, Invitation, Message } from '../../common/types'
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
+import { v4 } from 'uuid'
+import { notifyOfNewChannel, notifyOfNewContact } from '../handlers/contacts-handlers'
 
 ejabberd.on('onReceived', async (type: string, content: any) => {
 	try {
@@ -16,8 +18,17 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 
 				user.fingerprint = fingerprint
 				await contacts.createOrUpdateContact(user)
+				notifyOfNewContact(user)
 
-				console.log('created user')
+				const channel: Channel = {
+					id: v4(),
+					name: user.username,
+					type: 'dm',
+					members: [user],
+				}
+				await channels.createOrUpdateChannel(channel)
+				notifyOfNewChannel(channel)
+
 				break
 			case messageTypes.CHANNELS.MESSAGE:
 				const { message: decrypted } = await encryption.decrypt(content)

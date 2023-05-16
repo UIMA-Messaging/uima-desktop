@@ -1,6 +1,6 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels, messageTypes } from '../../common/constants'
-import { appData, contacts, ejabberd, encryption, channels as contactChannels } from '..'
+import { appData, contacts, ejabberd, encryption, channels as contactChannels, window } from '..'
 import { Channel, Invitation, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 import { v4 } from 'uuid'
@@ -88,3 +88,11 @@ ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => 
 		event.sender.send(channels.ON_ERROR, 'contacts.error', 'Contact not found. Cannot delete contact.')
 	}
 })
+
+export function notifyOfNewChannel(newChannel: Channel) {
+	window.webContents.send(channels.CHANNELS.ON_CREATE, newChannel)
+}
+
+export function notifyOfNewContact(newContact: User) {
+	window.webContents.send(channels.CONTACTS.ON_CREATE, newContact)
+}
