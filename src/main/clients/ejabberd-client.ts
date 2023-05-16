@@ -1,34 +1,36 @@
-import xml from '@xmpp/xml'
+import { client, xml, Client } from '@xmpp/client'
 import EventEmitter from 'events'
-import { Client, Stanza } from 'node-xmpp-client'
 import { JabberUser } from '../../common/types'
+import { Element } from '@xmpp/xml'
+import isDev from 'electron-is-dev'
+import debug from '@xmpp/debug'
 
 export default class EjabberdClient extends EventEmitter {
 	private client: Client
 	private connected: boolean
-	private host: string
-	private port: number
+	private service: string
+	private domain: string
 
-	constructor(host: string, port: number) {
+	constructor(service: string, domain: string) {
 		super()
+
 		this.connected = false
-		this.host = host
-		this.port = port
+		this.service = service
+		this.domain = domain
 	}
 
 	public connect(user: JabberUser) {
 		console.log('Connecting with:', user)
 
-		this.client = new Client({
-			jid: user.username,
+		this.client = client({
+			service: this.service,
+			domain: this.domain,
+			username: user.username.split('@')![0],
 			password: user.password,
-			host: this.host,
-			port: this.port,
-			reconnect: true,
 		})
 
-		this.client.on('online', () => {
-			this.client.send(xml('presence'))
+		this.client.on('online', async () => {
+			await this.client.send(xml('presence'))
 			this.connected = true
 			this.emit('onConnected')
 		})
@@ -43,25 +45,24 @@ export default class EjabberdClient extends EventEmitter {
 			this.emit('onError', error)
 		})
 
-		this.client.on('stanza', (stanza: Stanza) => {
+		this.client.on('stanza', async (stanza: Element) => {
 			try {
-				const { type, content } = JSON.parse(null)
+				const body = stanza.getChildText('body')
+				const { type, content } = JSON.parse(body)
 				this.emit('onReceived', type, content)
-			} catch {
+			} catch (e) {
 				console.log('Generic XMP message received:', stanza)
 			}
 		})
 
-		this.client.connect()
+		debug(this.client, isDev)
+
+		this.client.start()
 	}
 
-	public disconnect() {
+	public async disconnect() {
 		try {
-			this.client.send(xml('presence', { type: 'unavailable' }))
-			setTimeout(() => {
-				// @ts-ignore
-				this.client?.end()
-			}, 100)
+			await this.client.stop()
 			delete this.client
 			this.connected = false
 		} catch {
@@ -69,17 +70,19 @@ export default class EjabberdClient extends EventEmitter {
 		}
 	}
 
-	public send(recipientJid: string, type: string, message: object) {
-		console.log('Sending message to:', recipientJid, message)
+	public async send(recipientJid: string, type: string, message: object) {
 		if (!this.client) {
 			throw Error('XMP user not configured yet.')
 		}
+
 		if (!this.connected) {
 			throw Error('User not connected to XMP client.')
 		}
-		const payload = xml('body', null, JSON.stringify({ type: type, content: message }))
+
+		const payload = xml('body', {}, JSON.stringify({ type: type, content: message }))
 		const stanza = xml('message', { to: recipientJid }, payload)
-		this.client.send(stanza)
+
+		await this.client.send(stanza)
 	}
 
 	public isConnected(): boolean {

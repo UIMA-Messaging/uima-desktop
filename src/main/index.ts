@@ -55,7 +55,7 @@ const encryption = new Encryption()
 const authentication = new Authentification(appData, encryption)
 
 // Clients
-const ejabberd = new EjabberdClient(process.env.EJABBERD_HOST, Number(process.env.EJABBERD_PORT))
+const ejabberd = new EjabberdClient(process.env.EJABBERD_SERVICE, process.env.EJABBERD_DOMAIN)
 
 export { authentication, appData, ejabberd, messages, channels, contacts, encryption, window }
 
