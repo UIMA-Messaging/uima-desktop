@@ -2,30 +2,28 @@ import { client, xml, Client } from '@xmpp/client'
 import EventEmitter from 'events'
 import { JabberUser } from '../../common/types'
 import { Element } from '@xmpp/xml'
-import isDev from 'electron-is-dev'
-import debug from '@xmpp/debug'
 
 export default class EjabberdClient extends EventEmitter {
 	private client: Client
 	private connected: boolean
 	private service: string
-	private domain: string
 
-	constructor(service: string, domain: string) {
+	constructor(service: string) {
 		super()
 
 		this.connected = false
 		this.service = service
-		this.domain = domain
 	}
 
 	public connect(user: JabberUser) {
 		console.log('Connecting with:', user)
 
+		const split = user.username.split('@')
+
 		this.client = client({
 			service: this.service,
-			domain: this.domain,
-			username: user.username.split('@')![0],
+			domain: split[1],
+			username: split[0],
 			password: user.password,
 		})
 
@@ -54,8 +52,6 @@ export default class EjabberdClient extends EventEmitter {
 				console.log('Generic XMP message received:', stanza)
 			}
 		})
-
-		debug(this.client, isDev)
 
 		this.client.start()
 	}

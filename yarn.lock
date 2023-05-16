@@ -1142,14 +1142,6 @@
     "@types/xmpp__jid" "*"
     "@types/xmpp__xml" "*"
 
-"@types/xmpp__debug@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@types/xmpp__debug/-/xmpp__debug-0.13.0.tgz"
-  integrity sha512-bbIggKmZriFYBO9e8BLgcMaibbbN8nvNEYa5IoCfsLLiU65gVzZ5a2Kc2eMP31RM3xjTVIgL3ozF2ra29wVJ2A==
-  dependencies:
-    "@types/xmpp__connection" "*"
-    "@types/xmpp__xml" "*"
-
 "@types/xmpp__error@*":
   version "0.13.0"
   resolved "https://registry.npmjs.org/@types/xmpp__error/-/xmpp__error-0.13.0.tgz"
@@ -1523,14 +1515,6 @@
     "@xmpp/events" "^0.13.1"
     "@xmpp/jid" "^0.13.1"
     "@xmpp/xml" "^0.13.1"
-
-"@xmpp/debug@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.npmjs.org/@xmpp/debug/-/debug-0.13.0.tgz"
-  integrity sha512-4RCN0UsGLmfzzOdDAfzpm8luKprcdo9oRf0cnKqU/TKmbw5PN5F+TqX4we7uc4xHKzpu0rNyEhusKkVOfe3xzw==
-  dependencies:
-    "@xmpp/xml" "^0.13.0"
-    ltx "^3.0.0"
 
 "@xmpp/error@^0.13.1":
   version "0.13.1"
