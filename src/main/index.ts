@@ -38,12 +38,7 @@ function createWindow(): BrowserWindow {
 // App behavior
 let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		ejabberd?.disconnect()
-		app.quit()
-	}
-})
+app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
 app.on('quit', () => ejabberd?.disconnect())
 
