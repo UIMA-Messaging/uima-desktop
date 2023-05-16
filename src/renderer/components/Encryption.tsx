@@ -18,11 +18,13 @@ export default ({ user, showCiphers }: { user: User; showCiphers?: (toggle: bool
 					<div key={num}>{num}</div>
 				))}
 			</div>
-			<div className="encryption-encryption">
+			<div className="encryption-description">
 				<p>All messages between you and {user.displayName} are End-to-End Encrypted with the Signal Protocol. </p>
-				<p>To validate that noone is intercepting messages, compare each other's fingerprint on the left in person.</p>
 				<p>Nobody, including UIMA, can read the messages in this conversation.</p>
-				<u onClick={handleShowCipher}>{showing ? 'Show plaintext' : 'Reveal message encryption'}</u>
+				<p>To validate that noone is intercepting messages, compare each other's fingerprint on the left in person.</p>
+				<p>
+					<u onClick={handleShowCipher}>{showing ? 'Show plaintext' : 'Reveal message encryption'}</u>
+				</p>
 			</div>
 		</div>
 	)

@@ -1,10 +1,9 @@
 .encryption-container {
 	margin: 10px auto;
-	padding: 20px;
+	padding: 20px 30px;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
     align-items: center;
-	gap: 50px;
 }
 
 .fingerprint {
@@ -18,7 +17,7 @@
 	grid-template-columns: repeat(4, 1fr);
 	gap: 5px;
 
-	border-radius: var(--default-round);
+	border-radius: 10px;
 	background-color: var(--input-color);
 }
 
@@ -29,7 +28,7 @@
 	justify-self: center;
 }
 
-.encryption-encryption {
-	width: 60%;
+.encryption-description {
+	width: 65%;
     font-size: 80%;
 }

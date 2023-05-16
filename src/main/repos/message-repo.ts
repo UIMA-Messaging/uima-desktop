@@ -83,6 +83,7 @@ export default class MessageRepo {
 			`,
 			{
 				...message,
+				timestamp: new Date(message.timestamp),
 				authorId: message.author.id,
 				channelId,
 			}
