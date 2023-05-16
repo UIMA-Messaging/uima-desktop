@@ -40,6 +40,7 @@ let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
+app.on('quit', () => ejabberd?.disconnect())
 
 // Repositories
 const connection = new SqlConnection(new Database(process.env.DEFAULT_LOCAL_DATABASE))
