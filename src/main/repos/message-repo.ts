@@ -1,4 +1,5 @@
-import { Message } from '../../common/types'
+import { appData } from '..'
+import { Message, User } from '../../common/types'
 import SqlConnection from '../services/sql-connection'
 import ContactRepo from './contact-repo'
 
@@ -6,7 +7,8 @@ interface StoreMessage {
 	id: string
 	channelId: string
 	authorId: string
-	content: string
+	plaintext: string
+	ciphertext: string
 	timestamp: Date
 }
 
@@ -24,7 +26,8 @@ export default class MessageRepo {
 				id TEXT PRIMARY KEY,
 				channelId TEXT,
 				authorId TEXT,
-				content TEXT,
+				plaintext TEXT,
+				ciphertext TEXT,
 				timestamp DATETIME,
 				FOREIGN KEY (channelId) REFERENCES Channels(id),
 				FOREIGN KEY (authorId) REFERENCES Contacts(id)
@@ -44,12 +47,19 @@ export default class MessageRepo {
 
 		const messages: Message[] = []
 		for (const message of stored) {
-			messages.push({
-				id: message.id,
-				author: await this.contacts.getContactById(message.authorId),
-				content: message.content,
-				timestamp: message.timestamp,
-			})
+			let author = await this.contacts.getContactById(message.authorId)
+
+			// big meh
+			if (!author) {
+				const profile = await appData.get<User>('user.profile')
+				if (profile.id === message.authorId) {
+					author = profile
+				}
+			}
+
+			console.log('stored message', message)
+
+			messages.push({ ...message, author })
 		}
 
 		return messages
@@ -62,21 +72,21 @@ export default class MessageRepo {
 					id, 
 					channelId, 
 					authorId,
-					content, 
+					plaintext,
+					ciphertext, 
 					timestamp)
 				VALUES (
 					$id, 
 					$channelId, 
 					$authorId, 
-					$content, 
+					$plaintext,
+					$ciphertext,
 					$timestamp)
 			`,
 			{
-				id: message.id,
-				channelId: channelId,
+				...message,
 				authorId: message.author.id,
-				content: message.content,
-				timestamp: message.timestamp,
+				channelId,
 			}
 		)
 	}

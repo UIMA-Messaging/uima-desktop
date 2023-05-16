@@ -11,6 +11,7 @@ export interface Channel {
 export interface Message {
 	id: string
 	author: User
-	content: string
+	plaintext: string
+	ciphertext?: string
 	timestamp: Date
 }
