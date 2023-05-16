@@ -40,7 +40,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 			case messageTypes.GROUP.INVITATION:
 				break
 			default:
-				console.log('Unhandled message:', decrypted)
+				console.log('Unhandled message:', content)
 				break
 		}
 	} catch (error) {

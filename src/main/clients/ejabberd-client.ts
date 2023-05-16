@@ -66,7 +66,7 @@ export default class EjabberdClient extends EventEmitter {
 		}
 	}
 
-	public async send(recipientJid: string, type: string, message: object) {
+	public async send(recipientJid: string, type: string, message: any) {
 		if (!this.client) {
 			throw Error('XMP user not configured yet.')
 		}
