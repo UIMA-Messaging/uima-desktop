@@ -93,7 +93,7 @@ export default class X3DH {
 
 	private getOPKFromPublic(publicKey: string): string {
 		const i = this.oneTimePreKeys.findIndex((key) => key.publicKey === publicKey)
-		return i !== -1 ? this.oneTimePreKeys.splice(i, 1)[0].publicKey : null
+		return i !== -1 ? this.oneTimePreKeys.splice(i, 1)[0].privateKey : null
 	}
 
 	public getExchangeKeys(): ExchangeKeys {
