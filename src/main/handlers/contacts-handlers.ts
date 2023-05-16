@@ -36,7 +36,14 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			ejabberd.send(contact.jid, messageTypes.CONTACT.INVITATION, invitation)
 
 			contact.fingerprint = fingerprint
-			await contacts.createOrUpdateContact(contact)
+
+			try {
+				await contacts.createOrUpdateContact(contact)
+			} catch (e) {
+				console.log(e.message)
+				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create contact.')
+			}
+
 			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 
 			const channel: Channel = {
@@ -46,10 +53,16 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 				members: [contact],
 			}
 
-			await chattingChannels.createOrUpdateChannel(channel)
+			try {
+				await chattingChannels.createOrUpdateChannel(channel)
+			} catch (e) {
+				console.log(e.message)
+				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create channel for contact.')
+			}
+
 			event.sender.send(channels.CHANNELS.ON_CREATE, channel)
 		} catch (error) {
-			event.sender.send(channels.ON_ERROR, 'contacts.error', error)
+			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not add user as contact')
 		}
 	}
 })
