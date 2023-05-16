@@ -1,5 +1,5 @@
 import { IpcMainEvent, ipcMain } from 'electron'
-import { channels } from '../../common/constants'
+import { channels, messageTypes } from '../../common/constants'
 import { appData, contacts, ejabberd, encryption, channels as chattingChannels } from '..'
 import { Channel, Invitation, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
@@ -33,7 +33,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 				user: user,
 				postKeyBundle: postKeyBundle,
 			}
-			ejabberd.send(contact.jid, 'invitation', invitation)
+			ejabberd.send(contact.jid, messageTypes.CONTACT.INVITATION, invitation)
 
 			contact.fingerprint = fingerprint
 			await contacts.createOrUpdateContact(contact)
