@@ -6,6 +6,7 @@ import Picture from '../components/Picture'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import { useChannel } from '../hooks/use-channels'
+import Encryption from '../components/Encryption'
 
 export default () => {
 	const navigation = useNavigate()
@@ -56,7 +57,7 @@ export default () => {
 					{messages.map((message) => (
 						<ChatBubble key={message.id} text={message.content} timestamp={message.timestamp} author={message.author.displayName} />
 					))}
-					{channel?.type === 'dm' && <div className="fingerprint">{channel?.members[0].fingerprint}</div>}
+					{channel?.type === 'dm' && <Encryption user={channel?.members[0]} />}
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>
 				<div className="chat-inputs">
