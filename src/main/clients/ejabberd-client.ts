@@ -44,6 +44,14 @@ export default class EjabberdClient extends EventEmitter {
 		})
 
 		this.client.on('stanza', async (stanza: Element) => {
+			const fromJid = stanza.attrs.from
+			const toJid = stanza.attrs.to
+
+			// why is this happening?
+			if (fromJid?.split('/')[0] === toJid?.split('/')[0]) {
+				return
+			}
+
 			try {
 				const body = stanza.getChildText('body')
 				const { type, content } = JSON.parse(body)

@@ -3,8 +3,8 @@ import { Channel, Invitation, Message, NetworkMessage, User } from '../../common
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
-import { v4 } from 'uuid'
 import { notifyOfNewChannel, notifyOfNewContact } from '../handlers/contacts-handlers'
+import { v4 } from 'uuid'
 
 ejabberd.on('onReceived', async (type: string, content: any) => {
 	try {
@@ -31,19 +31,11 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 
 				break
 			case messageTypes.CHANNELS.MESSAGE:
-				const profile = await appData.get<User>('user.profile')
 				const networkMessage = content as NetworkMessage
-
-				if (profile.id === networkMessage.sender) {
-					return
-				}
-
 				const { message: decrypted } = await encryption.decrypt(content)
 
 				const { channelId, message } = decrypted as { channelId: string; message: Message }
-
 				message.ciphertext = networkMessage.content?.ciphertext
-
 				notifyOfNewMessage(channelId, message)
 
 				break
