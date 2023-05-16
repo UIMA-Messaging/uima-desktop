@@ -91,10 +91,10 @@ export default class DoubleRatchet {
 
 	private validataHeader(header: { counter: number; timestamp: Date }) {
 		if (header.counter > this.messageCounter) {
-			throw Error(`Message received out of order. Received message ${header.counter} when most resent was ${this.messageCounter}`)
+			throw Error(`Message received out of order. Received message ${header.counter} when most recent was ${this.messageCounter}`)
 		}
-		if (header.timestamp < this.latestMessageDate) {
-			throw Error(`Encryption out-of-sync. Received message at ${header.timestamp} when most resent was ${this.latestMessageDate}`)
+		if (header.timestamp > this.latestMessageDate) {
+			throw Error(`Encryption out-of-sync. Received message at ${header.timestamp} when most recent was ${this.latestMessageDate}`)
 		}
 	}
 }
