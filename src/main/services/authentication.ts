@@ -54,6 +54,7 @@ export default class Authentification extends EventEmitter {
 
 		const user: User = {
 			id: registeredUser.id,
+			jid: registeredUser.jid,
 			displayName: registeredUser.displayName,
 			username: registeredUser.username,
 			image: registeredUser.image,
