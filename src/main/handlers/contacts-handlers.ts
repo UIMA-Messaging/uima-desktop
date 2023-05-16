@@ -27,8 +27,10 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 			const bundle = await getKeyBundleForUser(user.id, contact.id, token)
 			const { postKeyBundle, fingerprint } = await encryption.establishExchange(contact.id, bundle)
 
+			const channelId = v4()
+
 			const invitation: Invitation = {
-				id: user.id,
+				channelId: channelId,
 				timestamp: new Date(),
 				user: user,
 				postKeyBundle: postKeyBundle,
@@ -46,7 +48,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 
 			try {
 				const channel: Channel = {
-					id: v4(),
+					id: channelId,
 					name: contact.username,
 					type: 'dm',
 					members: [contact],

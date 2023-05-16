@@ -4,7 +4,6 @@ import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
 import { notifyOfNewChannel, notifyOfNewContact } from '../handlers/contacts-handlers'
-import { v4 } from 'uuid'
 
 ejabberd.on('onReceived', async (type: string, content: any) => {
 	try {
@@ -12,7 +11,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 
 		switch (type) {
 			case messageTypes.CONTACT.INVITATION:
-				const { user, postKeyBundle } = content as Invitation
+				const { channelId: agreedChannelId, user, postKeyBundle } = content as Invitation
 
 				const { fingerprint } = await encryption.establishedPostExchange(user.id, postKeyBundle)
 
@@ -21,7 +20,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 				notifyOfNewContact(user)
 
 				const channel: Channel = {
-					id: user.id,
+					id: agreedChannelId,
 					name: user.username,
 					type: 'dm',
 					members: [user],
