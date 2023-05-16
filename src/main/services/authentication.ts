@@ -51,7 +51,16 @@ export default class Authentification extends EventEmitter {
 		await setX3DH(x3dh)
 
 		await this.appData.set('user.token', token, true)
-		await this.appData.set('user.profile', registeredUser, true)
+
+		const user: User = {
+			id: registeredUser.id,
+			displayName: registeredUser.displayName,
+			username: registeredUser.username,
+			image: registeredUser.image,
+			joinedAt: registeredUser.joinedAt,
+		}
+
+		await this.appData.set('user.profile', user, true)
 
 		this.emit('onRegister', registeredUser)
 
