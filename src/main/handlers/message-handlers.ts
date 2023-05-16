@@ -27,7 +27,7 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 		for (const member of channel.members) {
 			try {
 				const encrypted = await encryption.encrypt(member.id, { channelId, message })
-				ejabberd.send(member.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
+				await ejabberd.send(member.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
 			} catch (error) {
 				event.sender.send(channels.ON_ERROR, 'messages.error', error.message)
 			}
