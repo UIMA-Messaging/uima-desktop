@@ -4,7 +4,7 @@ import Input from '../components/Input'
 import Sidebar from '../components/Sidebar'
 import Picture from '../components/Picture'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useChannel } from '../hooks/use-channels'
 import Encryption from '../components/Encryption'
 
@@ -13,6 +13,7 @@ export default () => {
 	const { state } = useLocation()
 	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(state?.id)
 	const bottom = useRef(null)
+	const [showingCiphers, showCiphers] = useState(false)
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
@@ -55,9 +56,9 @@ export default () => {
 				<div className="chat-messages" onScroll={handleScroll}>
 					<div ref={bottom} />
 					{messages.map((message) => (
-						<ChatBubble key={message.id} text={message.plaintext} timestamp={message.timestamp} author={message.author?.username} />
+						<ChatBubble key={message.id} text={showingCiphers ? message.ciphertext : message.plaintext} timestamp={message.timestamp} author={message.author?.username} />
 					))}
-					{channel?.type === 'dm' && <Encryption user={channel?.members[0]} />}
+					{channel?.type === 'dm' && <Encryption user={channel?.members[0]} showCiphers={showCiphers} />}
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>
 				<div className="chat-inputs">
