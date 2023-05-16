@@ -1,4 +1,4 @@
-import { appData, channels, contacts, ejabberd, encryption } from '..'
+import { channels, contacts, ejabberd, encryption, messages } from '..'
 import { Channel, Invitation, Message, NetworkMessage, User } from '../../common/types'
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
@@ -21,7 +21,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 				notifyOfNewContact(user)
 
 				const channel: Channel = {
-					id: v4(),
+					id: user.id,
 					name: user.username,
 					type: 'dm',
 					members: [user],
@@ -34,9 +34,11 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 				const networkMessage = content as NetworkMessage
 				const { message: decrypted } = await encryption.decrypt(content)
 
-				const { channelId, message } = decrypted as { channelId: string; message: Message }
-				message.ciphertext = networkMessage.content?.ciphertext
-				notifyOfNewMessage(channelId, message)
+				const { channelId, message: decryptedMessage } = JSON.parse(decrypted) as { channelId: string; message: Message }
+
+				decryptedMessage.ciphertext = networkMessage.content?.ciphertext
+				messages.createMessage(channelId, decryptedMessage)
+				notifyOfNewMessage(channelId, decryptedMessage)
 
 				break
 			case messageTypes.GROUP.INVITATION:
