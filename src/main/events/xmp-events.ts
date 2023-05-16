@@ -4,21 +4,25 @@ import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
 
-ejabberd.on('onReceived', async (type: string, encryptedMessage: NetworkMessage) => {
+ejabberd.on('onReceived', async (type: string, networkMessage: NetworkMessage) => {
 	try {
-		const { message: decrypted } = await encryption.decrypt(encryptedMessage)
-
 		switch (type) {
 			case messageTypes.CONTACT.INVITATION:
-				const { user, postKeyBundle } = decrypted as Invitation
+				const { user, postKeyBundle } = networkMessage.content as unknown as Invitation
+
 				const { fingerprint } = await encryption.establishedPostExchange(user.id, postKeyBundle)
+
 				user.fingerprint = fingerprint
 				await contacts.createOrUpdateContact(user)
+
 				console.log('created user')
 				break
 			case messageTypes.CHANNELS.MESSAGE:
+				const { message: decrypted } = await encryption.decrypt(networkMessage)
+
 				const channelMessage = decrypted as { channelId: string; message: Message }
 				notifyOfNewMessage(channelMessage.channelId, channelMessage.message)
+
 				break
 			case messageTypes.GROUP.INVITATION:
 				break

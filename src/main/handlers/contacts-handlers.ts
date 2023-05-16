@@ -1,6 +1,6 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels, messageTypes } from '../../common/constants'
-import { appData, contacts, ejabberd, encryption, channels as chattingChannels } from '..'
+import { appData, contacts, ejabberd, encryption, channels as contactChannels } from '..'
 import { Channel, Invitation, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 import { v4 } from 'uuid'
@@ -48,13 +48,13 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 
 			const channel: Channel = {
 				id: v4(),
-				name: contact.displayName,
+				name: contact.username,
 				type: 'dm',
 				members: [contact],
 			}
 
 			try {
-				await chattingChannels.createOrUpdateChannel(channel)
+				await contactChannels.createOrUpdateChannel(channel)
 			} catch (e) {
 				console.log(e.message)
 				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create channel for contact.')
@@ -70,8 +70,21 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => {
 	const user = await contacts.getContactById(id)
 	if (user) {
-		await contacts.deleteContactById(id)
-		event.sender.send(channels.CONTACTS.ON_DELETE, user)
+		try {
+			await contacts.deleteContactById(id)
+			event.sender.send(channels.CONTACTS.ON_DELETE, user)
+		} catch (e) {
+			console.log(e.message)
+			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not remove user from contacts.')
+		}
+
+		try {
+			const channel = await contactChannels.deleteDirectMessageChannel(id)
+			event.sender.send(channels.CHANNELS.ON_DELETE, channel)
+		} catch (e) {
+			console.log(e.message)
+			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not remove conversation for contact.')
+		}
 	} else {
 		event.sender.send(channels.ON_ERROR, 'contacts.error', 'Contact not found. Cannot delete contact.')
 	}
