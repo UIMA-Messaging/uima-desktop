@@ -7,22 +7,25 @@ import ContactCard from '../components/ContactCard'
 import Button from '../components/Button'
 import { SearchResults, User } from '../../common/types'
 import { searchUserByQuery } from '../api/users'
-import { createContact, useContacts } from '../hooks/use-contacts'
+import { useContacts } from '../hooks/use-contacts'
 import useAppError from '../hooks/user-app-error'
+import useAuth from '../hooks/use-auth'
 
 export default () => {
+	const { profile } = useAuth()
 	const [users, setUsers] = useState<User[]>([])
 	const [pageNumber, setPageNumber] = useState(0)
 	const [query, setQuery] = useState(null)
 	const [isScrollAtBottom, setIsScrollAtBottom] = useState(false)
-	const { created, changed } = useContacts()
+	const { created, changed, create: createContact } = useContacts()
 	const [isContacting, setIsContacting] = useState(false)
 	const { message } = useAppError('contacts.error')
 
 	useEffect(() => {
 		if (isScrollAtBottom) {
 			searchUserByQuery(query, 10, pageNumber + 1).then((search: SearchResults<User>) => {
-				setUsers([...users, ...search.results])
+				const filteredResults = search.results.filter((user) => user.id !== profile.id)
+				setUsers([...users, ...filteredResults])
 				setPageNumber(pageNumber + 1)
 			})
 		}
@@ -31,7 +34,7 @@ export default () => {
 	useEffect(() => {
 		if (query) {
 			searchUserByQuery(query, 10, 0).then((search: SearchResults<User>) => {
-				setUsers(search.results)
+				setUsers(search.results.filter((user) => user.id !== profile.id))
 				setPageNumber(0)
 			})
 		}
@@ -47,9 +50,9 @@ export default () => {
 		setIsScrollAtBottom(isScrollAtBottom)
 	}
 
-	async function handleAddFriend(user: User) {
+	function handleAddFriend(user: User) {
 		setIsContacting(true)
-		await createContact(user)
+		createContact(user)
 	}
 
 	return (
