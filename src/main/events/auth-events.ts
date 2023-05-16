@@ -1,9 +1,7 @@
-import { authentication, appData, contacts, ejabberd } from '..'
+import { authentication, appData, ejabberd } from '..'
 import { RegisteredUser, JabberUser } from '../../common/types'
 
 authentication.on('onRegister', async (user: RegisteredUser) => {
-	await contacts.createOrUpdateContact({ ...user }) // not useful
-
 	const jabber: JabberUser = {
 		username: user.jid,
 		password: user.ephemeralPassword,
