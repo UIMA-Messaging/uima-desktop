@@ -55,7 +55,7 @@ export default () => {
 				<div className="chat-messages" onScroll={handleScroll}>
 					<div ref={bottom} />
 					{messages.map((message) => (
-						<ChatBubble key={message.id} text={message.plaintext} timestamp={message.timestamp} author={message.author?.displayName} />
+						<ChatBubble key={message.id} text={message.plaintext} timestamp={message.timestamp} author={message.author?.username} />
 					))}
 					{channel?.type === 'dm' && <Encryption user={channel?.members[0]} />}
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
