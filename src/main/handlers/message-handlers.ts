@@ -24,16 +24,14 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 			timestamp: new Date(),
 		}
 
-		// channel.members.forEach(async (user) => {
-		// 	try {
-		// 		const encrypted = await encryption.encrypt(user.id, { channelId, message })
-		// 		ejabberd.send(user.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
-		// 	} catch (error) {
-		// 		event.sender.send(channels.ON_ERROR, 'messages.error', error.message)
-		// 	}
-		// })
-
-		ejabberd.send('admin@localhost', messageTypes.CHANNELS.MESSAGE, message)
+		channel.members.forEach(async (user) => {
+			try {
+				const encrypted = await encryption.encrypt(user.id, { channelId, message })
+				ejabberd.send(user.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
+			} catch (error) {
+				event.sender.send(channels.ON_ERROR, 'messages.error', error.message)
+			}
+		})
 
 		await messages.createMessage(channelId, message)
 		event.sender.send(channels.MESSAGES.ON_SENT, channelId, message)
