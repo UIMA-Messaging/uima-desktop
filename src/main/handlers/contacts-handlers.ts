@@ -39,28 +39,27 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 
 			try {
 				await contacts.createOrUpdateContact(contact)
+				event.sender.send(channels.CONTACTS.ON_CREATE, contact)
 			} catch (e) {
 				console.log(e.message)
 				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create contact.')
 			}
 
-			event.sender.send(channels.CONTACTS.ON_CREATE, contact)
-
-			const channel: Channel = {
-				id: v4(),
-				name: contact.username,
-				type: 'dm',
-				members: [contact],
-			}
-
 			try {
+				const channel: Channel = {
+					id: v4(),
+					name: contact.username,
+					type: 'dm',
+					members: [contact],
+				}
+
 				await contactChannels.createOrUpdateChannel(channel)
+
+				event.sender.send(channels.CHANNELS.ON_CREATE, channel)
 			} catch (e) {
 				console.log(e.message)
 				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create channel for contact.')
 			}
-
-			event.sender.send(channels.CHANNELS.ON_CREATE, channel)
 		} catch (error) {
 			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not add user as contact')
 		}
