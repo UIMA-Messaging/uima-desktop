@@ -1,24 +1,24 @@
 .settings-container {
-  width: 50%;
+	width: 50%;
 }
 
 @media screen and (max-width: 600px) {
-  .settings-container {
-    width: 90%;
-  }
+	.settings-container {
+		width: 90%;
+	}
 }
 
 .image-upload-container {
-  display: flex;
-  gap: 19px;
-  align-items: end;
+	display: flex;
+	gap: 19px;
+	align-items: end;
 }
 
 .image-display {
-  border-radius: var(--default-round);
-  background-color: var(--input-color);
+	border-radius: var(--default-round);
+	background-color: var(--input-color);
 
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
+	width: 150px;
+	height: 150px;
+	object-fit: contain;
 }

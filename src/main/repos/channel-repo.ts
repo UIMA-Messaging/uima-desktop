@@ -15,8 +15,7 @@ export default class ChannelRepo {
 		this.connection = connection
 		this.contacts = contacts
 
-		console.log('Creating `Channels` and `ChannelMembers` tables if they do not already exist.')
-
+		console.log('Creating `Channels` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS Channels (
 				id TEXT PRIMARY KEY,
@@ -25,11 +24,12 @@ export default class ChannelRepo {
 				image TEXT
 			);`)
 
+		console.log('Creating `ChannelMembers` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS ChannelMembers (
 				userId TEXT NOT NULL,
 				channelId TEXT NOT NULL,
-				FOREIGN KEY (userId) REFERENCES Users(id),
+				FOREIGN KEY (userId) REFERENCES Contacts(id),
 				FOREIGN KEY (channelId) REFERENCES Channels(id)
 				PRIMARY KEY (userId, channelId)
 			);`)
@@ -109,7 +109,7 @@ export default class ChannelRepo {
 				VALUES (
 					$userId, 
 					$channelId)
-				ON CONFLICT(userId) DO NOTHING;
+				ON CONFLICT(userId, channelId) DO NOTHING;
 			`,
 			{
 				channelId: channelId,
@@ -120,5 +120,44 @@ export default class ChannelRepo {
 
 	public async deleteChannelById(id: string): Promise<void> {
 		await this.connection.execute('DELETE FROM Channels WHERE id = $id', { id })
+	}
+
+	public async deleteChannelMemeberById(id: string, channelId: string) {
+		await this.connection.execute(
+			`
+				DELETE FROM ChannelMemeber 
+				WHERE userId = $id 
+					AND channelId = $channelId
+			`,
+			{ channelId, id }
+		)
+	}
+
+	public async deleteDirectMessageChannel(contactId: string): Promise<Channel> {
+		const channel = await this.connection.querySingle<Channel>(
+			`
+				SELECT id
+				FROM Channels
+				WHERE type = 'dm'
+					AND id IN (
+						SELECT channelId
+						FROM ChannelMembers
+						WHERE userId = $contactId
+					);
+			`,
+			{ contactId }
+		)
+
+		await this.connection.execute(
+			`
+				DELETE FROM ChannelMembers
+				 WHERE channelId = $channelId
+			`,
+			{ channelId: channel.id }
+		)
+
+		await this.deleteChannelById(channel.id)
+
+		return channel
 	}
 }

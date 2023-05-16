@@ -7,22 +7,26 @@ import ContactCard from '../components/ContactCard'
 import Button from '../components/Button'
 import { SearchResults, User } from '../../common/types'
 import { searchUserByQuery } from '../api/users'
-import { createContact, useContacts } from '../hooks/use-contacts'
+import { useContacts } from '../hooks/use-contacts'
 import useAppError from '../hooks/user-app-error'
+import useAuth from '../hooks/use-auth'
 
 export default () => {
+	const { profile } = useAuth()
 	const [users, setUsers] = useState<User[]>([])
 	const [pageNumber, setPageNumber] = useState(0)
 	const [query, setQuery] = useState(null)
 	const [isScrollAtBottom, setIsScrollAtBottom] = useState(false)
-	const { created, changed } = useContacts()
+	const { contacts, created, changed, create: createContact } = useContacts()
 	const [isContacting, setIsContacting] = useState(false)
 	const { message } = useAppError('contacts.error')
 
 	useEffect(() => {
 		if (isScrollAtBottom) {
 			searchUserByQuery(query, 10, pageNumber + 1).then((search: SearchResults<User>) => {
-				setUsers([...users, ...search.results])
+				const profileFiltered = search.results.filter((user) => user.id !== profile.id)
+				const contactsFiltered = profileFiltered.filter((user) => !contacts.some((contact) => user.id === contact.id))
+				setUsers([...users, ...contactsFiltered])
 				setPageNumber(pageNumber + 1)
 			})
 		}
@@ -31,7 +35,9 @@ export default () => {
 	useEffect(() => {
 		if (query) {
 			searchUserByQuery(query, 10, 0).then((search: SearchResults<User>) => {
-				setUsers(search.results)
+				const profileFiltered = search.results.filter((user) => user.id !== profile.id)
+				const contactsFiltered = profileFiltered.filter((user) => !contacts.some((contact) => user.id === contact.id))
+				setUsers(contactsFiltered)
 				setPageNumber(0)
 			})
 		}
@@ -47,9 +53,9 @@ export default () => {
 		setIsScrollAtBottom(isScrollAtBottom)
 	}
 
-	async function handleAddFriend(user: User) {
+	function handleAddFriend(user: User) {
 		setIsContacting(true)
-		await createContact(user)
+		createContact(user)
 	}
 
 	return (
@@ -58,7 +64,7 @@ export default () => {
 			<Page title="Search someone">
 				<div className="search-container">
 					<Input placeholder="Search someone" getValue={setQuery} />
-					<p style={{ fontSize: '12px', color: 'red' }}>{message}</p>
+					<p style={{ fontSize: '12px', color: 'red' }}>{message?.toString()}</p>
 					<div style={isContacting ? { opacity: 0.5, pointerEvents: 'none' } : null} onScroll={handleScroll}>
 						{users.map((user) => (
 							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>

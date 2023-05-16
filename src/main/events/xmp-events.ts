@@ -1,26 +1,49 @@
-import { ejabberd, encryption } from '..'
-import { Invitation, Message, NetworkMessage } from '../../common/types'
+import { channels, contacts, ejabberd, encryption, messages } from '..'
+import { Channel, Invitation, Message, NetworkMessage, User } from '../../common/types'
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
 import { messageTypes } from '../../common/constants'
+import { notifyOfNewChannel, notifyOfNewContact } from '../handlers/contacts-handlers'
 
-ejabberd.on('onReceived', async (type: string, encryptedMessage: NetworkMessage) => {
+ejabberd.on('onReceived', async (type: string, content: any) => {
 	try {
-		const { message: decrypted } = await encryption.decrypt(encryptedMessage)
-
 		switch (type) {
 			case messageTypes.CONTACT.INVITATION:
-				const invitation = decrypted as Invitation
-				await encryption.establishedPostExchange(invitation.user.id, invitation.postKeyBundle)
+				console.log('RECEIVED', content)
+
+				const { channelId: agreedChannelId, user, postKeyBundle } = content as Invitation
+
+				const { fingerprint } = await encryption.establishedPostExchange(user.id, postKeyBundle)
+
+				user.fingerprint = fingerprint
+				await contacts.createOrUpdateContact(user)
+				notifyOfNewContact(user)
+
+				const channel: Channel = {
+					id: agreedChannelId,
+					name: user.username,
+					type: 'dm',
+					members: [user],
+				}
+				await channels.createOrUpdateChannel(channel)
+				notifyOfNewChannel(channel)
+
 				break
 			case messageTypes.CHANNELS.MESSAGE:
-				const channelMessage = decrypted as { channelId: string; message: Message }
-				notifyOfNewMessage(channelMessage.channelId, channelMessage.message)
+				const networkMessage = content as NetworkMessage
+				const { message: decrypted } = await encryption.decrypt(content)
+
+				const { channelId, message: decryptedMessage } = JSON.parse(decrypted) as { channelId: string; message: Message }
+
+				decryptedMessage.ciphertext = networkMessage.content?.ciphertext
+				messages.createMessage(channelId, decryptedMessage)
+				notifyOfNewMessage(channelId, decryptedMessage)
+
 				break
 			case messageTypes.GROUP.INVITATION:
 				break
 			default:
-				console.log('Unhandled message:', decrypted)
+				console.log('Unhandled message:', content)
 				break
 		}
 	} catch (error) {
@@ -38,6 +61,6 @@ ejabberd.on('onDisconnected', () => {
 	notifyOfStatus(false)
 })
 
-ejabberd.on('onError', (error: string) => {
+ejabberd.on('onError', (error: any) => {
 	notifyOfError(error)
 })

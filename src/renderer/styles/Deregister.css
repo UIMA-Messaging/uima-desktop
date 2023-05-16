@@ -1,0 +1,21 @@
+.registration-wrapper .profile-picture-container {
+	width: 30px !important;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.registration-wrapper .deregister-profile {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.registration-wrapper .cancel-button {
+	margin-top: 0 !important;
+}
+
+.registration-wrapper .deregister-button {
+	background-color: #b42020 !important;
+	color: white !important;
+}

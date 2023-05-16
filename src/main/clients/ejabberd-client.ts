@@ -1,34 +1,34 @@
-import xml from '@xmpp/xml'
+import { client, xml, Client } from '@xmpp/client'
 import EventEmitter from 'events'
-import { Client, Stanza } from 'node-xmpp-client'
 import { JabberUser } from '../../common/types'
+import { Element } from '@xmpp/xml'
 
 export default class EjabberdClient extends EventEmitter {
 	private client: Client
 	private connected: boolean
-	private host: string
-	private port: number
+	private service: string
 
-	constructor(host: string, port: number) {
+	constructor(service: string) {
 		super()
+
 		this.connected = false
-		this.host = host
-		this.port = port
+		this.service = service
 	}
 
 	public connect(user: JabberUser) {
 		console.log('Connecting with:', user)
 
-		this.client = new Client({
-			jid: user.username,
+		const split = user.username.split('@')
+
+		this.client = client({
+			service: this.service,
+			domain: split[1],
+			username: split[0],
 			password: user.password,
-			host: this.host,
-			port: this.port,
-			reconnect: true,
 		})
 
-		this.client.on('online', () => {
-			this.client.send(xml('presence'))
+		this.client.on('online', async () => {
+			await this.client.send(xml('presence'))
 			this.connected = true
 			this.emit('onConnected')
 		})
@@ -38,40 +38,54 @@ export default class EjabberdClient extends EventEmitter {
 			this.emit('onDisconnected')
 		})
 
-		this.client.on('error', (error: Error) => {
-			console.log(error.message)
+		this.client.on('error', (error: any) => {
 			this.emit('onError', error)
 		})
 
-		this.client.on('stanza', (stanza: Stanza) => {
-			console.log('Received message:', JSON.stringify(stanza, null, 2))
-			// this.emit('onReceived', null, null)
+		this.client.on('stanza', async (stanza: Element) => {
+			const fromJid = stanza.attrs.from
+			const toJid = stanza.attrs.to
+
+			// why is this happening?
+			if (fromJid?.split('/')[0] === toJid?.split('/')[0]) {
+				return
+			}
+
+			try {
+				const body = stanza.getChildText('body')
+				const { type, content } = JSON.parse(body)
+				this.emit('onReceived', type, content)
+			} catch (e) {
+				console.log('Received generic XMP message:', stanza)
+			}
 		})
 
-		this.client.connect()
+		this.client.start()
 	}
 
-	public disconnect() {
+	public async disconnect() {
 		try {
-			// @ts-ignore
-			this.client.end()
+			await this.client.stop()
+			delete this.client
 			this.connected = false
 		} catch {
-			console.log('Could not disconnect from chat servers.')
+			console.log('Could not disconnect from XMP client.')
 		}
 	}
 
-	public send(recipientJid: string, type: string, message: object) {
-		console.log('Sending message to:', recipientJid, message)
+	public async send(recipientJid: string, type: string, message: any) {
 		if (!this.client) {
-			throw Error('Ejabberd user not configured yet.')
+			throw Error('XMP user not configured yet.')
 		}
+
 		if (!this.connected) {
 			throw Error('User not connected to XMP client.')
 		}
-		const payload = xml('body', null, JSON.stringify(message))
-		const stanza = xml('message', { to: recipientJid, type: type }, payload)
-		this.client.send(stanza)
+
+		const payload = xml('body', {}, JSON.stringify({ type: type, content: message }))
+		const stanza = xml('message', { to: recipientJid }, payload)
+
+		await this.client.send(stanza)
 	}
 
 	public isConnected(): boolean {

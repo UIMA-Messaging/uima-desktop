@@ -10,6 +10,7 @@ export declare global {
 			onError: (callback: (type: string, message: string) => void) => void
 
 			register: (registration: Registration) => Promise<void>
+			unregister: (credentials: Credentials) => Promise<void>
 			login: (credentials: Credentials) => Promise<void>
 			logout: () => void
 

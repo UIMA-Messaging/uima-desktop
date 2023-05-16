@@ -5,7 +5,11 @@ export default function useAppError(type?: string) {
 
 	window.electron.onError((incomingType, incomingMessage) => {
 		if (type) {
-			type === incomingType ? setError(incomingMessage) : setError(null)
+			if (type === incomingType && incomingMessage !== message) {
+				setError(incomingMessage)
+			} else {
+				setError(null)
+			}
 		} else {
 			setError(incomingMessage)
 		}

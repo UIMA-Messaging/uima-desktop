@@ -22,7 +22,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 function createWindow(): BrowserWindow {
 	const window = new BrowserWindow({
-		height: 600,
+		height: 700,
 		width: 800,
 		backgroundColor: 'black',
 		webPreferences: {
@@ -40,6 +40,7 @@ let window: BrowserWindow = null
 app.whenReady().then(() => (window = createWindow()))
 app.on('window-all-closed', () => process.platform !== 'darwin' && app.quit())
 app.on('activate', () => BrowserWindow.getAllWindows().length === 0 && createWindow())
+app.on('quit', () => ejabberd?.disconnect())
 
 // Repositories
 const connection = new SqlConnection(new Database(process.env.DEFAULT_LOCAL_DATABASE))
@@ -48,14 +49,14 @@ const contacts = new ContactRepo(connection)
 const channels = new ChannelRepo(connection, contacts)
 const messages = new MessageRepo(connection, contacts)
 
-// Services
-const authentication = new Authentification(appData)
-
-// Clients
-const ejabberd = new EjabberdClient(process.env.EJABBERD_HOST, Number(process.env.EJABBERD_PORT))
-
 // Encryption
 const encryption = new Encryption()
+
+// Services
+const authentication = new Authentification(appData, encryption)
+
+// Clients
+const ejabberd = new EjabberdClient(process.env.EJABBERD_SERVICE)
 
 export { authentication, appData, ejabberd, messages, channels, contacts, encryption, window }
 

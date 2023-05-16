@@ -6,6 +6,7 @@ export const channels = {
 		REGISTER: 'auth.regsiter',
 		LOGIN: 'auth.login',
 		LOGOUT: 'auth.logout',
+		UNREGISTER: 'auth.unregister',
 	},
 
 	XMP: {

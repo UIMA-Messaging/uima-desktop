@@ -10,7 +10,7 @@ ipcMain.handle(channels.MESSAGES.GET, async (_: IpcMainEvent, channelId: string,
 
 ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string, content: string) => {
 	try {
-		const sender = JSON.parse(await appData.get<any>('user.profile')) as User
+		const sender = await appData.get<User>('user.profile')
 		const channel = await chattingChannels.getChannelById(channelId)
 
 		if (!channel) {
@@ -20,25 +20,27 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 		const message: Message = {
 			id: v4(),
 			author: sender,
-			content: content,
+			plaintext: content,
 			timestamp: new Date(),
 		}
 
-		// channel.members.forEach(async (user) => {
-		// 	try {
-		// 		const encrypted = await encryption.encrypt(user.id, { channelId, message })
-		// 		ejabberd.send(user.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
-		// 	} catch (error) {
-		// 		event.sender.send(channels.ON_ERROR, 'messages.error', error.message)
-		// 	}
-		// })
+		console.log('SENDING', message)
 
-		ejabberd.send('admin@localhost', messageTypes.CHANNELS.MESSAGE, message)
+		for (const member of channel.members) {
+			try {
+				const encrypted = await encryption.encrypt(member.id, sender.id, JSON.stringify({ channelId, message }))
+				await ejabberd.send(member.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
+			} catch (error) {
+				console.log('Could not send message to member ' + member.displayName, error.message)
+				event.sender.send(channels.ON_ERROR, 'messages.error', 'Could not send message to ' + member.displayName)
+			}
+		}
 
 		await messages.createMessage(channelId, message)
 		event.sender.send(channels.MESSAGES.ON_SENT, channelId, message)
 	} catch (error) {
 		console.log('Could not send message the ejabberd client:', error.message)
+		event.sender.send(channels.ON_ERROR, 'messages.error', 'Could not send message to channel.')
 	}
 })
 

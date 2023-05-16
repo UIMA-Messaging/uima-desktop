@@ -15,8 +15,9 @@ export default class ContactRepo {
 				username TEXT,
 				displayName TEXT,
 				image TEXT,
+				fingerprint TEXT,
 				joinedAt DATETIME,
-				editedAt DATETIME
+				editedAt DATETIME NULL
 			);`)
 	}
 
@@ -43,7 +44,8 @@ export default class ContactRepo {
 					id,
 					jid, 
 					username, 
-					displayName, 
+					displayName,
+					fingerprint, 
 					image, 
 					joinedAt, 
 					editedAt)
@@ -52,18 +54,20 @@ export default class ContactRepo {
 					$jid, 
 					$username, 
 					$displayName, 
+					$fingerprint,
 					$image, 
-					$joinedAt, 
+					$joinedAt,
 					$editedAt)
 				ON CONFLICT(id) DO UPDATE SET
 					jid = $jid,
 					username = $username,
 					displayName = $displayName,
 					image = $image,
+					fingerprint = $fingerprint,
 					joinedAt = $joinedAt,
 					editedAt = $editedAt;
 			`,
-			contact
+			{ ...contact, fingerprint: JSON.stringify(contact.fingerprint) }
 		)
 	}
 

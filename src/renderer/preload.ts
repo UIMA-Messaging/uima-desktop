@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('electron', {
 	onError: (callback: (type: string, message: string) => void) => ipcRenderer.on(channels.ON_ERROR, (_, type, message) => callback(type, message)),
 
 	register: (registration: Registration) => ipcRenderer.send(channels.AUTH.REGISTER, registration),
+	unregister: (credentials: Credentials) => ipcRenderer.send(channels.AUTH.UNREGISTER, credentials),
 	login: (credentials: Credentials) => ipcRenderer.send(channels.AUTH.LOGIN, credentials),
 	logout: () => ipcRenderer.send(channels.AUTH.LOGOUT),
 

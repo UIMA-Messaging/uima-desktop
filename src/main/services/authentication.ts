@@ -1,19 +1,23 @@
-import { BasicUser, Credentials, Registration } from '../../common/types'
-import { register } from '../clients/registration-client'
+import { BasicUser, Credentials, Registration, User } from '../../common/types'
+import { register, unregister } from '../clients/registration-client'
 import { createHash, randomBytes } from 'crypto'
 import { getToken } from '../clients/auth-client'
 import EventEmitter from 'events'
 import AppData from '../repos/app-data'
 import X3DH from '../security/x3dh'
+import { getX3DH, setX3DH } from '../repos/encryption-persistence'
+import Encryption from './encryption'
 
 export default class Authentification extends EventEmitter {
 	private appData: AppData
 	private authenticated: boolean
+	private encryption: Encryption
 
-	constructor(appData: AppData) {
+	constructor(appData: AppData, encryption: Encryption) {
 		super()
 
 		this.appData = appData
+		this.encryption = encryption
 		this.authenticated = false
 	}
 
@@ -27,7 +31,7 @@ export default class Authentification extends EventEmitter {
 		const basicUser: BasicUser = {
 			displayName: registration.username,
 			image: registration.image,
-			exchangeKeys: x3dh.getExchangeKeys()
+			exchangeKeys: x3dh.getExchangeKeys(),
 		}
 
 		const token = await getToken(basicUser)
@@ -40,9 +44,47 @@ export default class Authentification extends EventEmitter {
 		}
 		await this.generateChallenge(credentials.password + credentials.username)
 
-		this.emit('onRegister', registeredUser, credentials, x3dh, token)
-		
+		this.appData.setEncryptionKey(() => {
+			return AppData.defaultCipherStrategy({ ...credentials })
+		})
+
+		await setX3DH(x3dh)
+
+		await this.appData.set('user.token', token, true)
+
+		const user: User = {
+			id: registeredUser.id,
+			jid: registeredUser.jid,
+			displayName: registeredUser.displayName,
+			username: registeredUser.username,
+			image: registeredUser.image,
+			joinedAt: registeredUser.joinedAt,
+		}
+
+		await this.appData.set('user.profile', user, true)
+
+		this.emit('onRegister', registeredUser)
+
 		return await this.login(credentials)
+	}
+
+	public async unregister(credentials: Credentials): Promise<boolean> {
+		if (!(await this.isChallengePresent())) {
+			throw Error('No user is registered on this device.')
+		}
+
+		const user = await this.appData.get<User>('user.profile')
+		const token = await this.appData.get<string>('user.token')
+
+		await unregister(user, token)
+
+		await this.appData.erase(() => {
+			return AppData.defaultCipherStrategy({ ...credentials })
+		})
+
+		this.emit('onDeregister', user)
+
+		return this.logout()
 	}
 
 	public async login(credentials: Credentials): Promise<boolean> {
@@ -60,7 +102,18 @@ export default class Authentification extends EventEmitter {
 			throw Error('Username or password incorrect.')
 		}
 
-		this.emit('onLogin', credentials)
+		this.appData.setEncryptionKey(() => {
+			return AppData.defaultCipherStrategy({ ...credentials })
+		})
+
+		try {
+			const x3dh = await getX3DH()
+			this.encryption.setX3DH(x3dh)
+		} catch (error) {
+			console.log('X3DH not configured for encryption:', error.message)
+		}
+
+		this.emit('onLogin')
 
 		return this.authenticated
 	}
@@ -71,6 +124,9 @@ export default class Authentification extends EventEmitter {
 		}
 
 		this.authenticated = false
+
+		this.appData.invalidate()
+		this.encryption.invalidate()
 
 		this.emit('onLogout')
 
