@@ -24,17 +24,14 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 			timestamp: new Date(),
 		}
 
-		console.log('sender', sender)
-		console.log('channel', channel)
-		console.log('message', message)
+		console.log('SENDING', message)
 
 		for (const member of channel.members) {
 			try {
 				const encrypted = await encryption.encrypt(member.id, sender.id, JSON.stringify({ channelId, message }))
-				console.log('encrypted message', encrypted)
 				await ejabberd.send(member.jid, messageTypes.CHANNELS.MESSAGE, encrypted)
 			} catch (error) {
-				console.log(error.message)
+				console.log('Could not send message to member ' + member.displayName, error.message)
 				event.sender.send(channels.ON_ERROR, 'messages.error', 'Could not send message to ' + member.displayName)
 			}
 		}

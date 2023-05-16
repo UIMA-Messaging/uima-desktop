@@ -39,7 +39,6 @@ export default class EjabberdClient extends EventEmitter {
 		})
 
 		this.client.on('error', (error: any) => {
-			console.log(error)
 			this.emit('onError', error)
 		})
 
@@ -57,7 +56,7 @@ export default class EjabberdClient extends EventEmitter {
 				const { type, content } = JSON.parse(body)
 				this.emit('onReceived', type, content)
 			} catch (e) {
-				console.log('Generic XMP message received:', stanza)
+				console.log('Received generic XMP message:', stanza)
 			}
 		})
 

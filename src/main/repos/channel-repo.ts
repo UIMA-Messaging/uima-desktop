@@ -15,8 +15,7 @@ export default class ChannelRepo {
 		this.connection = connection
 		this.contacts = contacts
 
-		console.log('Creating `Channels` and `ChannelMembers` tables if they do not already exist.')
-
+		console.log('Creating `Channels` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS Channels (
 				id TEXT PRIMARY KEY,
@@ -25,6 +24,7 @@ export default class ChannelRepo {
 				image TEXT
 			);`)
 
+		console.log('Creating `ChannelMembers` table if it does not already exist.')
 		this.connection.execute(`
 			CREATE TABLE IF NOT EXISTS ChannelMembers (
 				userId TEXT NOT NULL,

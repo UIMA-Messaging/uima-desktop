@@ -7,10 +7,10 @@ import { notifyOfNewChannel, notifyOfNewContact } from '../handlers/contacts-han
 
 ejabberd.on('onReceived', async (type: string, content: any) => {
 	try {
-		console.log(content)
-
 		switch (type) {
 			case messageTypes.CONTACT.INVITATION:
+				console.log('RECEIVED', content)
+
 				const { channelId: agreedChannelId, user, postKeyBundle } = content as Invitation
 
 				const { fingerprint } = await encryption.establishedPostExchange(user.id, postKeyBundle)
@@ -48,7 +48,6 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 		}
 	} catch (error) {
 		console.log('Could not handle message received from XMP host:', error.message)
-		console.log(error)
 	}
 })
 

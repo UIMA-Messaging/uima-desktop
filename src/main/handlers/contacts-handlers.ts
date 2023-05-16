@@ -41,8 +41,8 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 				contact.fingerprint = fingerprint
 				await contacts.createOrUpdateContact(contact)
 				event.sender.send(channels.CONTACTS.ON_CREATE, contact)
-			} catch (e) {
-				console.log(e.message)
+			} catch (error) {
+				console.log('Could not create contact:', error.message)
 				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create contact.')
 			}
 
@@ -57,8 +57,8 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 				await contactChannels.createOrUpdateChannel(channel)
 
 				event.sender.send(channels.CHANNELS.ON_CREATE, channel)
-			} catch (e) {
-				console.log(e.message)
+			} catch (error) {
+				console.log('Could not create channel for contact:', error.message)
 				event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not create channel for contact.')
 			}
 		} catch (error) {
@@ -73,17 +73,17 @@ ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => 
 		try {
 			await contacts.deleteContactById(id)
 			event.sender.send(channels.CONTACTS.ON_DELETE, user)
-		} catch (e) {
-			console.log(e.message)
+		} catch (error) {
+			console.log('Could not remove user from contacts:', error.message)
 			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not remove user from contacts.')
 		}
 
 		try {
 			const channel = await contactChannels.deleteDirectMessageChannel(id)
 			event.sender.send(channels.CHANNELS.ON_DELETE, channel)
-		} catch (e) {
-			console.log(e.message)
-			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not remove conversation for contact.')
+		} catch (error) {
+			console.log('Could no remove conversation for contact ' + user.displayName, error.message)
+			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not remove conversation for contact ' + user.displayName)
 		}
 	} else {
 		event.sender.send(channels.ON_ERROR, 'contacts.error', 'Contact not found. Cannot delete contact.')
