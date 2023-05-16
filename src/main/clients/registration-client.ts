@@ -12,8 +12,6 @@ export async function register(user: BasicUser, token: string): Promise<Register
 	} catch (error) {
 		if (error instanceof AxiosError) {
 			switch (error?.response?.status) {
-				case 404:
-					throw Error(`User not found.`)
 				case 400:
 					throw Error(`Username already taken.`)
 				case 401:
