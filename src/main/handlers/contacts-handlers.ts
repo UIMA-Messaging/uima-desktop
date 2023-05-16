@@ -34,7 +34,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 				postKeyBundle: postKeyBundle,
 			}
 			ejabberd.send(contact.jid, messageTypes.CONTACT.INVITATION, invitation)
-			
+
 			try {
 				contact.fingerprint = fingerprint
 				await contacts.createOrUpdateContact(contact)

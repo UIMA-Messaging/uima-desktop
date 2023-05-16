@@ -44,6 +44,7 @@ ipcMain.on(channels.MESSAGES.SEND, async (event: IpcMainEvent, channelId: string
 		event.sender.send(channels.MESSAGES.ON_SENT, channelId, message)
 	} catch (error) {
 		console.log('Could not send message the ejabberd client:', error.message)
+		event.sender.send(channels.ON_ERROR, 'messages.error', 'Could not send message to channel.')
 	}
 })
 

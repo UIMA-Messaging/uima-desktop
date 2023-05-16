@@ -57,8 +57,6 @@ export default class MessageRepo {
 				}
 			}
 
-			console.log('stored message', message)
-
 			messages.push({ ...message, author })
 		}
 
