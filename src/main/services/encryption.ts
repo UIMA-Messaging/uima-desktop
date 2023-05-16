@@ -28,12 +28,15 @@ export default class Encryption {
 		}
 	}
 
-	public async establishedPostExchange(userId: string, postKeyBundle: PostKeyBundle) {
+	public async establishedPostExchange(userId: string, postKeyBundle: PostKeyBundle): Promise<{ fingerprint: string[] }> {
 		if (!this.x3dh) {
 			throw Error('Cannot perform post exchange when no X3DH is set.')
 		}
 		const { sharedSecret } = this.x3dh.postExchange(postKeyBundle)
 		await setDoubleRatchet(userId, DoubleRatchet.init(sharedSecret, false))
+		return {
+			fingerprint: secretToReadable(sharedSecret),
+		}
 	}
 
 	public async encrypt(recepientId: string, message: any): Promise<NetworkMessage> {

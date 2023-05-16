@@ -1,4 +1,4 @@
-import { ejabberd, encryption } from '..'
+import { contacts, ejabberd, encryption } from '..'
 import { Invitation, Message, NetworkMessage } from '../../common/types'
 import { notifyOfStatus, notifyOfError } from '../handlers/xmp-handlers'
 import { notifyOfNewMessage } from '../handlers/message-handlers'
@@ -10,8 +10,11 @@ ejabberd.on('onReceived', async (type: string, encryptedMessage: NetworkMessage)
 
 		switch (type) {
 			case messageTypes.CONTACT.INVITATION:
-				const invitation = decrypted as Invitation
-				await encryption.establishedPostExchange(invitation.user.id, invitation.postKeyBundle)
+				const { user, postKeyBundle } = decrypted as Invitation
+				const { fingerprint } = await encryption.establishedPostExchange(user.id, postKeyBundle)
+				user.fingerprint = fingerprint
+				await contacts.createOrUpdateContact(user)
+				console.log('created user')
 				break
 			case messageTypes.CHANNELS.MESSAGE:
 				const channelMessage = decrypted as { channelId: string; message: Message }
