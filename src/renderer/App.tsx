@@ -19,7 +19,7 @@ export default () => {
 	useEffect(() => {
 		switch (state) {
 			case 'loggedIn':
-				navigation('settings')
+				navigation('about')
 				break
 			case 'loggedOut':
 				navigation('')
