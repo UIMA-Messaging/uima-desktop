@@ -68,7 +68,7 @@ export default () => {
 					<Input placeholder="Search someone" getValue={setQuery} />
 					<div className="search-someone-prompt">
 						Cannot find someone?
-						<Button label="Search among contacts" type="green" onClick={() => navigation('/contacts')} />
+						<Button label="Search contacts" type="green" onClick={() => navigation('/contacts')} />
 					</div>
 					<p style={{ fontSize: '12px', color: 'red' }}>{message?.toString()}</p>
 					<div style={isContacting ? { opacity: 0.5, pointerEvents: 'none' } : null} onScroll={handleScroll}>

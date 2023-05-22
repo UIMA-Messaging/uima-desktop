@@ -20,10 +20,10 @@ export default () => {
 				<Picture image={profile?.image} name={profile?.username} />
 			</div>
 			<div className="sidebar-item-separator" />
-			<div className="sidebar-item" onClick={() => navigation('/contacts')}>
+			<div className="sidebar-item sidebar-item-options" onClick={() => navigation('/contacts')}>
 				<FontAwesomeIcon icon="user" />
 			</div>
-			<div className="sidebar-item" onClick={() => navigation('/search')}>
+			<div className="sidebar-item sidebar-item-options" onClick={() => navigation('/search')}>
 				<FontAwesomeIcon icon="search" />
 			</div>
 			{/* <div className="sidebar-item" onClick={() => navigation('/group')} /> */}

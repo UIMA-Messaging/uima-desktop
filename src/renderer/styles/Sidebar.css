@@ -55,3 +55,7 @@
 	height: 3px;
 	border-radius: 3px;
 }
+
+.sidebar-item-options:hover {
+	filter: invert(100%);
+}
