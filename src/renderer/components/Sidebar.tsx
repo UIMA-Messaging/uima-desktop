@@ -26,7 +26,7 @@ export default () => {
 			<div className="sidebar-item sidebar-item-options" onClick={() => navigation('/search')}>
 				<FontAwesomeIcon icon="search" />
 			</div>
-			<div className="sidebar-item sidebar-item-options" onClick={() => navigation('/search')}>
+			<div className="sidebar-item sidebar-item-options" onClick={() => navigation('/about')}>
 				<FontAwesomeIcon icon="info" />
 			</div>
 			{/* <div className="sidebar-item" onClick={() => navigation('/group')} /> */}
