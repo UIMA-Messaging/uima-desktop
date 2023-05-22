@@ -20,6 +20,9 @@
 	aspect-ratio: 1;
 	transition: 0.2s;
 	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* animation: grow 0.2s ease-out forwards; */
 }
