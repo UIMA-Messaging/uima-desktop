@@ -119,7 +119,7 @@ export default class Authentification extends EventEmitter {
 		}
 
 		const token = await this.appData.get<Token>('user.token')
-		console.log(token.creationDate)
+
 		if (!isTokenValid(token)) {
 			await this.appData.set('user.token', await getToken(), true)
 		}
