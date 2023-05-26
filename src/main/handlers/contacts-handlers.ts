@@ -1,7 +1,7 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels, messageTypes } from '../../common/constants'
 import { appData, contacts, ejabberd, encryption, channels as contactChannels, window } from '..'
-import { Channel, Invitation, Token, User } from '../../common/types'
+import { Channel, Invitation, Token, User, ContactRemoval } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 import { v4 } from 'uuid'
 
@@ -69,7 +69,34 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 
 ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => {
 	const user = await contacts.getContactById(id)
+
 	if (user) {
+		try {
+			const sender = await appData.get<User>('user.profile')
+			const channel = await contactChannels.getChannelById(id)
+
+			const removal: ContactRemoval = {
+				channelId: id,
+				timestamp: new Date(),
+				user: sender,
+			}
+
+			console.log('SENDING', removal)
+
+			for (const member of channel.members) {
+				try {
+					const encrypted = await encryption.encrypt(member.id, sender.id, JSON.stringify({ id, removal }))
+					await ejabberd.send(member.jid, messageTypes.CONTACT.REMOVAL, encrypted)
+				} catch (error) {
+					console.log('Could not send message to member ' + member.displayName, error.message)
+					event.sender.send(channels.ON_ERROR, 'messages.error', 'Could not send message to ' + member.displayName)
+				}
+			}
+		} catch (error) {
+			console.log('Could not send disinvite:', error.message)
+			event.sender.send(channels.ON_ERROR, 'contacts.error', 'Could not send disinvite to contact ' + user.displayName)
+		}
+
 		try {
 			await contacts.deleteContactById(id)
 			event.sender.send(channels.CONTACTS.ON_DELETE, user)
@@ -90,10 +117,10 @@ ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => 
 	}
 })
 
-export function notifyOfNewChannel(newChannel: Channel) {
-	window.webContents.send(channels.CHANNELS.ON_CREATE, newChannel)
-}
-
 export function notifyOfNewContact(newContact: User) {
 	window.webContents.send(channels.CONTACTS.ON_CREATE, newContact)
+}
+
+export function notifyOfContactRemoval(removedContact: User) {
+	window.webContents.send(channels.CONTACTS.ON_DELETE, removedContact)
 }

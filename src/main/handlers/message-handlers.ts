@@ -1,4 +1,4 @@
-import { appData, ejabberd, encryption, messages, channels as chattingChannels, window, contacts } from '..'
+import { appData, ejabberd, encryption, messages, channels as chattingChannels, window } from '..'
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels, messageTypes } from '../../common/constants'
 import { Message, User } from '../../common/types'

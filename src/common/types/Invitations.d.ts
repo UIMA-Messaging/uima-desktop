@@ -7,3 +7,9 @@ export interface Invitation {
 	user: User
 	postKeyBundle: PostKeyBundle
 }
+
+export interface ContactRemoval {
+	channelId: string
+	timestamp: Date
+	user: User
+}
