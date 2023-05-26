@@ -37,9 +37,9 @@ export default class ChannelRepo {
 
 	public async getAllChannels(): Promise<Channel[]> {
 		const channels = await this.connection.query<Channel>('SELECT * FROM Channels')
-		channels.forEach(async (channel) => {
+		for (const channel of channels) {
 			channel.members = await this.getAllMembersByChannelId(channel.id)
-		})
+		}
 		return channels
 	}
 
@@ -133,7 +133,7 @@ export default class ChannelRepo {
 		)
 	}
 
-	public async deleteDirectMessageChannel(contactId: string): Promise<Channel> {
+	public async getDMChannel(contactId: string): Promise<Channel> {
 		const channel = await this.connection.querySingle<Channel>(
 			`
 				SELECT id
@@ -148,15 +148,7 @@ export default class ChannelRepo {
 			{ contactId }
 		)
 
-		await this.connection.execute(
-			`
-				DELETE FROM ChannelMembers
-				 WHERE channelId = $channelId
-			`,
-			{ channelId: channel.id }
-		)
-
-		await this.deleteChannelById(channel.id)
+		channel.members = await this.getAllMembersByChannelId(channel.id)
 
 		return channel
 	}
