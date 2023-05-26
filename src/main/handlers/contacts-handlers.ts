@@ -1,7 +1,7 @@
 import { IpcMainEvent, ipcMain } from 'electron'
 import { channels, messageTypes } from '../../common/constants'
 import { appData, contacts, ejabberd, encryption, channels as contactChannels, window } from '..'
-import { Channel, Invitation, User } from '../../common/types'
+import { Channel, Invitation, Token, User } from '../../common/types'
 import { getKeyBundleForUser } from '../clients/identity-client'
 import { v4 } from 'uuid'
 
@@ -22,9 +22,9 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 	} else {
 		try {
 			const user = await appData.get<User>('user.profile')
-			const token = await appData.get<string>('user.token')
+			const token = await appData.get<Token>('user.token')
 
-			const bundle = await getKeyBundleForUser(user.id, contact.id, token)
+			const bundle = await getKeyBundleForUser(user.id, contact.id, token.accessToken)
 			const { postKeyBundle, fingerprint } = await encryption.establishExchange(contact.id, bundle)
 
 			const channelId = v4()
