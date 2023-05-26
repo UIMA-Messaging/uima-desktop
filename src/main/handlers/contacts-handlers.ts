@@ -76,7 +76,6 @@ ipcMain.on(channels.CONTACTS.DELETE, async (event: IpcMainEvent, id: string) => 
 			const channel = await contactChannels.getDMChannel(id)
 
 			const deinvite: ContactRemoval = {
-				channelId: id,
 				timestamp: new Date(),
 				user: sender,
 			}

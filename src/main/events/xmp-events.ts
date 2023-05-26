@@ -12,7 +12,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 			case messageTypes.CONTACT.REMOVAL:
 				console.log('RECEIVED', content)
 
-				const { channelId: channelToDelete, user: userToDelete } = content as ContactRemoval
+				const { user: userToDelete } = content as ContactRemoval
 
 				try {
 					await contacts.deleteContactById(userToDelete.id)
@@ -23,7 +23,8 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 				}
 
 				try {
-					const channel = await channels.deleteDirectMessageChannel(channelToDelete)
+					const channel = await channels.getDMChannel(userToDelete.id)
+					await channels.deleteChannelById(channel.id)
 					notifyRendererOfRemovedChannel(channel)
 				} catch (error) {
 					console.log('Could no remove conversation for contact ' + userToDelete.displayName, error.message)

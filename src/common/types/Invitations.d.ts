@@ -9,7 +9,6 @@ export interface Invitation {
 }
 
 export interface ContactRemoval {
-	channelId: string
 	timestamp: Date
 	user: User
 }
