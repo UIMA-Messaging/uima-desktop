@@ -54,6 +54,7 @@ export const messageTypes = {
 
 	CONTACT: {
 		INVITATION: 'contact.invite',
+		REMOVAL: 'contact.remove',
 	},
 
 	CHANNELS: {

@@ -8,6 +8,7 @@ export default ({ label, placeholder, disabled, children, getValue }: { label?: 
 		if (getValue && event.key === 'Enter') {
 			getValue(inputRef.current.value)
 			inputRef.current.value = ''
+			inputRef.current.blur()
 		}
 	}
 

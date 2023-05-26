@@ -33,10 +33,11 @@ export function useChannels(): { channels: Channel[]; created: Channel; removed:
 	return { channels, created, removed, changed }
 }
 
-export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void; loadNextMessages: () => void; newMessage: Message } {
+export function useChannel(id: string): { channel: Channel; messages: Message[]; sendMessage: (message: string) => void; loadNextMessages: () => void; newMessage: Message, loading: boolean } {
 	const [channel, setChannel] = useState<Channel>(null)
 	const [messages, setMessages] = useState<Message[]>([])
 	const [newMessage, setNewMessage] = useState<Message>(null)
+	const [loading, setLoading] = useState(true)
 	const [page, setPage] = useState(0)
 	const [sent, setSent] = useState(0)
 
@@ -46,6 +47,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 		setSent(0)
 		window.electron.getMessageByChannelId(id, 50, 0).then(setMessages)
 		window.electron.getChannelById(id).then(setChannel)
+		setLoading(false)
 	}, [id])
 
 	window.electron.onChannelChange((changed) => {
@@ -62,7 +64,7 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 
 	window.electron.onChannelDelete((deleted) => {
 		if (deleted.id === id) {
-			setChannel(deleted)
+			setChannel(null)
 		}
 	})
 
@@ -95,5 +97,5 @@ export function useChannel(id: string): { channel: Channel; messages: Message[];
 		})
 	}
 
-	return { channel, messages, sendMessage, loadNextMessages, newMessage }
+	return { channel, messages, sendMessage, loadNextMessages, newMessage, loading }
 }

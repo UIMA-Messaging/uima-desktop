@@ -81,11 +81,11 @@ export default class Authentification extends EventEmitter {
 
 		const user = await this.appData.get<User>('user.profile')
 
-		await unregister(user, token.accessToken)
-
 		await this.appData.erase(() => {
 			return AppData.defaultCipherStrategy({ ...credentials })
 		})
+
+		await unregister(user, token.accessToken)
 
 		this.emit('onDeregister', user)
 
