@@ -11,14 +11,20 @@ import Encryption from '../components/Encryption'
 export default () => {
 	const navigation = useNavigate()
 	const { state } = useLocation()
-	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(state?.id)
-	const bottom = useRef(null)
+	const { channel, messages, sendMessage, loadNextMessages, newMessage, loading } = useChannel(state?.id)
 	const [showingCiphers, showCiphers] = useState(false)
 	const [inputDisabled, setInputDisabled] = useState(false)
+	const bottom = useRef(null)
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
 	}, [newMessage])
+
+	useEffect(() => {
+		if (!channel && !loading) {
+			navigation("/contacts")
+		}
+	}, [channel])
 
 	function handleScroll(event: any) {
 		const target = event.target
@@ -47,21 +53,6 @@ export default () => {
 							<Picture name={channel?.name} image={channel?.image} />
 						</div>
 						{channel?.name}
-					</div>
-					<div className="chat-header-bread-crumbs">
-						{/* <span>{channel?.type === 'dm' ? 'direct messaging' : 'group chat'}</span> */}
-						{/* <span>/</span> */}
-						{/* <span>1 online</span> */}
-						{/* <span>/</span> */}
-						{/* <span>active 5 minutes ago</span> */}
-						{/* {channel?.type !== 'dm' && (
-							<>
-								<span>/</span>
-								<span onClick={() => navigation('/group', { state: { id: '254625462456' } })}>
-									<u style={{ cursor: 'pointer' }}>edit</u>
-								</span>
-							</>
-						)} */}
 					</div>
 				</div>
 				<div className="chat-messages" onScroll={handleScroll}>
