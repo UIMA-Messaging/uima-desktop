@@ -80,6 +80,11 @@
 	padding: 0 20px 10px 20px;
 }
 
+.chat-inputs input:disabled {
+	pointer-events: auto !important;
+	opacity: 1 !important;
+  }
+
 .chat-inputs .input-container {
 	margin-top: 0;
 }

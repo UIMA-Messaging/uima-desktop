@@ -14,6 +14,7 @@ export default () => {
 	const { channel, messages, sendMessage, loadNextMessages, newMessage } = useChannel(state?.id)
 	const bottom = useRef(null)
 	const [showingCiphers, showCiphers] = useState(false)
+	const [inputDisabled, setInputDisabled] = useState(false)
 
 	useEffect(() => {
 		bottom.current?.scrollIntoView({ behavior: 'smooth' })
@@ -24,6 +25,16 @@ export default () => {
 		if (Math.round(-target.scrollTop) >= target.scrollHeight - target.clientHeight - 200) {
 			loadNextMessages()
 		}
+	}
+
+	function handleSendMessage(message: string) {
+		setInputDisabled(true)
+
+		sendMessage(message)
+
+		setTimeout(() => {
+			setInputDisabled(false)
+		}, 200)
 	}
 
 	return (
@@ -62,7 +73,7 @@ export default () => {
 					<div className="chat-greeting">{channel?.type === 'dm' ? `Direct messages to ${channel?.members[0]?.displayName}` : `Welcome to ${channel?.name} group chat`}</div>
 				</div>
 				<div className="chat-inputs">
-					<Input getValue={sendMessage} placeholder="Say something..." />
+					<Input getValue={handleSendMessage} placeholder="Say something..." disabled={inputDisabled} />
 				</div>
 			</div>
 		</div>
