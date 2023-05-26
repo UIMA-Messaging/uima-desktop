@@ -1,4 +1,4 @@
-export { User, JabberUser } from './User'
+export { User, JabberUser, Token } from './User'
 export { Channel, Message } from './Channels'
 export { Registration, Credentials, BasicUser, RegisteredUser } from './Registration'
 export { SearchResults } from './Clients'

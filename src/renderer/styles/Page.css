@@ -7,6 +7,10 @@
   animation: open 0.2s ease-out forwards;
 }
 
+.page-container-inner {
+  width: calc(100% - 40px);
+}
+
 @keyframes open {
   0% {
     opacity: 0;

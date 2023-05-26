@@ -16,3 +16,10 @@ export interface JabberUser {
 	username: string
 	password: string
 }
+
+export interface Token {
+	accessToken: string
+	expiresIn: number
+	tokenType: string
+	creationDate: Date
+}

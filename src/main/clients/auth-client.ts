@@ -1,13 +1,15 @@
 import axios, { AxiosError } from 'axios'
-import { BasicUser } from '../../common/types'
+import { BasicUser, Token } from '../../common/types'
 import { Agent } from 'https'
 import isDev from 'electron-is-dev'
 
-export async function getToken(user: BasicUser) {
+export async function getToken(user?: BasicUser): Promise<Token> {
 	try {
-		const url = process.env.AUTH_SERVICE_BASE_URL + '/tokens/create'
-		const res = await axios.post(url, user, configuration())
-		return res.data
+		const url = process.env.GATEWAY_BASE_URL + '/api/auth/tokens/create'
+		const res = await axios.post<Token>(url, user, configuration())
+		const token = res.data
+		token.creationDate = new Date()
+		return token
 	} catch (error) {
 		if (error instanceof AxiosError) {
 			switch (error?.response?.status) {
@@ -26,4 +28,10 @@ export async function getToken(user: BasicUser) {
 
 function configuration() {
 	return isDev ? { httpsAgent: new Agent({ rejectUnauthorized: false }) } : null
+}
+
+export function isTokenValid({ creationDate, expiresIn }: Token): boolean {
+	const tokenExpiration = new Date(creationDate).getTime() + expiresIn * 1000
+	const currentTime = new Date().getTime()
+	return currentTime < tokenExpiration
 }

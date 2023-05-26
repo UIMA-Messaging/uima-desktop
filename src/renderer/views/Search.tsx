@@ -10,6 +10,7 @@ import { searchUserByQuery } from '../api/users'
 import { useContacts } from '../hooks/use-contacts'
 import useAppError from '../hooks/user-app-error'
 import useAuth from '../hooks/use-auth'
+import { useNavigate } from 'react-router-dom'
 
 export default () => {
 	const { profile } = useAuth()
@@ -20,6 +21,7 @@ export default () => {
 	const { contacts, created, changed, create: createContact } = useContacts()
 	const [isContacting, setIsContacting] = useState(false)
 	const { message } = useAppError('contacts.error')
+	const navigation = useNavigate()
 
 	useEffect(() => {
 		if (isScrollAtBottom) {
@@ -64,6 +66,10 @@ export default () => {
 			<Page title="Search someone">
 				<div className="search-container">
 					<Input placeholder="Search someone" getValue={setQuery} />
+					<div className="search-someone-prompt">
+						Cannot find someone?
+						<Button label="Search contacts" type="green" onClick={() => navigation('/contacts')} />
+					</div>
 					<p style={{ fontSize: '12px', color: 'red' }}>{message?.toString()}</p>
 					<div style={isContacting ? { opacity: 0.5, pointerEvents: 'none' } : null} onScroll={handleScroll}>
 						{users.map((user) => (

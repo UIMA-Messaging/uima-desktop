@@ -20,6 +20,9 @@
 	aspect-ratio: 1;
 	transition: 0.2s;
 	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	/* animation: grow 0.2s ease-out forwards; */
 }
@@ -51,4 +54,8 @@
 	width: 80%;
 	height: 3px;
 	border-radius: 3px;
+}
+
+.sidebar-item-options:hover {
+	filter: invert(100%);
 }

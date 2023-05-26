@@ -50,4 +50,5 @@
 	user-select: text;
 	font-weight: 500;
 	cursor: default;
+	word-break: break-all;
 }
