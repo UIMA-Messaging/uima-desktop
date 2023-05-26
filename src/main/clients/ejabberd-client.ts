@@ -16,8 +16,6 @@ export default class EjabberdClient extends EventEmitter {
 	}
 
 	public connect(user: JabberUser) {
-		console.log('Connecting with:', user)
-
 		const split = user.username.split('@')
 
 		this.client = client({
