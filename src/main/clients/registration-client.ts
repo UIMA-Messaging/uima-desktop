@@ -6,7 +6,7 @@ import { AxiosError } from 'axios'
 
 export async function register(user: BasicUser, token: string): Promise<RegisteredUser> {
 	try {
-		const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/register/'
+		const url = process.env.GATEWAY_BASE_URL + '/protected/api/registrations/users/register/'
 		const res = await axios.post(url, user, configuration(token))
 		return res.data
 	} catch (error) {
@@ -29,7 +29,7 @@ export async function register(user: BasicUser, token: string): Promise<Register
 
 export async function unregister(user: User, token: string): Promise<void> {
 	try {
-		const url = process.env.REGISTRATION_SERVICE_BASE_URL + '/users/unregister/'
+		const url = process.env.GATEWAY_BASE_URL + '/protected/api/registrations/users/unregister/'
 		await axios.delete(url + user.id, configuration(token))
 	} catch (error) {
 		if (error instanceof AxiosError) {

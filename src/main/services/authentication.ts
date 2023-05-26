@@ -1,7 +1,7 @@
-import { BasicUser, Credentials, Registration, User } from '../../common/types'
+import { BasicUser, Credentials, Registration, Token, User } from '../../common/types'
 import { register, unregister } from '../clients/registration-client'
 import { createHash, randomBytes } from 'crypto'
-import { getToken } from '../clients/auth-client'
+import { getToken, isTokenValid } from '../clients/auth-client'
 import EventEmitter from 'events'
 import AppData from '../repos/app-data'
 import X3DH from '../security/x3dh'
@@ -34,9 +34,9 @@ export default class Authentification extends EventEmitter {
 			exchangeKeys: x3dh.getExchangeKeys(),
 		}
 
-		const token = await getToken(basicUser)
+		const token = await getToken()
 
-		const registeredUser = await register(basicUser, token)
+		const registeredUser = await register(basicUser, token.accessToken)
 
 		const credentials: Credentials = {
 			username: registration.username,
@@ -73,10 +73,15 @@ export default class Authentification extends EventEmitter {
 			throw Error('No user is registered on this device.')
 		}
 
-		const user = await this.appData.get<User>('user.profile')
-		const token = await this.appData.get<string>('user.token')
+		const token = await this.appData.get<Token>('user.token')
 
-		await unregister(user, token)
+		if (!isTokenValid(token)) {
+			return this.logout()
+		}
+
+		const user = await this.appData.get<User>('user.profile')
+
+		await unregister(user, token.accessToken)
 
 		await this.appData.erase(() => {
 			return AppData.defaultCipherStrategy({ ...credentials })
@@ -89,7 +94,7 @@ export default class Authentification extends EventEmitter {
 
 	public async login(credentials: Credentials): Promise<boolean> {
 		if (this.authenticated) {
-			throw Error('A user is already authenticated. User must first logout.')
+			throw Error('A user is already logged out.')
 		}
 
 		if (!(await this.isChallengePresent())) {
@@ -111,6 +116,12 @@ export default class Authentification extends EventEmitter {
 			this.encryption.setX3DH(x3dh)
 		} catch (error) {
 			console.log('X3DH not configured for encryption:', error.message)
+		}
+
+		const token = await this.appData.get<Token>('user.token')
+		console.log(token.creationDate)
+		if (!isTokenValid(token)) {
+			await this.appData.set('user.token', await getToken(), true)
 		}
 
 		this.emit('onLogin')

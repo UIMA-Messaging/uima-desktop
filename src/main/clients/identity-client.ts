@@ -5,7 +5,7 @@ import { KeyBundle } from '../../common/types/SigalProtocol'
 
 export async function getKeyBundleForUser(from: string, to: string, token: string): Promise<KeyBundle> {
 	try {
-		const url = process.env.IDENTITY_SERVICE_BASE_URL + '/keys/bundle/' + `${from}/${to}`
+		const url = process.env.GATEWAY_BASE_URL + '/protected/api/identity/keys/bundle/' + `${from}/${to}`
 		const res = await axios.post(url, null, configuration(token))
 		return res.data
 	} catch (error) {
