@@ -43,6 +43,8 @@ export default () => {
 		}, 200)
 	}
 
+	console.log(channel?.members[0])
+
 	return (
 		<div className="app-container">
 			<Sidebar />

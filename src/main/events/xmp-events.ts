@@ -47,6 +47,7 @@ ejabberd.on('onReceived', async (type: string, content: any) => {
 					id: agreedChannelId,
 					name: user.username,
 					type: 'dm',
+					image: user.image,
 					members: [user],
 				}
 				await channels.createOrUpdateChannel(channel)

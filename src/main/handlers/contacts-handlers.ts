@@ -51,6 +51,7 @@ ipcMain.on(channels.CONTACTS.CREATE, async (event: IpcMainEvent, contact: User) 
 					id: channelId,
 					name: contact.username,
 					type: 'dm',
+					image: contact.image,
 					members: [contact],
 				}
 

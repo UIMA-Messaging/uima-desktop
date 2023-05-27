@@ -23,7 +23,7 @@ export default () => {
 					</div>
 					<div className="contact-list-container">
 						{contacts.map((user) => (
-							<ContactCard key={user.id} username={user.username} displayName={user.displayName}>
+							<ContactCard key={user.id} username={user.username} displayName={user.displayName} image={user.image}>
 								<Button type="red" label="Remove" onClick={() => remove(user.id)} />
 							</ContactCard>
 						))}
