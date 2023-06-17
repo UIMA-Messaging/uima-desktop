@@ -24,6 +24,7 @@ where both `EJABBERD_SERVICE` and `GATEWAY_BASE_URL` can configure the app to ru
 
 ## Features
 Some of the features this instant messaging application offers include but are not limited to 
+- Account registration and deletion
 - E2EE with the Signal Protocol
 - Local storage encryption
 - Real-time messaging
