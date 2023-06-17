@@ -32,6 +32,8 @@ Some of the features this instant messaging application offers include but are n
 - Contact management
 - Fuzzy user searching
 - Cross platform communication
+- Asynchronous messaging
 
 ## UI
+
 
