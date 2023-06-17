@@ -40,4 +40,30 @@ Some of the features this instant messaging application offers include but are n
 
 ## UI
 
+#### Registration page 
 
+![Screenshot 2023-06-13 at 5 19 02 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/4a0338cf-f396-4b8f-802f-b32bae1f06e5)
+
+#### Login page
+
+![Screenshot 2023-06-13 at 5 22 52 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/d6d601a7-d213-4405-9cb1-652bb1580a70)
+
+#### Contact page
+
+![Screenshot 2023-06-17 at 3 43 27 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/6f5e6167-f139-4b08-be1e-e3e8608e69c2)
+
+#### Search page
+
+![Screenshot 2023-06-17 at 3 43 35 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/016212ef-e57f-437f-8653-6c2ee7331ca4)
+
+#### Chat page
+
+![Screenshot 2023-05-21 at 3 41 08 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/ed732288-3463-48e3-9c81-f425a2b1e700)
+
+#### Settings page
+
+![Screenshot 2023-06-17 at 3 43 38 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/7cbf879d-ab6e-4907-85b5-632f87fa7821)
+
+#### Delete page 
+
+![Screenshot 2023-06-17 at 3 43 42 pm](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/9fdca1ae-b889-40c2-9b84-2d1f7db41e2b)
