@@ -10,7 +10,7 @@ The functionality of this desktop app is enabled by the UIMA backend:
 
 ![Individual  UIMA C4 Model](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/7e00e514-23d2-40c4-861e-8d0b6e9c6691)
 
-> ⚠ Please note that there is no distrubution pipeline for this project and therefore does not have a 'download' link.
+> ⚠ There is no distrubution pipeline for this project and therefore does not have a 'download' link.
 
 ## Configuration
 The project’s environment variables can be configured via a `.env` like so:
@@ -23,6 +23,8 @@ GATEWAY_BASE_URL=GATEWAY_BASE_URL
 ```
 
 where both `EJABBERD_SERVICE` and `GATEWAY_BASE_URL` can configure the app to run on either the production or staging environment by pre appending *staging.* or not to the URLs respectively. 
+
+> ⚠ Please note that the either the staging or production clusters must be running, otherwise the most of the features won't be accessible.
 
 ## Features
 Some of the features this instant messaging application offers include but are not limited to 
