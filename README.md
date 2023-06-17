@@ -10,6 +10,8 @@ The functionality of this desktop app is enabled by the UIMA backend:
 
 ![Individual  UIMA C4 Model](https://github.com/UIMA-Messaging/uima-desktop/assets/56337726/7e00e514-23d2-40c4-861e-8d0b6e9c6691)
 
+> ⚠ Please note that there is no distrubution pipeline for this project and therefore does not have a 'download' link.
+
 ## Configuration
 The project’s environment variables can be configured via a `.env` like so:
 ```
