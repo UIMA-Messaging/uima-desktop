@@ -29,7 +29,7 @@ Some of the features this instant messaging application offers include but are n
 - Real-time messaging
 - Real-time invitation (and block) reception 
 - Contact management
-- Cross plat-form communication
+- Cross platform communication
 
 ## UI
 
